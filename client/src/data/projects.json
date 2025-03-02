@@ -1,0 +1,30 @@
+{
+    "collaborative": [
+        {
+            "name": "Project 1",
+            "description": "This is a description of Project 1.",
+            "url": "https://example.com/project1",
+            "media": "https://example.com/project1.jpg"
+        },
+        {
+            "name": "Project 2",
+            "description": "This is a description of Project 2.",
+            "url": "https://example.com/project2",
+            "media": "https://example.com/project2.jpg"
+        }
+    ],
+    "personal": [
+        {
+            "name": "Project 5",
+            "description": "This is a description of Project 5.",
+            "url": "https://example.com/project5",
+            "media": "https://example.com/project5.jpg"
+        },
+        {
+            "name": "Project 6",
+            "description": "This is a description of Project 6.",
+            "url": "https://example.com/project6",
+            "media": "https://example.com/project6.jpg"
+        }
+    ]
+}

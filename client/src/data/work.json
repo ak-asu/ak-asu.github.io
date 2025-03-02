@@ -1,0 +1,42 @@
+{
+    "volunteer": [
+        {
+            "title": "Volunteer Developer",
+            "company": "Open Source Project",
+            "location": "Remote",
+            "startDate": "2023-01-01",
+            "endDate": null,
+            "description": [
+                "Contributed to an open-source project by fixing bugs and adding new features.",
+                "Collaborated with other developers on GitHub to review and merge pull requests.",
+                "Participated in community discussions and provided support to other contributors."
+            ]
+        }
+    ],
+    "professional": [
+        {
+            "title": "Software Engineer",
+            "company": "Google",
+            "location": "Mountain View, CA",
+            "startDate": "2022-01-01",
+            "endDate": null,
+            "description": [
+                "Developed and maintained web applications using React and Node.js.",
+                "Collaborated with cross-functional teams to design and implement new features.",
+                "Optimized application performance and improved user experience."
+            ]
+        },
+        {
+            "title": "Software Engineer Intern",
+            "company": "Facebook",
+            "location": "Menlo Park, CA",
+            "startDate": "2021-06-01",
+            "endDate": "2021-12-31",
+            "description": [
+                "Assisted in the development of a new feature for the Facebook app.",
+                "Conducted code reviews and provided feedback to other team members.",
+                "Participated in daily stand-up meetings and sprint planning sessions."
+            ]
+        }
+    ]
+}

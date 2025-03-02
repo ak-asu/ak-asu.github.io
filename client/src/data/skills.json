@@ -1,0 +1,77 @@
+{
+    "languages": [
+        {
+            "name": "JavaScript",
+            "level": "Intermediate",
+            "icon": "javascript.svg"
+        },
+        {
+            "name": "TypeScript",
+            "level": "Intermediate",
+            "icon": "typescript.svg"
+        },
+        {
+            "name": "Python",
+            "level": "Intermediate",
+            "icon": "python.svg"
+        }
+    ],
+    "cloud": [
+        {
+            "name": "AWS",
+            "level": "Intermediate",
+            "icon": "aws.svg"
+        },
+        {
+            "name": "GCP",
+            "level": "Intermediate",
+            "icon": "gcp.svg"
+        }
+    ],
+    "databases": [
+        {
+            "name": "MongoDB",
+            "level": "Intermediate",
+            "icon": "mongodb.svg"
+        }
+    ],
+    "tools": [
+        {
+            "name": "Git",
+            "level": "Intermediate",
+            "icon": "git.svg"
+        },
+        {
+            "name": "Docker",
+            "level": "Intermediate",
+            "icon": "docker.svg"
+        },
+        {
+            "name": "Kubernetes",
+            "level": "Intermediate",
+            "icon": "kubernetes.svg"
+        }
+    ],
+    "frameworks": [
+        {
+            "name": "React",
+            "level": "Intermediate",
+            "icon": "react.svg"
+        },
+        {
+            "name": "Node.js",
+            "level": "Intermediate",
+            "icon": "nodejs.svg"
+        },
+        {
+            "name": "Express.js",
+            "level": "Intermediate",
+            "icon": "express.svg"
+        },
+        {
+            "name": "Next.js",
+            "level": "Intermediate",
+            "icon": "nextjs.svg"
+        }
+    ]
+}

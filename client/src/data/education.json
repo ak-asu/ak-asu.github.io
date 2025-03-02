@@ -1,0 +1,20 @@
+{
+    "education": [
+        {
+            "degree": "Master of Science",
+            "field": "Computer Science",
+            "school": "University of California, Berkeley",
+            "gpa": 3.8,
+            "startYear": 2021,
+            "endYear": 2023
+        },
+        {
+            "degree": "Bachelor of Science",
+            "field": "Computer Science",
+            "school": "University of California, Berkeley",
+            "gpa": 3.8,
+            "startYear": 2021,
+            "endYear": 2023
+        }
+    ]
+}

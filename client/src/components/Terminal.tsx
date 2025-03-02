@@ -80,7 +80,7 @@ export const Terminal = () => {
       case 'help':
         return Object.entries(AVAILABLE_COMMANDS).map(([cmd, desc]) => `${cmd}: ${desc}`);
       case 'clear':
-        setHistory([]);
+        // The clear command is now handled in handleSubmit
         return [];
       case 'about':
         return [
@@ -137,6 +137,15 @@ export const Terminal = () => {
     if (soundEnabled) {
       audioManager.playSoundEffect('click');
     }
+    // Handle clear command specially
+    if (input.trim().toLowerCase() === 'clear') {
+      setHistory([]);
+      setCommandHistory([...commandHistory, input]);
+      setHistoryIndex(-1);
+      setInput('');
+      setSuggestions([]);
+      return;
+    }
 
     const newCommand: Command = {
       input,
@@ -185,6 +194,34 @@ export const Terminal = () => {
     }
   };
 
+  const handleTerminalClick = (e: React.MouseEvent) => {
+    // Don't focus if clicking on interactive elements
+    const target = e.target as HTMLElement;
+    const isInteractiveElement = 
+      target.tagName === 'BUTTON' || 
+      target.tagName === 'A' || 
+      target.tagName === 'INPUT' ||
+      target.getAttribute('role') === 'option' ||
+      target.classList.contains('interactive') ||
+      target.closest('[role="option"]') ||
+      target.closest('button') ||
+      target.closest('a');
+    
+    // Only focus the input if not clicking on an interactive element
+    if (!isInteractiveElement && inputRef.current) {
+      e.preventDefault(); // Prevent any default behavior
+      // e.stopPropagation(); // Stop the event from bubbling up      
+      // Focus with a slight delay to ensure the focus isn't lost
+      // This helps prevent the focus from being immediately lost after clicking
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
+      
+      // Prevent selection of text when double-clicking
+      window.getSelection()?.removeAllRanges();
+    }
+  };
+
   const getAnimationProps = () => {
     switch (animationLevel) {
       case 'expert':
@@ -207,17 +244,50 @@ export const Terminal = () => {
     }
   };
 
+  useEffect(() => {
+    // Focus the input when the component mounts
+    inputRef.current?.focus();
+    
+    // Add a click event listener to the window to refocus when clicking outside
+    const handleWindowClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check if click is outside the terminal
+      if (terminalRef.current && !terminalRef.current.contains(target)) {
+        // Don't refocus if clicking on another interactive element
+        if (!target.closest('button') && !target.closest('a') && !target.closest('input')) {
+          inputRef.current?.focus();
+        }
+      }
+    };
+    
+    // Clean up the event listener
+    return () => {
+      window.removeEventListener('click', handleWindowClick);
+    };
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={`font-mono rounded-lg w-full h-[70vh] overflow-hidden relative ${
+      className={`font-mono rounded-lg w-full h-[calc(100vh-4rem)] overflow-hidden relative ${
         theme === 'dark'
           ? 'bg-gray-900 text-green-500'
           : 'bg-gray-100 text-gray-900'
       }`}
       role="region"
       aria-label="Interactive Terminal"
+      onClick={handleTerminalClick}
+      style={{ cursor: 'text' }}
+      // Use -1 to make the container focusable but not in tab order
+      tabIndex={-1}
+      // When container gets focus, forward to input
+      onFocus={(e) => {
+        // Only focus the input if the focus event is on the container itself
+        if (e.target === e.currentTarget) {
+          inputRef.current?.focus();
+        }
+      }}
     >
       <TooltipProvider>
         <Tooltip>
@@ -245,6 +315,7 @@ export const Terminal = () => {
         role="log"
         aria-live="polite"
         aria-label="Terminal Output"
+        onClick={handleTerminalClick}  // Also add click handler to inner div
       >
         <AnimatePresence mode="popLayout">
           {history.map((cmd, i) => (
@@ -294,7 +365,7 @@ export const Terminal = () => {
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="bg-transparent outline-none flex-1"
+              className="bg-transparent outline-none flex-1 w-full caret-current focus:caret-visible"
               autoFocus
               spellCheck={false}
               aria-label="Enter command"
@@ -303,6 +374,21 @@ export const Terminal = () => {
               aria-expanded={suggestions.length > 0}
               aria-controls="command-suggestions"
               aria-autocomplete="list"
+              // Add onBlur handler to help maintain focus within the terminal
+              onBlur={(e) => {
+                // Only refocus if the focus is leaving the terminal component altogether
+                // Check if the new focus target is within our terminal component
+                if (!e.currentTarget.contains(e.relatedTarget as Node) && 
+                    !terminalRef.current?.contains(e.relatedTarget as Node)) {
+                  // If focus is leaving terminal entirely, don't refocus
+                  // This prevents focus trapping but allows normal tab navigation
+                } else {
+                  // Otherwise keep focus in the input
+                  requestAnimationFrame(() => {
+                    inputRef.current?.focus();
+                  });
+                }
+              }}
             />
             {suggestions.length > 0 && (
               <motion.div
@@ -342,6 +428,12 @@ export const Terminal = () => {
           </div>
         </form>
       </div>
+      
+      {/* Add an invisible overlay to make the entire area clickable */}
+      <div 
+        className="absolute inset-0 pointer-events-none" 
+        aria-hidden="true"
+      />
     </motion.div>
   );
 };
