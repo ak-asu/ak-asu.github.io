@@ -1,12 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Menu, X } from 'lucide-react';
+import { Phone, Menu, Home, FolderKanban, School, BriefcaseBusiness, Trophy, PencilRuler } from 'lucide-react';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { toggleMode } from '../store/features/modeSlice';
 import { SettingsPanel } from './SettingsPanel';
 import type { RootState } from '../store/store';
-import { useState } from 'react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 export const Navbar = () => {
   const dispatch = useDispatch();
@@ -14,8 +15,12 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { label: 'Home', href: '#main-content' },
-    { label: 'Projects', href: '#projects' },
+    { label: 'Home', href: '#main-content', icon: Home },
+    { label: 'Education', href: '#education', icon: School },
+    { label: 'Skills', href: '#skills', icon: PencilRuler },
+    { label: 'Projects', href: '#projects', icon: FolderKanban },
+    { label: 'Work', href: '#work', icon: BriefcaseBusiness },
+    { label: 'Achievements', href: '#achievements', icon: Trophy },
     { label: 'Contact', href: '#contact', icon: Phone },
   ];
 
@@ -30,30 +35,39 @@ export const Navbar = () => {
   );
 
   const NavContent = () => (
-    <>
-      {navItems.map((item) => (
-        <motion.a
-          key={item.label}
-          href={item.href}
-          whileHover={{ scale: 1.05 }}
-          className="flex items-center gap-2 px-4 py-2"
-          role="menuitem"
+    <TooltipProvider>
+      <>
+        {!isTechnicalMode && navItems.map((item) => (
+          <motion.div key={item.label} className="relative">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <motion.a
+                  href={item.href}
+                  whileHover={{ scale: 1.05 }}
+                  className="flex items-center gap-2 px-4 py-2"
+                  role="menuitem"
+                >
+                  {item.icon && <item.icon className="w-4 h-4" aria-hidden="true" />}
+                </motion.a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>{item.label}</span>
+              </TooltipContent>
+            </Tooltip>
+          </motion.div>
+        ))}
+        <Button
+          onClick={() => dispatch(toggleMode())}
+          variant="outline"
+          className="ml-4"
+          aria-pressed={isTechnicalMode}
+          aria-label={`Switch to ${isTechnicalMode ? 'Interactive' : 'Technical'} mode`}
         >
-          {item.icon && <item.icon className="w-4 h-4" aria-hidden="true" />}
-          {item.label}
-        </motion.a>
-      ))}
-      <Button
-        onClick={() => dispatch(toggleMode())}
-        variant="outline"
-        className="ml-4"
-        aria-pressed={isTechnicalMode}
-        aria-label={`Switch to ${isTechnicalMode ? 'Interactive' : 'Technical'} mode`}
-      >
-        {isTechnicalMode ? 'Switch to Interactive' : 'Switch to Technical'}
-      </Button>
-      <SettingsPanel />
-    </>
+          {isTechnicalMode ? 'Switch to Interactive' : 'Switch to Technical'}
+        </Button>
+        <SettingsPanel />
+      </>
+    </TooltipProvider>
   );
 
   return (

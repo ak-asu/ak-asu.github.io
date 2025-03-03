@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useAnimation, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useAnimation, useMotionValue } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 import skillsData from '@/data/skills.json';
-import Image from 'next/image';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Skill {
     name: string;
@@ -31,7 +30,6 @@ const Skills: React.FC = () => {
     const controls = useAnimation();
     const [isPaused, setIsPaused] = useState(false);
     const x = useMotionValue(0);
-    const dragX = useMotionValue(0);
     const dragging = useRef(false);
 
     // Flatten all skills into a single array and duplicate to ensure seamless scrolling
@@ -40,23 +38,34 @@ const Skills: React.FC = () => {
         ...Object.values(skillsData).flat(),
     ];
 
+    // Calculate animation duration based on animation level
+    const getAnimationDuration = () => {
+        switch(animationLevel) {
+            case 'expert': return 30;
+            case 'medium': return 45;
+            case 'basic': return 60;
+            default: return 45;
+        }
+    };
+
     useEffect(() => {
-        if (isPaused) return;
+        if (isPaused) {
+            controls.stop();
+            return;
+        }
 
         const animateScroll = async () => {
-            while (!isPaused) {
-                await controls.start({
-                    x: [0, -50 * allSkills.length / 2],
-                    transition: {
-                        x: {
-                            repeat: Infinity,
-                            repeatType: "loop",
-                            duration: animationLevel === 'expert' ? 30 : animationLevel === 'medium' ? 45 : 60,
-                            ease: "linear"
-                        }
+            await controls.start({
+                x: [0, -50 * allSkills.length / 2],
+                transition: {
+                    x: {
+                        repeat: Infinity,
+                        repeatType: "loop",
+                        duration: getAnimationDuration(),
+                        ease: "linear"
                     }
-                });
-            }
+                }
+            });
         };
 
         animateScroll();
@@ -108,50 +117,63 @@ const Skills: React.FC = () => {
                     transition: { duration: 0.2 } 
                 }}
             >
-                <Tooltip content={`${skill.name} - ${skill.level} (${proficiency}%)`}>
-                    <div className="relative w-16 h-16">
-                        <div className="absolute inset-0 rounded-full overflow-hidden bg-gray-300">
-                            {/* Colored progress circle */}
-                            <svg className="w-full h-full" viewBox="0 0 100 100">
-                                <circle 
-                                    cx="50" 
-                                    cy="50" 
-                                    r="45" 
-                                    fill="none" 
-                                    stroke={isTechnicalMode ? "#3ddc84" : "#4299e1"} 
-                                    strokeWidth="10"
-                                    strokeDasharray={`${proficiency * 2.83} ${283 - proficiency * 2.83}`}
-                                    strokeDashoffset="70" // Start from top
-                                    transform="rotate(-90 50 50)"
-                                />
-                            </svg>
-                        </div>
-                        
-                        {/* Skill icon */}
-                        <div className="absolute inset-0 flex items-center justify-center p-3">
-                            <Image 
-                                src={`/icons/${skill.icon}`} 
-                                alt={skill.name}
-                                width={40}
-                                height={40}
-                            />
-                        </div>
-                    </div>
-                </Tooltip>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <div className="relative w-16 h-16">
+                                <div className="absolute inset-0 rounded-full overflow-hidden bg-gray-300">
+                                    {/* Colored progress circle */}
+                                    <svg className="w-full h-full" viewBox="0 0 100 100">
+                                        <circle 
+                                            cx="50" 
+                                            cy="50" 
+                                            r="45" 
+                                            fill="none" 
+                                            stroke={isTechnicalMode ? "#3ddc84" : "#4299e1"} 
+                                            strokeWidth="10"
+                                            strokeDasharray={`${proficiency * 2.83} ${283 - proficiency * 2.83}`}
+                                            strokeDashoffset="70" // Start from top
+                                            transform="rotate(-90 50 50)"
+                                        />
+                                    </svg>
+                                </div>
+                                
+                                {/* Skill icon */}
+                                <div className="absolute inset-0 flex items-center justify-center p-3">
+                                    {/* {<Image 
+                                        src={`/icons/${skill.icon}`} 
+                                        alt={skill.name}
+                                        width={40}
+                                        height={40}
+                                        priority={index < 10} // Prioritize loading for first few icons
+                                    />} */}
+                                </div>
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent className={`${isTechnicalMode ? 'bg-black border-green-400 text-green-400' : 'bg-white text-indigo-600'}`}>
+                            <div className="flex flex-col items-center">
+                                <span className="font-bold">{skill.name}</span>
+                                <span className="text-sm">{skill.level} ({proficiency}%)</span>
+                            </div>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </motion.div>
         );
     };
 
     return (
         <div 
-            className="w-full overflow-hidden py-12 bg-opacity-50 relative"
+            className={`w-full overflow-hidden py-12 relative ${
+                isTechnicalMode ? 'bg-black bg-opacity-90' : 'bg-gray-50'
+            }`}
             ref={containerRef}
             onMouseDown={handleMouseDown}
         >
             <h2 className={`text-3xl font-bold mb-8 text-center ${
                 isTechnicalMode ? 'text-green-400' : 'text-indigo-600'
             }`}>
-                Skills & Technologies
+                {isTechnicalMode ? '<Skills />' : 'Skills & Technologies'}
             </h2>
 
             <motion.div
@@ -173,14 +195,22 @@ const Skills: React.FC = () => {
 
             {/* Technical mode overlay */}
             {isTechnicalMode && (
-                <div className="absolute top-3 right-3 bg-black bg-opacity-70 text-xs text-green-400 font-mono p-2 rounded">
+                <div className="absolute top-3 right-3 bg-black bg-opacity-70 text-xs text-green-400 font-mono p-2 rounded border border-green-400">
                     <code>
-                        {isPaused ? '[ Animation: PAUSED ]' : '[ Animation: RUNNING ]'}
+                        {isPaused ? '[ Animation: PAUSED ]' : '[ Animation: RUNNING ]'}<br />
+                        [ Speed: {animationLevel.toUpperCase()} ]
                     </code>
                 </div>
             )}
+
+            {/* User interaction hint */}
+            <div className={`text-center mt-4 text-sm ${isTechnicalMode ? 'text-green-400' : 'text-indigo-400'}`}>
+                {isTechnicalMode 
+                    ? '[ CLICK to pause animation, DRAG to explore ]'
+                    : 'Click to pause, drag to explore skills'}
+            </div>
         </div>
     );
 };
 
-export default Skills
+export default Skills;

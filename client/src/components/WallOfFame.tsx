@@ -1,32 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import achievements from '../data/achievements.json';
-import Image from 'next/image';
+import { RootState } from '@/store/store';
+import achievements from '@/data/achievements.json';
 import Confetti from 'react-confetti';
-import useWindowSize from '../hooks/useWindowSize';
+import useWindowSize from '../hooks/use-window-size';
 
-interface Achievement {
-    name: string;
-    description: string;
-    image: string;
-    points: number;
-}
 
 const CurtainedAchievements: React.FC = () => {
-    const isTechnicalMode = useSelector((state: RootState) => state.mode.isTechnicalMode);
-    const animationLevel = useSelector((state: RootState) => state.settings.animationLevel);
-    
+    const { animationLevel, isTechnicalMode } = useSelector((state: RootState) => state.mode);
+
     const [isOpen, setIsOpen] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
     const [autoScrolling, setAutoScrolling] = useState(true);
     const [userInteracting, setUserInteracting] = useState(false);
-    
+
     const creditsRef = useRef<HTMLDivElement>(null);
     const curtainContainerRef = useRef<HTMLDivElement>(null);
     const { width, height } = useWindowSize();
-    
+
     const leftCurtainControls = useAnimation();
     const rightCurtainControls = useAnimation();
 
@@ -57,23 +49,23 @@ const CurtainedAchievements: React.FC = () => {
         let animationId: number;
         const scrollCredits = () => {
             if (!creditsRef.current || !autoScrolling || userInteracting) return;
-            
+
             const { scrollHeight, clientHeight, scrollTop } = creditsRef.current;
-            
+
             // Reset to top when reached bottom
             if (scrollTop >= scrollHeight - clientHeight - 1) {
                 creditsRef.current.scrollTop = 0;
             } else {
                 creditsRef.current.scrollTop += 1;
             }
-            
+
             animationId = requestAnimationFrame(scrollCredits);
         };
 
         if (isOpen && autoScrolling && !userInteracting) {
             animationId = requestAnimationFrame(scrollCredits);
         }
-        
+
         return () => {
             if (animationId) cancelAnimationFrame(animationId);
         };
@@ -83,8 +75,8 @@ const CurtainedAchievements: React.FC = () => {
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
-                isOpen && 
-                curtainContainerRef.current && 
+                isOpen &&
+                curtainContainerRef.current &&
                 !curtainContainerRef.current.contains(event.target as Node)
             ) {
                 setUserInteracting(false);
@@ -107,7 +99,7 @@ const CurtainedAchievements: React.FC = () => {
                 leftCurtainControls.start("open"),
                 rightCurtainControls.start("open")
             ]);
-            
+
             // Hide confetti after 3 seconds
             setTimeout(() => {
                 setShowConfetti(false);
@@ -133,11 +125,9 @@ const CurtainedAchievements: React.FC = () => {
 
     // Render all achievements in a credit-roll style
     const renderAchievementCredits = () => {
-        const allAchievements: Achievement[] = Object.values(achievements).flat() as Achievement[];
-        
         return (
-            <div 
-                ref={creditsRef} 
+            <div
+                ref={creditsRef}
                 className={`
                     h-full overflow-y-auto px-6 py-8 scrollbar-thin
                     ${isTechnicalMode ? 'scrollbar-thumb-green-400 scrollbar-track-gray-800' : 'scrollbar-thumb-blue-400 scrollbar-track-gray-200'}
@@ -149,57 +139,67 @@ const CurtainedAchievements: React.FC = () => {
                 onMouseUp={() => setTimeout(() => setUserInteracting(false), 3000)}
             >
                 <div className="space-y-16 pb-32">
-                    {Object.entries(achievements).map(([category, items]) => (
+                    {/* Update the code to handle the achievements array structure correctly */}
+                    {Object.entries(
+                        // Group achievements by type
+                        achievements.reduce((acc: Record<string, any[]>, item: any) => {
+                            const type = item.type || 'other';
+                            if (!acc[type]) acc[type] = [];
+                            acc[type].push(item);
+                            return acc;
+                        }, {})
+                    ).map(([category, items]) => (
                         <div key={category} className="mb-12">
-                            <motion.h3 
+                            <motion.h3
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.5 }}
                                 className={`
-                                    text-2xl font-bold mb-6 text-center capitalize
-                                    ${isTechnicalMode ? 'text-green-400' : 'text-blue-600'}
-                                `}
+                    text-2xl font-bold mb-6 text-center capitalize
+                    ${isTechnicalMode ? 'text-green-400' : 'text-blue-600'}
+                `}
                             >
                                 {category}
                             </motion.h3>
-                            
+
                             <div className="space-y-10">
-                                {(items as Achievement[]).map((achievement, index) => (
-                                    <motion.div 
+                                {items.map((achievement, index) => (
+                                    <motion.div
                                         key={`${category}-${index}`}
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        transition={{ 
+                                        transition={{
                                             delay: 0.2 * index,
                                             type: "spring",
-                                            stiffness: animationLevel === 'expert' ? 100 : 50 
+                                            stiffness: animationLevel === 'expert' ? 100 : 50
                                         }}
                                         className={`
-                                            p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center gap-6
-                                            ${isTechnicalMode ? 'bg-gray-800 text-green-400' : 'bg-white text-gray-800'}
-                                        `}
+                            p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center gap-6
+                            ${isTechnicalMode ? 'bg-gray-800 text-green-400' : 'bg-white text-gray-800'}
+                        `}
                                     >
                                         <div className="relative w-24 h-24 flex-shrink-0">
-                                            <Image
-                                                src={achievement.image}
-                                                alt={achievement.name}
-                                                layout="fill"
-                                                objectFit="contain"
-                                                className="rounded"
-                                                priority={false}
-                                            />
+                                            {/* {<Image
+                                src={achievement.image}
+                                alt={achievement.title}
+                                fill
+                                sizes="(max-width: 768px) 24vw, 96px"
+                                style={{ objectFit: "contain" }}
+                                className="rounded"
+                                priority={false}
+                            />} */}
                                         </div>
                                         <div className="flex-grow text-center md:text-left">
-                                            <h4 className="text-xl font-bold mb-2">{achievement.name}</h4>
+                                            <h4 className="text-xl font-bold mb-2">{achievement.title}</h4>
                                             <p className="text-base opacity-90 mb-2">{achievement.description}</p>
                                             <div className="flex justify-center md:justify-start items-center gap-2">
                                                 <span className="font-semibold">
                                                     Points:
                                                 </span>
                                                 <span className={`
-                                                    text-lg font-bold
-                                                    ${isTechnicalMode ? 'text-yellow-300' : 'text-amber-600'}
-                                                `}>
+                                    text-lg font-bold
+                                    ${isTechnicalMode ? 'text-yellow-300' : 'text-amber-600'}
+                                `}>
                                                     {achievement.points}
                                                 </span>
                                             </div>
@@ -215,7 +215,7 @@ const CurtainedAchievements: React.FC = () => {
     };
 
     return (
-        <div 
+        <div
             ref={curtainContainerRef}
             className={`
                 relative w-full h-screen flex items-center justify-center overflow-hidden
@@ -231,10 +231,10 @@ const CurtainedAchievements: React.FC = () => {
                     numberOfPieces={animationLevel === 'expert' ? 500 : animationLevel === 'medium' ? 200 : 100}
                 />
             )}
-            
+
             {/* Closed curtain title */}
             {!isOpen && (
-                <motion.div 
+                <motion.div
                     className="absolute z-30 cursor-pointer"
                     onClick={toggleCurtain}
                     whileHover={{ scale: 1.05 }}
@@ -242,15 +242,15 @@ const CurtainedAchievements: React.FC = () => {
                 >
                     <h2 className={`
                         text-4xl md:text-6xl font-extrabold text-center px-8 py-6 rounded-lg shadow-2xl
-                        ${isTechnicalMode 
-                            ? 'bg-gray-800 text-green-400 border-2 border-green-500' 
+                        ${isTechnicalMode
+                            ? 'bg-gray-800 text-green-400 border-2 border-green-500'
                             : 'bg-white text-blue-700 border-2 border-blue-500'}
                     `}>
                         Achievements
                     </h2>
                 </motion.div>
             )}
-            
+
             {/* Left Curtain */}
             <motion.div
                 custom={true}
@@ -259,12 +259,12 @@ const CurtainedAchievements: React.FC = () => {
                 animate={leftCurtainControls}
                 className={`
                     absolute left-0 top-0 w-1/2 h-full z-20
-                    ${isTechnicalMode 
-                        ? 'bg-gradient-to-r from-gray-900 to-gray-800 border-r border-green-500' 
+                    ${isTechnicalMode
+                        ? 'bg-gradient-to-r from-gray-900 to-gray-800 border-r border-green-500'
                         : 'bg-gradient-to-r from-blue-700 to-blue-600'}
                 `}
             />
-            
+
             {/* Right Curtain */}
             <motion.div
                 custom={false}
@@ -273,12 +273,12 @@ const CurtainedAchievements: React.FC = () => {
                 animate={rightCurtainControls}
                 className={`
                     absolute right-0 top-0 w-1/2 h-full z-20
-                    ${isTechnicalMode 
-                        ? 'bg-gradient-to-l from-gray-900 to-gray-800 border-l border-green-500' 
+                    ${isTechnicalMode
+                        ? 'bg-gradient-to-l from-gray-900 to-gray-800 border-l border-green-500'
                         : 'bg-gradient-to-l from-blue-700 to-blue-600'}
                 `}
             />
-            
+
             {/* Content behind curtains */}
             <div className={`
                 absolute inset-0 z-10 p-4 md:p-8 
@@ -304,8 +304,8 @@ const CurtainedAchievements: React.FC = () => {
                                         onClick={toggleCurtain}
                                         className={`
                                             p-2 rounded-full
-                                            ${isTechnicalMode 
-                                                ? 'bg-gray-800 text-green-400 hover:bg-gray-700' 
+                                            ${isTechnicalMode
+                                                ? 'bg-gray-800 text-green-400 hover:bg-gray-700'
                                                 : 'bg-blue-600 text-white hover:bg-blue-700'}
                                         `}
                                     >
@@ -314,7 +314,7 @@ const CurtainedAchievements: React.FC = () => {
                                         </svg>
                                     </button>
                                 </div>
-                                
+
                                 <div className={`
                                     h-[calc(100%-3rem)] rounded-lg shadow-lg overflow-hidden
                                     ${isTechnicalMode ? 'bg-black' : 'bg-gray-50'}

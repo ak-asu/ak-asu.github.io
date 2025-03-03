@@ -1,30 +1,42 @@
-{
-    "collaborative": [
-        {
-            "name": "Project 1",
-            "description": "This is a description of Project 1.",
-            "url": "https://example.com/project1",
-            "media": "https://example.com/project1.jpg"
-        },
-        {
-            "name": "Project 2",
-            "description": "This is a description of Project 2.",
-            "url": "https://example.com/project2",
-            "media": "https://example.com/project2.jpg"
-        }
-    ],
-    "personal": [
-        {
-            "name": "Project 5",
-            "description": "This is a description of Project 5.",
-            "url": "https://example.com/project5",
-            "media": "https://example.com/project5.jpg"
-        },
-        {
-            "name": "Project 6",
-            "description": "This is a description of Project 6.",
-            "url": "https://example.com/project6",
-            "media": "https://example.com/project6.jpg"
-        }
-    ]
-}
+[
+    {
+        "name": "Project 1",
+        "shortDescription": "This is a short description of Project 1.",
+        "description": "This is a description of Project 1.",
+        "technologies": ["HTML", "CSS", "JavaScript"],
+        "duration": "1 month",
+        "url": "https://example.com/project1",
+        "media": "https://example.com/project1.jpg",
+        "type": "collaborative"
+    },
+    {
+        "name": "Project 2",
+        "shortDescription":"This is a short description of Project 2.",
+        "description": "This is a description of Project 2.",
+        "technologies": ["HTML", "CSS", "JavaScript"],
+        "duration": "2 months",
+        "url": "https://example.com/project2",
+        "media": "https://example.com/project2.jpg",
+        "type": "collaborative"
+    },
+    {
+        "name": "Project 5",
+        "shortDescription": "This is a short description of Project 5.",
+        "description": "This is a description of Project 5.",
+        "technologies": ["HTML", "CSS", "JavaScript"],
+        "duration": "3 months",
+        "url": "https://example.com/project5",
+        "media": "https://example.com/project5.jpg",
+        "type": "personal"
+    },
+    {
+        "name": "Project 6",
+        "shortDescription": "This is a short description of Project 6.",
+        "description": "This is a description of Project 6.",
+        "technologies": ["HTML", "CSS", "JavaScript"],
+        "duration": "4 months",
+        "url": "https://example.com/project6",
+        "media": "https://example.com/project6.jpg",
+        "type": "personal"
+    }
+]

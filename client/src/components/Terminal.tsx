@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSelector } from 'react-redux';
-import type { RootState } from '@/store/store';
-import { audioManager } from '@/lib/audio';
 import { Command } from 'lucide-react';
 import {
   Tooltip,
@@ -10,6 +8,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import type { RootState } from '@/store/store';
+import { audioManager } from '@/lib/audio';
+import achievements from '@/data/achievements.json';
+import education from '@/data/education.json';
+import projects from '@/data/projects.json';
+import skills from '@/data/skills.json';
+import work from '@/data/work.json';
 
 type Command = {
   input: string;
@@ -24,11 +29,15 @@ const AVAILABLE_COMMANDS = {
   projects: 'List my projects',
   contact: 'Show contact information',
   skills: 'Display my technical skills',
+  education: 'Display my educational background',
+  work: 'Show my work experience',
+  achievements: 'List my achievements',
   theme: 'Toggle terminal theme (light/dark)',
   whoami: 'Display current user information',
   ls: 'List directory contents',
   cd: 'Change directory',
   cat: 'Display file contents',
+  project: 'Get details about a specific project (usage: project <number>)',
 };
 
 export const Terminal = () => {
@@ -37,11 +46,10 @@ export const Terminal = () => {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [currentPath, setCurrentPath] = useState('~/portfolio');
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { animationLevel, soundEnabled } = useSelector((state: RootState) => state.mode);
+  const { animationLevel, soundEnabled, themeMode } = useSelector((state: RootState) => state.mode);
 
   const scrollToBottom = () => {
     if (terminalRef.current) {
@@ -50,6 +58,20 @@ export const Terminal = () => {
   };
 
   useEffect(scrollToBottom, [history]);
+
+  // Add welcome message on component mount
+  useEffect(() => {
+    const welcomeCommand: Command = {
+      input: "welcome",
+      output: [
+        "Welcome to my Interactive Portfolio Terminal!",
+        "Type 'help' to see available commands.",
+        "You can switch to the non-technical mode using the toggle in the top-right corner."
+      ],
+      timestamp: getTimestamp()
+    };
+    setHistory([welcomeCommand]);
+  }, []);
 
   const getTimestamp = () => {
     return new Date().toLocaleTimeString();
@@ -60,7 +82,6 @@ export const Terminal = () => {
       setSuggestions([]);
       return;
     }
-
     const matches = Object.keys(AVAILABLE_COMMANDS).filter(cmd =>
       cmd.startsWith(value.toLowerCase())
     );
@@ -79,52 +100,196 @@ export const Terminal = () => {
     switch (args[0]) {
       case 'help':
         return Object.entries(AVAILABLE_COMMANDS).map(([cmd, desc]) => `${cmd}: ${desc}`);
+
       case 'clear':
         // The clear command is now handled in handleSubmit
         return [];
+
       case 'about':
         return [
-          'I am a software developer passionate about creating innovative solutions.',
-          'I specialize in full-stack development with a focus on modern technologies.',
+          'Hi there! I\'m a passionate software developer specializing in full-stack development.',
+          'With expertise in modern web technologies, I create engaging and scalable applications.',
+          'My goal is to build software that makes a difference, focusing on user experience and performance.',
+          'Type "skills", "projects", or "contact" to learn more about me.'
         ];
+
       case 'projects':
         return [
-          'Recent Projects:',
-          '1. Portfolio Website - React, TypeScript, Three.js',
-          '2. E-commerce Platform - Next.js, Node.js, PostgreSQL',
-          '3. Mobile App - React Native, Firebase',
+          'My Projects:',
+          ...projects.map((project, index) => `${index + 1}. ${project.name} - ${project.shortDescription}`),
+          '',
+          'For more details on a specific project, type: "project <number>"'
         ];
+
+      case 'project':
+        if (args[1] && !isNaN(parseInt(args[1]))) {
+          const projectIndex = parseInt(args[1]) - 1;
+          if (projectIndex >= 0 && projectIndex < projects.length) {
+            const project = projects[projectIndex];
+            return [
+              `Project: ${project.name}`,
+              `Description: ${project.description}`,
+              `Technologies: ${project.technologies.join(', ')}`,
+              `Duration: ${project.duration}`,
+              project.url ? `Link: ${project.url}` : 'Link: Not available',
+            ];
+          }
+          return [`Project number ${args[1]} not found. Type "projects" to see available projects.`];
+        }
+        return ['Usage: project <number>'];
+
       case 'contact':
         return [
           'Email: example@domain.com',
           'GitHub: github.com/username',
           'LinkedIn: linkedin.com/in/username',
+          'Twitter: @username'
         ];
+
       case 'skills':
-        return [
-          'Languages: TypeScript, JavaScript, Python, Go',
-          'Frontend: React, Vue.js, Angular',
-          'Backend: Node.js, Django, Flask',
-          'Database: PostgreSQL, MongoDB, Redis',
-        ];
+        const lines: string[] = ['My Skills:'];
+        for (const [category, items] of Object.entries(skills)) {
+          lines.push(`${category}: ${items.map((i) => `${i.name} (${i.level}%)`).join(', ')}`);
+        }
+        
+        return lines;
+
+      case 'education':
+        return education.map(edu =>
+          `${edu.degree} at ${edu.institution} (${edu.startDate} - ${edu.endDate || 'Present'})`
+        );
+
+      case 'work':
+        return work.map(job =>
+          `${job.position} at ${job.company} (${job.startDate} - ${job.endDate || 'Present'})`
+        );
+
+      case 'achievements':
+        return achievements.map(achievement =>
+          `${achievement.title} - ${achievement.date}`
+        );
+
       case 'theme':
-        setTheme(theme === 'dark' ? 'light' : 'dark');
+        const theme = themeMode === 'dark' ? 'light' : 'dark';
+        //TODO: Dispatch action to update theme
         return [`Switched to ${theme === 'dark' ? 'light' : 'dark'} theme`];
+
       case 'whoami':
         return ['visitor@portfolio'];
+
       case 'ls':
-        return ['projects/', 'about.md', 'contact.txt', 'skills.json'];
+        if (currentPath === '~/portfolio') {
+          return ['projects/', 'skills.json', 'education.json', 'work.json', 'achievements.json', 'about.md', 'contact.txt'];
+        } else if (currentPath === '~/portfolio/projects') {
+          return projects.map((p, i) => `${i + 1}-${p.name.toLowerCase().replace(/\s+/g, '-')}.json`);
+        }
+        return ['Directory not found'];
+
       case 'cd':
-        if (args[1]) {
-          setCurrentPath(`~/portfolio/${args[1]}`);
-          return [`Changed directory to ${args[1]}`];
+        if (!args[1] || args[1] === '~' || args[1] === '/') {
+          setCurrentPath('~/portfolio');
+          return ['Changed directory to ~/portfolio'];
+        } else if (args[1] === '..') {
+          if (currentPath !== '~/portfolio') {
+            setCurrentPath('~/portfolio');
+            return ['Changed directory to ~/portfolio'];
+          }
+          return ['Already at root directory'];
+        } else if (args[1] === 'projects' && currentPath === '~/portfolio') {
+          setCurrentPath('~/portfolio/projects');
+          return ['Changed directory to ~/portfolio/projects'];
         }
-        return ['Usage: cd <directory>'];
+        return [`Directory ${args[1]} not found`];
+
       case 'cat':
-        if (args[1]) {
-          return [`Displaying contents of ${args[1]}...`, 'File contents would appear here'];
+        if (!args[1]) return ['Usage: cat <filename>'];
+
+        if (args[1].match(/^\d+-.*\.json$/) && currentPath === '~/portfolio/projects') {
+          const projectIndex = parseInt(args[1].split('-')[0]) - 1;
+          if (projectIndex >= 0 && projectIndex < projects.length) {
+            const project = projects[projectIndex];
+            return [
+              `{`,
+              `  "name": "${project.name}",`,
+              `  "description": "${project.description}",`,
+              `  "technologies": [${project.technologies.map(t => `"${t}"`).join(', ')}],`,
+              `  "duration": "${project.duration}",`,
+              `  "link": "${project.url || ''}",`,
+              `}`
+            ];
+          }
         }
-        return ['Usage: cat <filename>'];
+
+        switch (args[1]) {
+          case 'skills.json':
+            if (currentPath === '~/portfolio') {
+              return [
+                '{',
+                ...Object.entries(skills).map(([category, items]) =>
+                  `  "${category}": [${items.map(i => `"${i}"`).join(', ')}],`
+                ),
+                '}'
+              ];
+            }
+            break;
+          case 'education.json':
+            if (currentPath === '~/portfolio') {
+              return [
+                '[',
+                ...education.map(edu =>
+                  `  { "institution": "${edu.institution}", "degree": "${edu.degree}", "date": "${edu.startDate} - ${edu.endDate || 'Present'}" },`
+                ),
+                ']'
+              ];
+            }
+            break;
+          case 'work.json':
+            if (currentPath === '~/portfolio') {
+              return [
+                '[',
+                ...work.map(job =>
+                  `  { "company": "${job.company}", "position": "${job.position}", "date": "${job.startDate} - ${job.endDate || 'Present'}" },`
+                ),
+                ']'
+              ];
+            }
+            break;
+          case 'achievements.json':
+            if (currentPath === '~/portfolio') {
+              return [
+                '[',
+                ...achievements.map(achievement =>
+                  `  { "title": "${achievement.title}", "date": "${achievement.date}" },`
+                ),
+                ']'
+              ];
+            }
+            break;
+          case 'about.md':
+            if (currentPath === '~/portfolio') {
+              return [
+                '# About Me',
+                '',
+                'I\'m a passionate software developer specializing in full-stack development.',
+                'With expertise in modern web technologies, I create engaging and scalable applications.',
+                'My goal is to build software that makes a difference, focusing on user experience and performance.'
+              ];
+            }
+            break;
+          case 'contact.txt':
+            if (currentPath === '~/portfolio') {
+              return [
+                'Email: example@domain.com',
+                'GitHub: github.com/username',
+                'LinkedIn: linkedin.com/in/username',
+                'Twitter: @username'
+              ];
+            }
+            break;
+        }
+
+        return [`File ${args[1]} not found or cannot be displayed`];
+
       default:
         return [`Command not found: ${command}. Type 'help' for available commands.`];
     }
@@ -137,6 +302,7 @@ export const Terminal = () => {
     if (soundEnabled) {
       audioManager.playSoundEffect('click');
     }
+
     // Handle clear command specially
     if (input.trim().toLowerCase() === 'clear') {
       setHistory([]);
@@ -197,16 +363,16 @@ export const Terminal = () => {
   const handleTerminalClick = (e: React.MouseEvent) => {
     // Don't focus if clicking on interactive elements
     const target = e.target as HTMLElement;
-    const isInteractiveElement = 
-      target.tagName === 'BUTTON' || 
-      target.tagName === 'A' || 
+    const isInteractiveElement =
+      target.tagName === 'BUTTON' ||
+      target.tagName === 'A' ||
       target.tagName === 'INPUT' ||
       target.getAttribute('role') === 'option' ||
       target.classList.contains('interactive') ||
       target.closest('[role="option"]') ||
       target.closest('button') ||
       target.closest('a');
-    
+
     // Only focus the input if not clicking on an interactive element
     if (!isInteractiveElement && inputRef.current) {
       e.preventDefault(); // Prevent any default behavior
@@ -216,25 +382,24 @@ export const Terminal = () => {
       requestAnimationFrame(() => {
         inputRef.current?.focus();
       });
-      
-      // Prevent selection of text when double-clicking
-      window.getSelection()?.removeAllRanges();
+      // inputRef.current.focus();
     }
   };
 
+  // Determine animation properties based on animation level
   const getAnimationProps = () => {
     switch (animationLevel) {
       case 'expert':
         return {
-          initial: { opacity: 0, y: 20, scale: 0.9 },
+          initial: { opacity: 0, y: 20, scale: 0.95 },
           animate: { opacity: 1, y: 0, scale: 1 },
-          transition: { type: 'spring', stiffness: 200, damping: 20 },
+          transition: { type: 'spring', damping: 12 }
         };
       case 'medium':
         return {
           initial: { opacity: 0, y: 10 },
           animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.2 },
+          transition: { type: 'tween' }
         };
       default:
         return {
@@ -247,7 +412,7 @@ export const Terminal = () => {
   useEffect(() => {
     // Focus the input when the component mounts
     inputRef.current?.focus();
-    
+
     // Add a click event listener to the window to refocus when clicking outside
     const handleWindowClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -259,22 +424,25 @@ export const Terminal = () => {
         }
       }
     };
-    
+
+    window.addEventListener('click', handleWindowClick);
+
     // Clean up the event listener
     return () => {
       window.removeEventListener('click', handleWindowClick);
     };
   }, []);
-
+  // ${themeMode === 'dark'
+  //   ? 'bg-gray-900 text-green-500'
+  //   : 'bg-gray-100 text-gray-900'
+  // }
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={`font-mono rounded-lg w-full h-[calc(100vh-4rem)] overflow-hidden relative ${
-        theme === 'dark'
-          ? 'bg-gray-900 text-green-500'
-          : 'bg-gray-100 text-gray-900'
-      }`}
+      className={`font-mono rounded-lg w-full h-[calc(100vh-4rem)] overflow-hidden relative
+        
+        `}
       role="region"
       aria-label="Interactive Terminal"
       onClick={handleTerminalClick}
@@ -288,6 +456,7 @@ export const Terminal = () => {
           inputRef.current?.focus();
         }
       }}
+      ref={terminalRef}
     >
       <TooltipProvider>
         <Tooltip>
@@ -310,12 +479,11 @@ export const Terminal = () => {
       </TooltipProvider>
 
       <div
-        ref={terminalRef}
         className="overflow-y-auto h-full p-4"
         role="log"
         aria-live="polite"
         aria-label="Terminal Output"
-        onClick={handleTerminalClick}  // Also add click handler to inner div
+        onClick={handleTerminalClick}
       >
         <AnimatePresence mode="popLayout">
           {history.map((cmd, i) => (
@@ -378,8 +546,8 @@ export const Terminal = () => {
               onBlur={(e) => {
                 // Only refocus if the focus is leaving the terminal component altogether
                 // Check if the new focus target is within our terminal component
-                if (!e.currentTarget.contains(e.relatedTarget as Node) && 
-                    !terminalRef.current?.contains(e.relatedTarget as Node)) {
+                if (!e.currentTarget.contains(e.relatedTarget as Node) &&
+                  !terminalRef.current?.contains(e.relatedTarget as Node)) {
                   // If focus is leaving terminal entirely, don't refocus
                   // This prevents focus trapping but allows normal tab navigation
                 } else {
@@ -428,10 +596,10 @@ export const Terminal = () => {
           </div>
         </form>
       </div>
-      
+
       {/* Add an invisible overlay to make the entire area clickable */}
-      <div 
-        className="absolute inset-0 pointer-events-none" 
+      <div
+        className="absolute inset-0 pointer-events-none"
         aria-hidden="true"
       />
     </motion.div>

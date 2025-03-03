@@ -6,7 +6,6 @@ export type ThemeMode = 'light' | 'dark' | 'system';
 interface ModeState {
   isTechnicalMode: boolean;
   animationLevel: AnimationLevel;
-  currentMode: 'technical' | 'non-technical';
   themeMode: ThemeMode;
   soundEnabled: boolean;
   physicsEnabled: boolean;
@@ -15,7 +14,6 @@ interface ModeState {
 const initialState: ModeState = {
   isTechnicalMode: false,
   animationLevel: 'medium',
-  currentMode: 'non-technical',
   themeMode: 'system',
   soundEnabled: true,
   physicsEnabled: true,

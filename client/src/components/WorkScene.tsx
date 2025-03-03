@@ -7,21 +7,19 @@ import Building from './work/Building';
 import Character from './work/Character';
 import Home from './work/Home';
 import ProjectDetails from './work/ProjectDetails';
-import workData from '../data/work.json';
+import workData from '@/data/work.json';
 import { WorkData, Company, Project } from '../types/work';
 
 // Prepare data structure for the scene
 const prepareWorkData = (): WorkData => {
   const companies: Company[] = [];
 
-  // Process professional experience first
-  if (workData.professional) {
-    workData.professional.forEach((job) => {
+    workData.forEach((job) => {
       const company: Company = {
         name: job.company,
         location: job.location,
         projects: [{
-          title: job.title,
+          title: job.company,
           description: job.description.join(' '),
           startDate: job.startDate,
           endDate: job.endDate || 'Present',
@@ -36,32 +34,6 @@ const prepareWorkData = (): WorkData => {
         companies.push(company);
       }
     });
-  }
-
-  // Then volunteer experience
-  if (workData.volunteer) {
-    workData.volunteer.forEach((job) => {
-      const company: Company = {
-        name: job.company,
-        location: job.location,
-        projects: [{
-          title: job.title,
-          description: job.description.join(' '),
-          startDate: job.startDate,
-          endDate: job.endDate || 'Present',
-          type: 'volunteer'
-        }]
-      };
-      
-      const existingCompany = companies.find(c => c.name === job.company);
-      if (existingCompany) {
-        existingCompany.projects.push(...company.projects);
-      } else {
-        companies.push(company);
-      }
-    });
-  }
-
   return { companies };
 };
 

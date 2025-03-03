@@ -8,8 +8,7 @@ export const CustomCursor = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   
-  const currentMode = useSelector((state: RootState) => state.mode.currentMode);
-  const animationLevel = useSelector((state: RootState) => state.mode.animationLevel);
+  const { animationLevel, isTechnicalMode } = useSelector((state: RootState) => state.mode);
   
   // Adjust cursor size based on animation level
   const cursorSize = animationLevel === 'basic' ? 16 : 
@@ -100,14 +99,14 @@ export const CustomCursor = () => {
       <motion.div
         className="h-full w-full rounded-full"
         style={{
-          backgroundColor: currentMode === 'technical' ? 'rgb(51, 255, 51)' : 'rgb(255, 255, 255)',
+          backgroundColor: isTechnicalMode ? 'rgb(51, 255, 51)' : 'rgb(255, 255, 255)',
           opacity: 0.4,
         }}
       />
       <motion.div
         className="absolute top-0 left-0 h-full w-full rounded-full border-2"
         style={{
-          borderColor: currentMode === 'technical' ? 'rgb(51, 255, 51)' : 'rgb(255, 255, 255)',
+          borderColor: isTechnicalMode ? 'rgb(51, 255, 51)' : 'rgb(255, 255, 255)',
         }}
       />
     </motion.div>

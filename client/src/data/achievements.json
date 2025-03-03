@@ -1,34 +1,34 @@
-{
-    "rewards": [
-        {
-            "name": "First Reward",
-            "description": "This is the first reward you can get.",
-            "image": "/images/achievements/reward1.png",
-            "points": 10
-        }
-    ],
-    "recognition": [
-        {
-            "name": "First Recognition",
-            "description": "This is the first recognition you can get.",
-            "image": "/images/achievements/recognition1.png",
-            "points": 10
-        }
-    ],
-    "participation": [
-        {
-            "name": "First Participation",
-            "description": "This is the first participation you can get.",
-            "image": "/images/achievements/participation1.png",
-            "points": 10
-        }
-    ],
-    "certifications": [
-        {
-            "name": "First Certification",
-            "description": "This is the first certification you can get.",
-            "image": "/images/achievements/certification1.png",
-            "points": 10
-        }
-    ]
-}
+[
+    {
+        "title": "First Reward",
+        "description": "This is the first reward you can get.",
+        "date": "2023-01-01",
+        "image": "/images/achievements/reward1.png",
+        "points": 10,
+        "type": "reward"
+    },
+    {
+        "title": "First Recognition",
+        "description": "This is the first recognition you can get.",
+        "date": "2023-01-01",
+        "image": "/images/achievements/recognition1.png",
+        "points": 10,
+        "type": "recognition"
+    },
+    {
+        "title": "First Participation",
+        "description": "This is the first participation you can get.",
+        "date": "2023-01-01",
+        "image": "/images/achievements/participation1.png",
+        "points": 10,
+        "type": "participation"
+    },
+    {
+        "title": "First Certification",
+        "description": "This is the first certification you can get.",
+        "date": "2023-01-01",
+        "image": "/images/achievements/certification1.png",
+        "points": 10,
+        "type": "certification"
+    }
+]

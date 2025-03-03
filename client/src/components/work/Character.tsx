@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import Image from 'next/image';
 
 interface CharacterProps {
   position: { x: number; y: number };
@@ -89,13 +88,13 @@ const Character: React.FC<CharacterProps> = ({
           filter: isTechnicalMode ? 'hue-rotate(120deg) brightness(1.2)' : 'none'
         }}
       >
-        <Image
+        {/* {<Image
           src={getCharacterSprite()}
           alt="Character"
           layout="fill"
           objectFit="contain"
           priority
-        />
+        />} */}
       </div>
       
       {/* Speech bubble for working or resting states */}

@@ -1,30 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
-import { setActiveEducation } from '../redux/slices/educationSlice';
-import educationData from '../data/education.json';
-import Image from 'next/image';
-
-interface Subject {
-    name: string;
-    grade: string;
-}
-
-interface EducationEntry {
-    degree: string;
-    field: string;
-    school: string;
-    gpa: number;
-    startYear: number;
-    endYear: number;
-    subjects?: Subject[];
-    image?: string;
-}
+import { setActiveEducation } from '@/store/features/educationSlice';
+import education from '@/data/education.json';
 
 const EducationCard: React.FC = () => {
     const dispatch = useDispatch();
     const activeEducation = useSelector((state: any) => state.education.activeEducation);
-    const animationLevel = useSelector((state: any) => state.settings.animationLevel);
+    const animationLevel = useSelector((state: any) => state.mode.animationLevel);
     const [currentPage, setCurrentPage] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStartX, setDragStartX] = useState(0);
@@ -32,24 +15,8 @@ const EducationCard: React.FC = () => {
     const bookRef = useRef<HTMLDivElement>(null);
     const pencilAnimation = useAnimation();
     const textAnimation = useAnimation();
-
-    const education: EducationEntry[] = educationData.education;
     
     const totalPages = education.length + 2; // Education entries + cover & back
-    
-    // Sample subjects for demonstration
-    const sampleSubjects: { [key: number]: Subject[] } = {
-        0: [
-            { name: "Advanced Algorithms", grade: "A" },
-            { name: "Machine Learning", grade: "A-" },
-            { name: "Computer Vision", grade: "A" },
-        ],
-        1: [
-            { name: "Data Structures", grade: "A" },
-            { name: "Operating Systems", grade: "A-" },
-            { name: "Database Systems", grade: "B+" },
-        ]
-    };
 
     // Write animation function
     const animateWriting = async () => {
@@ -126,13 +93,13 @@ const EducationCard: React.FC = () => {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.3 }}
                     >
-                        <Image 
+                        {/* {<Image 
                             src="/images/book-cover.svg" 
                             alt="Education Book" 
                             width={200} 
                             height={200} 
                             className="mt-4"
-                        />
+                        />} */}
                     </motion.div>
                 </div>
             );
@@ -161,6 +128,7 @@ const EducationCard: React.FC = () => {
             // Education pages
             const eduIndex = page - 1;
             const entry = education[eduIndex];
+            if (!entry) return null;
             
             return (
                 <div className="flex h-full">
@@ -171,13 +139,13 @@ const EducationCard: React.FC = () => {
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.5 }}
                         >
-                            <Image 
+                            {/* {<Image 
                                 src={entry.image || `/images/school-${eduIndex}.jpg`}
                                 alt={entry.school}
                                 width={200}
                                 height={150}
                                 className="rounded shadow-md"
-                            />
+                            />} */}
                         </motion.div>
                     </div>
                     
@@ -188,12 +156,12 @@ const EducationCard: React.FC = () => {
                                 className="absolute z-10"
                                 animate={pencilAnimation}
                             >
-                                <Image 
+                                {/* {<Image 
                                     src="/images/pencil.svg" 
                                     alt="Writing pencil" 
                                     width={30} 
                                     height={30} 
-                                />
+                                />} */}
                             </motion.div>
                         )}
                         
@@ -204,14 +172,14 @@ const EducationCard: React.FC = () => {
                             transition={{ duration: 0.5 }}
                         >
                             <h3 className="text-xl font-semibold text-amber-900">{entry.degree} in {entry.field}</h3>
-                            <p className="text-amber-800">{entry.school}</p>
-                            <p className="text-amber-700">{entry.startYear} - {entry.endYear}</p>
+                            <p className="text-amber-800">{entry.institution}</p>
+                            <p className="text-amber-700">{entry.startDate} - {entry.endDate}</p>
                             <p className="text-amber-900">GPA: {entry.gpa}</p>
                             
                             <div className="mt-6">
                                 <h4 className="font-medium text-amber-900 mb-2">Key Subjects:</h4>
                                 <ul className="text-sm space-y-1">
-                                    {sampleSubjects[eduIndex]?.map((subject, idx) => (
+                                    {education[eduIndex].subjects?.map((subject, idx) => (
                                         <li key={idx} className="flex justify-between">
                                             <span>{subject.name}</span>
                                             <span className="font-medium">{subject.grade}</span>
