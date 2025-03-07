@@ -2,6 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: 210 12% 93%; /* #b9c7d2 lighter variant */
+  --foreground: 0 0% 18%; /* #474747 */
+  
+  --card: 210 12% 97%;
+  --card-foreground: 0 0% 18%; /* #474747 */
+  
+  --popover: 210 12% 97%;
+  --popover-foreground: 0 0% 18%; /* #474747 */
+  
+  --primary: 192 82% 45%; /* #1791a3 */
+  --primary-foreground: 0 0% 98%;
+  
+  --secondary: 192 59% 68%; /* #73d3e7 */
+  --secondary-foreground: 0 0% 18%; /* #474747 */
+  
+  --muted: 198 15% 49%; /* #6d868d */
+  --muted-foreground: 0 0% 96%;
+  
+  --accent: 210 12% 93%; /* #b9c7d2 */
+  --accent-foreground: 0 0% 18%; /* #474747 */
+  
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  
+  --border: 198 15% 49%; /* #6d868d variant */
+  --input: 198 15% 49%; /* #6d868d variant */
+  --ring: 192 82% 45%; /* #1791a3 */
+
+  /* ... existing variables ... */
+}
+
+.dark {
+  --background: 0 0% 18%; /* #474747 */
+  --foreground: 210 12% 93%; /* #b9c7d2 */
+  
+  --card: 0 0% 22%;
+  --card-foreground: 210 12% 93%; /* #b9c7d2 */
+  
+  --popover: 0 0% 22%;
+  --popover-foreground: 210 12% 93%; /* #b9c7d2 */
+  
+  --primary: 192 59% 68%; /* #73d3e7 */
+  --primary-foreground: 0 0% 18%; /* #474747 */
+  
+  --secondary: 192 82% 45%; /* #1791a3 */
+  --secondary-foreground: 0 0% 98%;
+  
+  --muted: 198 15% 49%; /* #6d868d */
+  --muted-foreground: 0 0% 96%;
+  
+  --accent: 198 15% 38%; /* #6d868d darker variant */
+  --accent-foreground: 210 12% 93%; /* #b9c7d2 */
+  
+  --border: 198 15% 49%; /* #6d868d */
+  --input: 198 15% 49%; /* #6d868d */
+  --ring: 192 59% 68%; /* #73d3e7 */
+
+  /* ... existing dark mode variables ... */
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -29,11 +90,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-primary/20 rounded-full;
+  @apply bg-[#6d868d]/40 rounded-full;  /* Using muted color from palette */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary/30;
+  @apply bg-[#1791a3]/50;  /* Using primary color from palette */
 }
 
 /* Smooth scrolling */
@@ -65,9 +126,11 @@ a, button, [role="button"], .interactive {
 @keyframes bounce-subtle {
   0%, 100% {
     transform: translateY(0);
+    color: #73d3e7;  /* Light teal from palette */
   }
   50% {
     transform: translateY(-4px);
+    color: #1791a3;  /* Deeper teal from palette */
   }
 }
 
@@ -80,7 +143,7 @@ a, button, [role="button"], .interactive {
     to right,
     transparent,
     transparent 10px,
-    currentColor 10px,
-    currentColor 20px
+    #6d868d 10px,  /* Slate color from palette */
+    #6d868d 20px
   );
 }

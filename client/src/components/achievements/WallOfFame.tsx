@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import achievements from '@/data/achievements.json';
 import Confetti from 'react-confetti';
-import useWindowSize from '../hooks/use-window-size';
+import useWindowSize from '../../hooks/use-window-size';
 
 
 const CurtainedAchievements: React.FC = () => {

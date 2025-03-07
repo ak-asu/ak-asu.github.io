@@ -61,6 +61,17 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        palette: {
+          teal: {
+            light: "#73d3e7",  // Light teal
+            DEFAULT: "#1791a3", // Teal
+          },
+          slate: "#6d868d",    // Slate 
+          gray: {
+            light: "#b9c7d2",  // Light gray
+            dark: "#474747",   // Dark gray  
+          }
+        },
       },
       keyframes: {
         "accordion-down": {

@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store/store';
-import { setActiveProject } from '../store/features/workSlice';
-import Building from './work/Building';
-import Character from './work/Character';
-import Home from './work/Home';
-import ProjectDetails from './work/ProjectDetails';
+import { RootState } from '../../store/store';
+import { setActiveProject } from '../../store/features/workSlice';
+import Building from './Building';
+import Character from './Character';
+import Home from './Home';
+import ProjectDetails from './ProjectDetails';
 import workData from '@/data/work.json';
-import { WorkData, Company, Project } from '../types/work';
+import { WorkData, Company, Project } from '../../types/work';
 
 // Prepare data structure for the scene
 const prepareWorkData = (): WorkData => {

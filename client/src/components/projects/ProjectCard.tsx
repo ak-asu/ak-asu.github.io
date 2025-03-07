@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Card, CardHeader, CardContent } from './ui/card';
+import { Card, CardHeader, CardContent } from '../ui/card';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 import { audioManager } from '@/lib/audio';
