@@ -15,6 +15,8 @@ const EducationCard: React.FC = () => {
     const bookRef = useRef<HTMLDivElement>(null);
     const pencilAnimation = useAnimation();
     const textAnimation = useAnimation();
+    const [isFlipping, setIsFlipping] = useState(false);
+    const [dragProgress, setDragProgress] = useState(0); // Track drag progress for visual feedback
     
     const totalPages = education.length + 2; // Education entries + cover & back
 
@@ -61,22 +63,58 @@ const EducationCard: React.FC = () => {
         
         const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
         const diff = clientX - dragStartX;
+        const threshold = 100;
         
-        if (Math.abs(diff) > 100) {
+        // Calculate drag progress percentage for visual feedback
+        const progressPercentage = Math.min(Math.abs(diff) / threshold, 1);
+        setDragProgress(diff > 0 ? progressPercentage : -progressPercentage);
+        
+        if (Math.abs(diff) > threshold) {
             if (diff > 0 && currentPage > 0) {
-                setCurrentPage(currentPage - 1);
+                handlePageFlip(currentPage - 1);
             } else if (diff < 0 && currentPage < totalPages - 1) {
-                setCurrentPage(currentPage + 1);
+                handlePageFlip(currentPage + 1);
             }
             setIsDragging(false);
+            setDragProgress(0);
         }
     };
 
     const handleDragEnd = () => {
         setIsDragging(false);
+        setDragProgress(0);
     };
 
+    // Separate click handler for button navigation
+    const handlePageClick = (direction: 'prev' | 'next') => {
+        let newPage = currentPage;
+        if (direction === 'prev' && currentPage > 0) {
+            newPage = currentPage - 1;
+        } else if (direction === 'next' && currentPage < totalPages - 1) {
+            newPage = currentPage + 1;
+        }
+        
+        if (newPage !== currentPage) {
+            handlePageFlip(newPage);
+        }
+    };
+
+    const handlePageFlip = (newPage: number) => {
+        if (newPage !== currentPage) {
+            setIsFlipping(true);
+            setCurrentPage(newPage);
+            
+            // Reset flipping state after animation completes
+            setTimeout(() => {
+                setIsFlipping(false);
+            }, 600);
+        }
+    };
+
+    // Improved error handling for content pages
     const getPageContent = (page: number) => {
+        if (page < 0 || page >= totalPages) return null;
+        
         if (page === 0) {
             // Cover page
             return (
@@ -127,6 +165,8 @@ const EducationCard: React.FC = () => {
         } else {
             // Education pages
             const eduIndex = page - 1;
+            if (eduIndex < 0 || eduIndex >= education.length) return null;
+            
             const entry = education[eduIndex];
             if (!entry) return null;
             
@@ -197,24 +237,42 @@ const EducationCard: React.FC = () => {
     const pageVariants = {
         initial: (custom: { direction: number }) => ({
             rotateY: custom.direction > 0 ? 0 : -180,
-            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
+            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+            filter: "brightness(1)"
         }),
         animate: (custom: { direction: number }) => ({
             rotateY: custom.direction > 0 ? -180 : 0,
-            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.3)",
+            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.3)",
+            filter: "brightness(0.95)",
             transition: {
                 type: "spring",
-                stiffness: 100,
-                damping: 20
+                stiffness: 70,
+                damping: 15,
+                mass: 1.2
             }
         })
+    };
+
+    // Create visual feedback during dragging with proper transition format
+    const getDragStyle = (index: number) => {
+        if (!isDragging) return {};
+        
+        if ((index === currentPage && dragProgress < 0) || (index === currentPage - 1 && dragProgress > 0)) {
+            // Apply rotation based on drag progress
+            const rotationAmount = dragProgress * 180;
+            return {
+                transform: `rotateY(${rotationAmount}deg)`,
+                transition: { duration: 0 } // Using object format for Framer Motion
+            };
+        }
+        return {};
     };
 
     return (
         <div className="flex items-center justify-center w-full py-12">
             <div 
                 ref={bookRef}
-                className="relative w-[700px] h-[500px] perspective-1000"
+                className="relative w-[800px] h-[500px] mx-auto"
                 onMouseDown={handleDragStart}
                 onMouseMove={handleDragMove}
                 onMouseUp={handleDragEnd}
@@ -223,62 +281,131 @@ const EducationCard: React.FC = () => {
                 onTouchMove={handleDragMove}
                 onTouchEnd={handleDragEnd}
             >
-                <div className="relative w-full h-full">
+                {/* Debug element - can be removed after testing */}
+                <div className="absolute top-2 left-2 z-50 bg-white bg-opacity-80 p-2 rounded text-sm">
+                    Page: {currentPage + 1}/{totalPages}, 
+                    Drag: {isDragging ? 'yes' : 'no'}, 
+                    Progress: {Math.round(dragProgress * 100)}%
+                </div>
+
+                <div className="relative w-full h-full" style={{ perspective: '1500px' }}>
                     {/* Book binding */}
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-10 h-full bg-amber-800 rounded-sm z-0"></div>
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-10 h-full bg-amber-800 rounded-sm z-10 shadow-inner">
+                        <div className="absolute inset-0 bg-gradient-to-r from-amber-900 via-amber-800 to-amber-900 opacity-70"></div>
+                    </div>
                     
                     {/* Pages */}
                     {Array.from({ length: totalPages }).map((_, i) => {
                         // Calculate whether this page should be flipped
                         const isFlipped = i < currentPage;
-                        // Direction is for the animation
-                        const direction = isFlipped ? 1 : -1;
                         
                         // Calculate z-index to stack pages correctly
-                        const zIndex = i === currentPage - 1 || i === currentPage ? 10 : totalPages - Math.abs(currentPage - i);
+                        const zIndex = totalPages - i;
+                        
+                        // Determine if this is the page currently flipping
+                        const isCurrentlyFlipping = (i === currentPage - 1 || i === currentPage) && isFlipping;
                         
                         return (
-                            <motion.div
+                            <div
                                 key={i}
-                                className="absolute top-0 left-0 w-full h-full origin-left"
+                                className="absolute top-0 w-[345px] h-full"
                                 style={{ 
-                                    zIndex,
-                                    transformStyle: 'preserve-3d',
-                                    backfaceVisibility: 'hidden'
+                                    left: i % 2 === 0 ? 'calc(50% - 345px)' : '50%',
+                                    zIndex: zIndex,
+                                    perspective: '1000px'
                                 }}
-                                custom={{ direction }}
-                                initial="initial"
-                                animate={isFlipped ? "animate" : "initial"}
-                                variants={pageVariants}
                             >
-                                {/* Front of page */}
-                                <div 
-                                    className="absolute top-0 left-0 w-full h-full bg-amber-50 border border-amber-200 rounded shadow-md"
+                                <motion.div 
+                                    className="absolute top-0 left-0 w-full h-full origin-right"
                                     style={{ 
-                                        backfaceVisibility: 'hidden',
+                                        transformStyle: 'preserve-3d',
+                                        ...((i % 2 === 0) ? { transformOrigin: 'right center' } : { transformOrigin: 'left center' })
                                     }}
-                                >
-                                    {getPageContent(i)}
-                                </div>
-                                
-                                {/* Back of page */}
-                                <div 
-                                    className="absolute top-0 left-0 w-full h-full bg-amber-50 border border-amber-200 rounded shadow-md"
-                                    style={{ 
-                                        transform: 'rotateY(180deg)',
-                                        backfaceVisibility: 'hidden',
+                                    initial={false}
+                                    animate={isFlipped ? { rotateY: -180 } : { rotateY: 0 }}
+                                    transition={{
+                                        type: 'spring',
+                                        stiffness: 70,
+                                        damping: 15,
+                                        mass: 1.2
                                     }}
+                                    {...(isDragging ? getDragStyle(i) : {})}
                                 >
-                                    {getPageContent(i + 1)}
-                                </div>
-                            </motion.div>
+                                    {/* Front of page */}
+                                    <div 
+                                        className="absolute top-0 left-0 w-full h-full bg-amber-50 border border-amber-200 p-4 rounded shadow-md"
+                                        style={{ 
+                                            backfaceVisibility: 'hidden',
+                                            zIndex: isFlipped ? 0 : 1
+                                        }}
+                                    >
+                                        {getPageContent(i)}
+                                    </div>
+                                    
+                                    {/* Back of page */}
+                                    <div 
+                                        className="absolute top-0 left-0 w-full h-full bg-amber-50 border border-amber-200 p-4 rounded shadow-md"
+                                        style={{ 
+                                            backfaceVisibility: 'hidden',
+                                            transform: 'rotateY(180deg)',
+                                            zIndex: isFlipped ? 1 : 0
+                                        }}
+                                    >
+                                        {getPageContent(i + 1)}
+                                    </div>
+                                </motion.div>
+                            </div>
                         );
                     })}
+
+                    {/* Click areas for page turning - made visible for debugging */}
+                    <div 
+                        className="absolute top-0 left-0 w-1/4 h-full cursor-pointer z-20"
+                        onClick={() => handlePageClick('prev')}
+                        aria-label="Previous page"
+                    />
+                    <div 
+                        className="absolute top-0 right-0 w-1/4 h-full cursor-pointer z-20"
+                        onClick={() => handlePageClick('next')}
+                        aria-label="Next page"
+                    />
                 </div>
                 
-                {/* Navigation hints */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-12 text-amber-700 text-sm">
-                    <span>Drag left/right to turn pages</span>
+                {/* Visual drag indicators */}
+                {isDragging && (
+                    <>
+                        {dragProgress < 0 && currentPage < totalPages - 1 && (
+                            <div className="absolute top-1/2 right-4 transform -translate-y-1/2 text-2xl text-amber-800 font-bold animate-pulse">
+                                &raquo;
+                            </div>
+                        )}
+                        {dragProgress > 0 && currentPage > 0 && (
+                            <div className="absolute top-1/2 left-4 transform -translate-y-1/2 text-2xl text-amber-800 font-bold animate-pulse">
+                                &laquo;
+                            </div>
+                        )}
+                    </>
+                )}
+                
+                {/* Navigation buttons */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center items-center space-x-8 text-amber-700">
+                    <button 
+                        className={`px-3 py-1 rounded bg-amber-100 hover:bg-amber-200 transition ${currentPage <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={() => handlePageClick('prev')}
+                        disabled={currentPage <= 0}
+                    >
+                        Previous
+                    </button>
+                    
+                    <span className="text-sm">Page {currentPage + 1} of {totalPages}</span>
+                    
+                    <button 
+                        className={`px-3 py-1 rounded bg-amber-100 hover:bg-amber-200 transition ${currentPage >= totalPages - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={() => handlePageClick('next')}
+                        disabled={currentPage >= totalPages - 1}
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
         </div>

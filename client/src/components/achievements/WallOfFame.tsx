@@ -6,6 +6,33 @@ import achievements from '@/data/achievements.json';
 import Confetti from 'react-confetti';
 import useWindowSize from '../../hooks/use-window-size';
 
+// Curtain sprite component
+const CurtainSprite: React.FC<{side: 'left' | 'right', isTechnicalMode: boolean}> = ({ side, isTechnicalMode }) => {
+    const spriteCount = 8; // Number of sprite elements
+    
+    return (
+        <div className="absolute inset-0 pointer-events-none">
+            {Array.from({ length: spriteCount }).map((_, index) => (
+                <div 
+                    key={index}
+                    className={`
+                        absolute top-0 h-full w-1
+                        ${side === 'left' ? 'left-0' : 'right-0'}
+                        ${isTechnicalMode ? 'bg-palette-teal-light/20' : 'bg-white/20'}
+                    `}
+                    style={{
+                        left: side === 'left' ? `${(index + 1) * (100 / (spriteCount + 2))}%` : undefined,
+                        right: side === 'right' ? `${(index + 1) * (100 / (spriteCount + 2))}%` : undefined,
+                        height: '100%',
+                        boxShadow: isTechnicalMode 
+                            ? '0 0 15px rgba(115, 211, 231, 0.4)' 
+                            : '0 0 15px rgba(255, 255, 255, 0.4)'
+                    }}
+                />
+            ))}
+        </div>
+    );
+};
 
 const CurtainedAchievements: React.FC = () => {
     const { animationLevel, isTechnicalMode } = useSelector((state: RootState) => state.mode);
@@ -14,9 +41,11 @@ const CurtainedAchievements: React.FC = () => {
     const [showConfetti, setShowConfetti] = useState(false);
     const [autoScrolling, setAutoScrolling] = useState(true);
     const [userInteracting, setUserInteracting] = useState(false);
+    const [scrollingToTop, setScrollingToTop] = useState(false);
 
     const creditsRef = useRef<HTMLDivElement>(null);
     const curtainContainerRef = useRef<HTMLDivElement>(null);
+    const scrollAnimationRef = useRef<number | null>(null);
     const { width, height } = useWindowSize();
 
     const leftCurtainControls = useAnimation();
@@ -44,32 +73,79 @@ const CurtainedAchievements: React.FC = () => {
         })
     };
 
+    // Smooth scroll to top function
+    const scrollToTop = (duration: number = 1500) => {
+        if (!creditsRef.current) return;
+        
+        setScrollingToTop(true);
+        
+        const startPosition = creditsRef.current.scrollTop;
+        const startTime = performance.now();
+        
+        const animateScroll = (timestamp: number) => {
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing function for smooth deceleration and acceleration
+            const easeInOutCubic = (t: number): number => 
+                t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            
+            const easedProgress = easeInOutCubic(progress);
+            
+            if (creditsRef.current) {
+                creditsRef.current.scrollTop = startPosition * (1 - easedProgress);
+            }
+            
+            if (progress < 1) {
+                scrollAnimationRef.current = requestAnimationFrame(animateScroll);
+            } else {
+                setScrollingToTop(false);
+                setAutoScrolling(true);
+            }
+        };
+        
+        scrollAnimationRef.current = requestAnimationFrame(animateScroll);
+    };
+
+    // Clean up any animations on unmount
+    useEffect(() => {
+        return () => {
+            if (scrollAnimationRef.current) {
+                cancelAnimationFrame(scrollAnimationRef.current);
+            }
+        };
+    }, []);
+
     // Auto-scrolling effect
     useEffect(() => {
         let animationId: number;
         const scrollCredits = () => {
-            if (!creditsRef.current || !autoScrolling || userInteracting) return;
+            if (!creditsRef.current || !autoScrolling || userInteracting || scrollingToTop) return;
 
             const { scrollHeight, clientHeight, scrollTop } = creditsRef.current;
-
-            // Reset to top when reached bottom
+            
+            // Check if we've reached the bottom
             if (scrollTop >= scrollHeight - clientHeight - 1) {
-                creditsRef.current.scrollTop = 0;
+                // Cancel the current animation
+                if (animationId) cancelAnimationFrame(animationId);
+                
+                // Scroll back to top smoothly
+                scrollToTop();
             } else {
+                // Normal scrolling behavior
                 creditsRef.current.scrollTop += 1;
+                animationId = requestAnimationFrame(scrollCredits);
             }
-
-            animationId = requestAnimationFrame(scrollCredits);
         };
 
-        if (isOpen && autoScrolling && !userInteracting) {
+        if (isOpen && autoScrolling && !userInteracting && !scrollingToTop) {
             animationId = requestAnimationFrame(scrollCredits);
         }
 
         return () => {
             if (animationId) cancelAnimationFrame(animationId);
         };
-    }, [isOpen, autoScrolling, userInteracting]);
+    }, [isOpen, autoScrolling, userInteracting, scrollingToTop]);
 
     // Click outside handler
     useEffect(() => {
@@ -117,7 +193,7 @@ const CurtainedAchievements: React.FC = () => {
 
     // Handle scroll interaction
     const handleScroll = () => {
-        if (!userInteracting) {
+        if (!userInteracting && !scrollingToTop) {
             setUserInteracting(true);
             setAutoScrolling(false);
         }
@@ -130,7 +206,7 @@ const CurtainedAchievements: React.FC = () => {
                 ref={creditsRef}
                 className={`
                     h-full overflow-y-auto px-6 py-8 scrollbar-thin
-                    ${isTechnicalMode ? 'scrollbar-thumb-green-400 scrollbar-track-gray-800' : 'scrollbar-thumb-blue-400 scrollbar-track-gray-200'}
+                    ${isTechnicalMode ? 'scrollbar-thumb-palette-slate scrollbar-track-palette-gray-dark' : 'scrollbar-thumb-palette-teal scrollbar-track-palette-gray-light'}
                 `}
                 onWheel={handleScroll}
                 onTouchStart={() => setUserInteracting(true)}
@@ -156,7 +232,7 @@ const CurtainedAchievements: React.FC = () => {
                                 transition={{ delay: 0.5 }}
                                 className={`
                     text-2xl font-bold mb-6 text-center capitalize
-                    ${isTechnicalMode ? 'text-green-400' : 'text-blue-600'}
+                    ${isTechnicalMode ? 'text-palette-teal-light' : 'text-palette-teal'}
                 `}
                             >
                                 {category}
@@ -175,19 +251,11 @@ const CurtainedAchievements: React.FC = () => {
                                         }}
                                         className={`
                             p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center gap-6
-                            ${isTechnicalMode ? 'bg-gray-800 text-green-400' : 'bg-white text-gray-800'}
+                            ${isTechnicalMode ? 'bg-palette-gray-dark text-palette-teal-light' : 'bg-white text-palette-gray-dark'}
                         `}
                                     >
                                         <div className="relative w-24 h-24 flex-shrink-0">
-                                            {/* {<Image
-                                src={achievement.image}
-                                alt={achievement.title}
-                                fill
-                                sizes="(max-width: 768px) 24vw, 96px"
-                                style={{ objectFit: "contain" }}
-                                className="rounded"
-                                priority={false}
-                            />} */}
+                                            {/* Image placeholder */}
                                         </div>
                                         <div className="flex-grow text-center md:text-left">
                                             <h4 className="text-xl font-bold mb-2">{achievement.title}</h4>
@@ -198,7 +266,7 @@ const CurtainedAchievements: React.FC = () => {
                                                 </span>
                                                 <span className={`
                                     text-lg font-bold
-                                    ${isTechnicalMode ? 'text-yellow-300' : 'text-amber-600'}
+                                    ${isTechnicalMode ? 'text-palette-teal-light' : 'text-palette-teal'}
                                 `}>
                                                     {achievement.points}
                                                 </span>
@@ -218,15 +286,18 @@ const CurtainedAchievements: React.FC = () => {
         <div
             ref={curtainContainerRef}
             className={`
-                relative w-full h-screen flex items-center justify-center overflow-hidden
-                ${isTechnicalMode ? 'bg-gray-900' : 'bg-gray-100'}
+                relative w-full h-[80vh] flex items-center justify-center overflow-hidden
+                rounded-2xl shadow-xl border
+                ${isTechnicalMode 
+                    ? 'bg-palette-gray-dark border-palette-teal-light/30' 
+                    : 'bg-palette-gray-light border-palette-teal/20'}
             `}
         >
             {/* Confetti celebration effect */}
             {showConfetti && isOpen && (
                 <Confetti
                     width={width}
-                    height={height}
+                    height={height * 0.8}
                     recycle={false}
                     numberOfPieces={animationLevel === 'expert' ? 500 : animationLevel === 'medium' ? 200 : 100}
                 />
@@ -243,8 +314,8 @@ const CurtainedAchievements: React.FC = () => {
                     <h2 className={`
                         text-4xl md:text-6xl font-extrabold text-center px-8 py-6 rounded-lg shadow-2xl
                         ${isTechnicalMode
-                            ? 'bg-gray-800 text-green-400 border-2 border-green-500'
-                            : 'bg-white text-blue-700 border-2 border-blue-500'}
+                            ? 'bg-palette-gray-dark text-palette-teal-light border-2 border-palette-teal-light'
+                            : 'bg-white text-palette-teal border-2 border-palette-teal'}
                     `}>
                         Achievements
                     </h2>
@@ -258,12 +329,22 @@ const CurtainedAchievements: React.FC = () => {
                 initial="closed"
                 animate={leftCurtainControls}
                 className={`
-                    absolute left-0 top-0 w-1/2 h-full z-20
+                    absolute left-0 top-0 w-1/2 h-full z-20 overflow-hidden
                     ${isTechnicalMode
-                        ? 'bg-gradient-to-r from-gray-900 to-gray-800 border-r border-green-500'
-                        : 'bg-gradient-to-r from-blue-700 to-blue-600'}
+                        ? 'bg-gradient-to-r from-palette-gray-dark to-[#333333] border-r border-palette-teal-light'
+                        : 'bg-gradient-to-r from-palette-teal to-palette-teal-light'}
                 `}
-            />
+            >
+                <CurtainSprite side="left" isTechnicalMode={isTechnicalMode} />
+                <div className={`
+                    absolute inset-0 
+                    ${isTechnicalMode 
+                        ? 'bg-[url("/curtain-pattern-dark.png")] opacity-10' 
+                        : 'bg-[url("/curtain-pattern.png")] opacity-20'}
+                    bg-repeat
+                `}></div>
+                <div className="absolute inset-y-0 right-0 w-8 shadow-[inset_-15px_0_10px_rgba(0,0,0,0.3)]"></div>
+            </motion.div>
 
             {/* Right Curtain */}
             <motion.div
@@ -272,17 +353,27 @@ const CurtainedAchievements: React.FC = () => {
                 initial="closed"
                 animate={rightCurtainControls}
                 className={`
-                    absolute right-0 top-0 w-1/2 h-full z-20
+                    absolute right-0 top-0 w-1/2 h-full z-20 overflow-hidden
                     ${isTechnicalMode
-                        ? 'bg-gradient-to-l from-gray-900 to-gray-800 border-l border-green-500'
-                        : 'bg-gradient-to-l from-blue-700 to-blue-600'}
+                        ? 'bg-gradient-to-l from-palette-gray-dark to-[#333333] border-l border-palette-teal-light'
+                        : 'bg-gradient-to-l from-palette-teal to-palette-teal-light'}
                 `}
-            />
+            >
+                <CurtainSprite side="right" isTechnicalMode={isTechnicalMode} />
+                <div className={`
+                    absolute inset-0
+                    ${isTechnicalMode 
+                        ? 'bg-[url("/curtain-pattern-dark.png")] opacity-10' 
+                        : 'bg-[url("/curtain-pattern.png")] opacity-20'}
+                    bg-repeat
+                `}></div>
+                <div className="absolute inset-y-0 left-0 w-8 shadow-[inset_15px_0_10px_rgba(0,0,0,0.3)]"></div>
+            </motion.div>
 
             {/* Content behind curtains */}
             <div className={`
-                absolute inset-0 z-10 p-4 md:p-8 
-                ${isTechnicalMode ? 'bg-gray-900' : 'bg-gray-100'}
+                absolute inset-0 z-10 p-4 md:p-8 rounded-2xl
+                ${isTechnicalMode ? 'bg-palette-gray-dark' : 'bg-palette-gray-light'}
             `}>
                 <AnimatePresence>
                     {isOpen && (
@@ -296,7 +387,7 @@ const CurtainedAchievements: React.FC = () => {
                                 <div className="flex justify-between items-center mb-4">
                                     <h2 className={`
                                         text-2xl md:text-3xl font-bold
-                                        ${isTechnicalMode ? 'text-green-400' : 'text-blue-700'}
+                                        ${isTechnicalMode ? 'text-palette-teal-light' : 'text-palette-teal'}
                                     `}>
                                         Achievement Credits
                                     </h2>
@@ -305,8 +396,8 @@ const CurtainedAchievements: React.FC = () => {
                                         className={`
                                             p-2 rounded-full
                                             ${isTechnicalMode
-                                                ? 'bg-gray-800 text-green-400 hover:bg-gray-700'
-                                                : 'bg-blue-600 text-white hover:bg-blue-700'}
+                                                ? 'bg-palette-gray-dark text-palette-teal-light hover:bg-[#333333]'
+                                                : 'bg-palette-teal text-white hover:bg-palette-teal-light'}
                                         `}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -317,7 +408,7 @@ const CurtainedAchievements: React.FC = () => {
 
                                 <div className={`
                                     h-[calc(100%-3rem)] rounded-lg shadow-lg overflow-hidden
-                                    ${isTechnicalMode ? 'bg-black' : 'bg-gray-50'}
+                                    ${isTechnicalMode ? 'bg-black' : 'bg-white'}
                                 `}>
                                     {renderAchievementCredits()}
                                 </div>

@@ -70,14 +70,10 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    cursor: none;
   }
 }
 
 @layer utilities {
-  .cursor-none {
-    cursor: none;
-  }
 }
 
 /* Custom scrollbar */
@@ -132,6 +128,44 @@ a, button, [role="button"], .interactive {
     transform: translateY(-4px);
     color: #1791a3;  /* Deeper teal from palette */
   }
+}
+
+@keyframes glitch {
+  0% {
+      text-shadow: none;
+  }
+  20% {
+      text-shadow: 0 0 3px currentColor;
+  }
+  21% {
+      text-shadow: none;
+  }
+  60% {
+      text-shadow: none;
+  }
+  61% {
+      text-shadow: 0 0 3px currentColor;
+  }
+  62% {
+      text-shadow: none;
+  }
+  90% {
+      text-shadow: none;
+  }
+  91% {
+      text-shadow: 0 0 3px currentColor;
+  }
+  92% {
+      text-shadow: none;
+  }
+}
+
+.cyberpunk-tooltip {
+  position: relative;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(0, 255, 170, 0.3);
+  border-width: 1px;
+  animation: glitch 2s infinite;
 }
 
 .animate-bounce-subtle {
