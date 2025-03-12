@@ -1,13 +1,106 @@
 import { useEffect, useRef, useState, Suspense } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Canvas } from '@react-three/fiber';
-import { Physics, usePlane, useBox } from '@react-three/cannon';
+import { Physics, usePlane, useBox, useSphere } from '@react-three/cannon';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 import { motion } from 'framer-motion';
 import { audioManager } from '@/lib/audio';
 import { ErrorBoundary } from 'react-error-boundary';
 import type { Mesh, PlaneGeometry, MeshStandardMaterial } from 'three';
+import { Html } from '@react-three/drei';
+
+// Social media link type definition
+interface SocialMediaLink {
+  name: string;
+  url: string;
+  color: string;
+  icon?: string;
+  position: [number, number, number];
+}
+
+// Define social media links
+const socialLinks: SocialMediaLink[] = [
+  { name: 'GitHub', url: 'https://github.com/', color: '#333', icon: 'github', position: [2, 2, 0] },
+  { name: 'LinkedIn', url: 'https://linkedin.com/in/', color: '#0077B5', icon: 'linkedin', position: [-2, 3, 1] },
+  { name: 'Twitter', url: 'https://twitter.com/', color: '#1DA1F2', icon: 'twitter', position: [1.5, 1, -1] },
+  { name: 'Portfolio', url: '/', color: '#FF5722', icon: 'briefcase', position: [-1.5, 2, -1] },
+];
+
+// Social Media Sphere Component
+function SocialMediaSphere({ name, url, color, position, icon }: SocialMediaLink) {
+  const [ref, api] = useSphere(() => ({
+    mass: 1,
+    position: position,
+    args: [0.5], // radius of sphere
+    restitution: 0.8, // bounciness
+  }));
+  
+  const [isHovered, setIsHovered] = useState(false);
+  const velocity = useRef<[number, number, number]>([0, 0, 0]);
+  
+  // Store velocity data for animation when physics is disabled
+  useEffect(() => {
+    api.velocity.subscribe((v) => (velocity.current = v));
+  }, [api.velocity]);
+
+  const handleClick = () => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+    audioManager.playSoundEffect('click');
+  };
+  
+  const handleHover = (hovering: boolean) => {
+    setIsHovered(hovering);
+    if (hovering) audioManager.playSoundEffect('hover');
+  };
+
+  // Apply random forces periodically to keep the spheres moving
+  useEffect(() => {
+    const interval = setInterval(() => {
+      api.applyImpulse([
+        (Math.random() - 0.5) * 2,
+        Math.random() * 5,
+        (Math.random() - 0.5) * 2
+      ], [0, 0, 0]);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [api]);
+  
+  // Use keyboard event handling
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (document.activeElement === ref.current && (e.key === 'Enter' || e.key === ' ')) {
+        handleClick();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleClick]);
+
+  return (
+    <mesh
+      ref={ref as unknown as React.Ref<Mesh>}
+      onClick={handleClick}
+      onPointerOver={() => handleHover(true)}
+      onPointerOut={() => handleHover(false)}
+      scale={isHovered ? 1.2 : 1}
+      userData={{
+        ariaLabel: `${name} social media link`,
+        tabIndex: 0
+      }}
+    >
+      <sphereGeometry args={[0.5, 32, 32]} />
+      <meshPhongMaterial color={isHovered ? '#ffffff' : color} emissive={color} emissiveIntensity={isHovered ? 0.5 : 0.2} />
+      <Html distanceFactor={10}>
+        <div className="pointer-events-none select-none bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm">
+          {name}
+        </div>
+      </Html>
+    </mesh>
+  );
+}
 
 interface LaptopMeshProps {
   ref: React.RefObject<Mesh>;
@@ -158,12 +251,17 @@ export const ThreeLaptop = () => {
         >
           <Laptop />
           <Ground />
+          {/* Add social media spheres */}
+          {socialLinks.map((link) => (
+            <SocialMediaSphere key={link.name} {...link} />
+          ))}
         </Physics>
       </Canvas>
       {/* Hidden instructions for screen readers */}
       <div className="sr-only">
-        <p>Press Tab to focus on the laptop model. Use Enter or Space to open/close the laptop screen.</p>
+        <p>Press Tab to focus on the laptop model or social media links. Use Enter or Space to interact with focused elements.</p>
         <p>The laptop responds to mouse hover and click interactions, with physics-based animations.</p>
+        <p>Colored spheres represent links to social media profiles. Click on them to visit the respective websites.</p>
       </div>
     </motion.div>
   );

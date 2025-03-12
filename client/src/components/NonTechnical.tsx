@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { ThreeLaptop } from './projects/ThreeLaptop';
-import { SpriteCharacter } from './SpriteCharacter';
-import { TicTacToe } from './games/TicTacToe';
+import { ThreeCube } from './ThreeCube';
+import { GameCarousel } from './games/GameCarousel';
 import { ProjectCard } from './projects/ProjectCard';
 import EducationCard from './education/EducationCard';
 import WorkScene from './work/WorkScene';
@@ -141,7 +140,6 @@ export const NonTechnical = () => {
         aria-live="polite"
       >
         <div className="text-center">
-          <SpriteCharacter />
           <motion.div
             className="mt-8 flex flex-col items-center"
           >
@@ -187,7 +185,7 @@ export const NonTechnical = () => {
         role="main"
       >
         <div className="container mx-auto px-4">
-          {/* Introduction Section with 3D Laptop */}
+          {/* Introduction Section with 3D Cube */}
           <Section id="intro" title="Welcome to My Portfolio">
             <div className="flex flex-col items-center justify-center">
               <motion.div
@@ -196,47 +194,25 @@ export const NonTechnical = () => {
                 transition={{ duration: 0.5 }}
                 className="max-w-4xl mx-auto text-center mb-16"
               >
-                <ThreeLaptop />
-                <p className="mt-8 text-lg text-gray-600">
-                  Explore my portfolio to learn more about my skills, experience, and projects.
-                  Interact with the 3D elements and enjoy the journey!
-                </p>
+                <ThreeCube />
               </motion.div>
-              
-              {/* Floating character guide */}
-              <div className="fixed right-8 bottom-8 z-50">
-                <SpriteCharacter />
-              </div>
             </div>
           </Section>
-
-          {/* Education Section */}
           <Section id="education" title="Education">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               <EducationCard />
             </div>
           </Section>
-
-          {/* Skills Section */}
           <Section id="skills" title="Skills">
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               <SkillsShowcase />
             </div>
           </Section>
-
-          {/* Work Experience Section */}
           <Section id="work" title="Work Experience">
-            <motion.div
-              className="w-full"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-            >
+            <div className="max-w-6xl mx-auto">
               <WorkScene />
-            </motion.div>
+            </div>
           </Section>
-
-          {/* Projects Section */}
           <Section id="projects" title="Projects">
             <div 
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -264,23 +240,17 @@ export const NonTechnical = () => {
               ))}
             </div>
           </Section>
-
-          {/* Achievements Section */}
           <Section id="achievements" title="Achievements">
             <div className="max-w-6xl mx-auto">
               <CurtainedAchievements />
             </div>
           </Section>
-
-          {/* Let's Play Section */}
           <Section id="play" title="Let's Play">
-            <div className="max-w-2xl mx-auto">
-              <TicTacToe />
+            <div className="max-w-6xl mx-auto">
+              <GameCarousel />
             </div>
           </Section>
         </div>
-
-        {/* Section navigation dots */}
         <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-50">
           <ul className="space-y-4">
             {sections.map((section) => (

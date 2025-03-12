@@ -3,6 +3,12 @@ import { motion, useAnimation } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { setActiveEducation } from '@/store/features/educationSlice';
 import education from '@/data/education.json';
+import BookPage from './BookPage';
+import NavigationButtons from './NavigationButtons';
+import BookBinding from './BookBinding';
+import DragIndicators from './DragIndicators';
+import DebugInfo from './DebugInfo';
+import PageContent from './PageContent';
 
 const EducationCard: React.FC = () => {
     const dispatch = useDispatch();
@@ -16,9 +22,9 @@ const EducationCard: React.FC = () => {
     const pencilAnimation = useAnimation();
     const textAnimation = useAnimation();
     const [isFlipping, setIsFlipping] = useState(false);
-    const [dragProgress, setDragProgress] = useState(0); // Track drag progress for visual feedback
+    const [dragProgress, setDragProgress] = useState(0);
     
-    const totalPages = education.length + 2; // Education entries + cover & back
+    const totalPages = education.length + 2;
 
     // Write animation function
     const animateWriting = async () => {
@@ -65,7 +71,6 @@ const EducationCard: React.FC = () => {
         const diff = clientX - dragStartX;
         const threshold = 100;
         
-        // Calculate drag progress percentage for visual feedback
         const progressPercentage = Math.min(Math.abs(diff) / threshold, 1);
         setDragProgress(diff > 0 ? progressPercentage : -progressPercentage);
         
@@ -85,7 +90,6 @@ const EducationCard: React.FC = () => {
         setDragProgress(0);
     };
 
-    // Separate click handler for button navigation
     const handlePageClick = (direction: 'prev' | 'next') => {
         let newPage = currentPage;
         if (direction === 'prev' && currentPage > 0) {
@@ -104,165 +108,21 @@ const EducationCard: React.FC = () => {
             setIsFlipping(true);
             setCurrentPage(newPage);
             
-            // Reset flipping state after animation completes
             setTimeout(() => {
                 setIsFlipping(false);
             }, 600);
         }
     };
 
-    // Improved error handling for content pages
-    const getPageContent = (page: number) => {
-        if (page < 0 || page >= totalPages) return null;
-        
-        if (page === 0) {
-            // Cover page
-            return (
-                <div className="flex flex-col items-center justify-center h-full bg-amber-100 p-8 text-center">
-                    <motion.h1 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-4xl font-bold mb-6 text-amber-800"
-                    >
-                        Education
-                    </motion.h1>
-                    <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                    >
-                        {/* {<Image 
-                            src="/images/book-cover.svg" 
-                            alt="Education Book" 
-                            width={200} 
-                            height={200} 
-                            className="mt-4"
-                        />} */}
-                    </motion.div>
-                </div>
-            );
-        } else if (page === totalPages - 1) {
-            // Back cover
-            return (
-                <div className="flex flex-col items-center justify-center h-full bg-amber-100 p-8 text-center">
-                    <motion.h2 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-3xl font-semibold mb-6 text-amber-800"
-                    >
-                        To be continued...
-                    </motion.h2>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="text-lg text-amber-700 italic"
-                    >
-                        (Learning never stops)
-                    </motion.p>
-                </div>
-            );
-        } else {
-            // Education pages
-            const eduIndex = page - 1;
-            if (eduIndex < 0 || eduIndex >= education.length) return null;
-            
-            const entry = education[eduIndex];
-            if (!entry) return null;
-            
-            return (
-                <div className="flex h-full">
-                    {/* Left page - Image */}
-                    <div className="w-1/2 bg-amber-50 p-4 flex items-center justify-center border-r border-amber-800">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.5 }}
-                        >
-                            {/* {<Image 
-                                src={entry.image || `/images/school-${eduIndex}.jpg`}
-                                alt={entry.school}
-                                width={200}
-                                height={150}
-                                className="rounded shadow-md"
-                            />} */}
-                        </motion.div>
-                    </div>
-                    
-                    {/* Right page - Education details */}
-                    <div className="w-1/2 bg-amber-50 p-4 relative">
-                        {!textWritten && (
-                            <motion.div
-                                className="absolute z-10"
-                                animate={pencilAnimation}
-                            >
-                                {/* {<Image 
-                                    src="/images/pencil.svg" 
-                                    alt="Writing pencil" 
-                                    width={30} 
-                                    height={30} 
-                                />} */}
-                            </motion.div>
-                        )}
-                        
-                        <motion.div
-                            className="space-y-4"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: textWritten ? 1 : 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h3 className="text-xl font-semibold text-amber-900">{entry.degree} in {entry.field}</h3>
-                            <p className="text-amber-800">{entry.institution}</p>
-                            <p className="text-amber-700">{entry.startDate} - {entry.endDate}</p>
-                            <p className="text-amber-900">GPA: {entry.gpa}</p>
-                            
-                            <div className="mt-6">
-                                <h4 className="font-medium text-amber-900 mb-2">Key Subjects:</h4>
-                                <ul className="text-sm space-y-1">
-                                    {education[eduIndex].subjects?.map((subject, idx) => (
-                                        <li key={idx} className="flex justify-between">
-                                            <span>{subject.name}</span>
-                                            <span className="font-medium">{subject.grade}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </motion.div>
-                    </div>
-                </div>
-            );
-        }
-    };
-
-    const pageVariants = {
-        initial: (custom: { direction: number }) => ({
-            rotateY: custom.direction > 0 ? 0 : -180,
-            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-            filter: "brightness(1)"
-        }),
-        animate: (custom: { direction: number }) => ({
-            rotateY: custom.direction > 0 ? -180 : 0,
-            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.3)",
-            filter: "brightness(0.95)",
-            transition: {
-                type: "spring",
-                stiffness: 70,
-                damping: 15,
-                mass: 1.2
-            }
-        })
-    };
-
-    // Create visual feedback during dragging with proper transition format
+    // Get drag style for page animation
     const getDragStyle = (index: number) => {
         if (!isDragging) return {};
         
         if ((index === currentPage && dragProgress < 0) || (index === currentPage - 1 && dragProgress > 0)) {
-            // Apply rotation based on drag progress
             const rotationAmount = dragProgress * 180;
             return {
                 transform: `rotateY(${rotationAmount}deg)`,
-                transition: { duration: 0 } // Using object format for Framer Motion
+                transition: { duration: 0 }
             };
         }
         return {};
@@ -281,84 +141,51 @@ const EducationCard: React.FC = () => {
                 onTouchMove={handleDragMove}
                 onTouchEnd={handleDragEnd}
             >
-                {/* Debug element - can be removed after testing */}
-                <div className="absolute top-2 left-2 z-50 bg-white bg-opacity-80 p-2 rounded text-sm">
-                    Page: {currentPage + 1}/{totalPages}, 
-                    Drag: {isDragging ? 'yes' : 'no'}, 
-                    Progress: {Math.round(dragProgress * 100)}%
-                </div>
+                <DebugInfo 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    isDragging={isDragging}
+                    dragProgress={dragProgress}
+                />
 
                 <div className="relative w-full h-full" style={{ perspective: '1500px' }}>
-                    {/* Book binding */}
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-10 h-full bg-amber-800 rounded-sm z-10 shadow-inner">
-                        <div className="absolute inset-0 bg-gradient-to-r from-amber-900 via-amber-800 to-amber-900 opacity-70"></div>
-                    </div>
+                    <BookBinding />
                     
                     {/* Pages */}
                     {Array.from({ length: totalPages }).map((_, i) => {
-                        // Calculate whether this page should be flipped
                         const isFlipped = i < currentPage;
-                        
-                        // Calculate z-index to stack pages correctly
                         const zIndex = totalPages - i;
-                        
-                        // Determine if this is the page currently flipping
                         const isCurrentlyFlipping = (i === currentPage - 1 || i === currentPage) && isFlipping;
                         
                         return (
-                            <div
+                            <BookPage
                                 key={i}
-                                className="absolute top-0 w-[345px] h-full"
-                                style={{ 
-                                    left: i % 2 === 0 ? 'calc(50% - 345px)' : '50%',
-                                    zIndex: zIndex,
-                                    perspective: '1000px'
-                                }}
+                                index={i}
+                                isFlipped={isFlipped}
+                                zIndex={zIndex}
+                                dragStyle={getDragStyle(i)}
+                                isDragging={isDragging}
                             >
-                                <motion.div 
-                                    className="absolute top-0 left-0 w-full h-full origin-right"
-                                    style={{ 
-                                        transformStyle: 'preserve-3d',
-                                        ...((i % 2 === 0) ? { transformOrigin: 'right center' } : { transformOrigin: 'left center' })
-                                    }}
-                                    initial={false}
-                                    animate={isFlipped ? { rotateY: -180 } : { rotateY: 0 }}
-                                    transition={{
-                                        type: 'spring',
-                                        stiffness: 70,
-                                        damping: 15,
-                                        mass: 1.2
-                                    }}
-                                    {...(isDragging ? getDragStyle(i) : {})}
-                                >
-                                    {/* Front of page */}
-                                    <div 
-                                        className="absolute top-0 left-0 w-full h-full bg-amber-50 border border-amber-200 p-4 rounded shadow-md"
-                                        style={{ 
-                                            backfaceVisibility: 'hidden',
-                                            zIndex: isFlipped ? 0 : 1
-                                        }}
-                                    >
-                                        {getPageContent(i)}
-                                    </div>
-                                    
-                                    {/* Back of page */}
-                                    <div 
-                                        className="absolute top-0 left-0 w-full h-full bg-amber-50 border border-amber-200 p-4 rounded shadow-md"
-                                        style={{ 
-                                            backfaceVisibility: 'hidden',
-                                            transform: 'rotateY(180deg)',
-                                            zIndex: isFlipped ? 1 : 0
-                                        }}
-                                    >
-                                        {getPageContent(i + 1)}
-                                    </div>
-                                </motion.div>
-                            </div>
+                                <PageContent 
+                                    pageIndex={i}
+                                    totalPages={totalPages}
+                                    textWritten={textWritten}
+                                    pencilAnimation={pencilAnimation}
+                                    education={education}
+                                />
+                                <PageContent 
+                                    pageIndex={i + 1}
+                                    totalPages={totalPages}
+                                    textWritten={textWritten}
+                                    pencilAnimation={pencilAnimation}
+                                    education={education}
+                                    isBackSide
+                                />
+                            </BookPage>
                         );
                     })}
 
-                    {/* Click areas for page turning - made visible for debugging */}
+                    {/* Click areas for page turning */}
                     <div 
                         className="absolute top-0 left-0 w-1/4 h-full cursor-pointer z-20"
                         onClick={() => handlePageClick('prev')}
@@ -371,42 +198,18 @@ const EducationCard: React.FC = () => {
                     />
                 </div>
                 
-                {/* Visual drag indicators */}
-                {isDragging && (
-                    <>
-                        {dragProgress < 0 && currentPage < totalPages - 1 && (
-                            <div className="absolute top-1/2 right-4 transform -translate-y-1/2 text-2xl text-amber-800 font-bold animate-pulse">
-                                &raquo;
-                            </div>
-                        )}
-                        {dragProgress > 0 && currentPage > 0 && (
-                            <div className="absolute top-1/2 left-4 transform -translate-y-1/2 text-2xl text-amber-800 font-bold animate-pulse">
-                                &laquo;
-                            </div>
-                        )}
-                    </>
-                )}
+                <DragIndicators 
+                    isDragging={isDragging}
+                    dragProgress={dragProgress}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                />
                 
-                {/* Navigation buttons */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center items-center space-x-8 text-amber-700">
-                    <button 
-                        className={`px-3 py-1 rounded bg-amber-100 hover:bg-amber-200 transition ${currentPage <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        onClick={() => handlePageClick('prev')}
-                        disabled={currentPage <= 0}
-                    >
-                        Previous
-                    </button>
-                    
-                    <span className="text-sm">Page {currentPage + 1} of {totalPages}</span>
-                    
-                    <button 
-                        className={`px-3 py-1 rounded bg-amber-100 hover:bg-amber-200 transition ${currentPage >= totalPages - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        onClick={() => handlePageClick('next')}
-                        disabled={currentPage >= totalPages - 1}
-                    >
-                        Next
-                    </button>
-                </div>
+                <NavigationButtons 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    handlePageClick={handlePageClick}
+                />
             </div>
         </div>
     );

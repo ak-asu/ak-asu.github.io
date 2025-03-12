@@ -3,97 +3,11 @@ import { motion, useAnimation, useMotionValue } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 import skillsData from '@/data/skills.json';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Slider } from '@/components/ui/slider';
-import { Pause, Play, ChevronRight } from 'lucide-react';
-
-// Add animation style types and easing functions
-type AnimationStyle = 'linear' | 'easeInOut' | 'bounce' | 'spring' | 'none';
-
-interface Skill {
-    name: string;
-    level: string;
-    icon: string;
-    category?: string;
-}
-
-const levelToPercentage = (level: string): number => {
-    switch (level.toLowerCase()) {
-        case 'beginner': return 25;
-        case 'intermediate': return 60;
-        case 'advanced': return 85;
-        case 'expert': return 95;
-        default: return 50;
-    }
-};
-
-const MatrixRain: React.FC<{isDarkMode: boolean}> = ({ isDarkMode }) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        // Matrix rain characters
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$+-*/><{}[]";
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops: number[] = [];
-
-        // Initialize drops
-        for (let i = 0; i < columns; i++) {
-            drops[i] = Math.random() * -100;
-        }
-
-        const draw = () => {
-            // Semi-transparent background to create fade effect - adjust based on theme
-            ctx.fillStyle = isDarkMode 
-                ? 'rgba(0, 0, 0, 0.05)' 
-                : 'rgba(185, 199, 210, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Set text color based on theme
-            ctx.fillStyle = isDarkMode ? '#1791a3' : '#73d3e7';
-            ctx.font = `${fontSize}px monospace`;
-
-            // Loop over each drop
-            for (let i = 0; i < drops.length; i++) {
-                // Choose random character
-                const text = chars[Math.floor(Math.random() * chars.length)];
-                
-                // Draw character
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                // Reset drop when it reaches bottom
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                
-                // Move drop
-                drops[i]++;
-            }
-        };
-
-        const interval = setInterval(draw, 70);
-
-        return () => {
-            clearInterval(interval);
-        };
-    }, [isDarkMode]);
-
-    return (
-        <canvas 
-            ref={canvasRef} 
-            className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none"
-        />
-    );
-};
+import { Pause, Play } from 'lucide-react';
+import MatrixRain from './MatrixRain';
+import SkillIcon from './SkillIcon';
+import { AnimationStyle, Skill } from './types';
 
 const Skills: React.FC = () => {
     const isTechnicalMode = useSelector((state: RootState) => state.mode.isTechnicalMode);
@@ -109,7 +23,6 @@ const Skills: React.FC = () => {
     const dragging = useRef(false);
     const [speed, setSpeed] = useState(animationLevel === 'expert' ? 30 : animationLevel === 'basic' ? 60 : 45);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    // Add animation style state
     const [animationStyle, setAnimationStyle] = useState<AnimationStyle>('linear');
     const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
     const [isOverlayHovered, setIsOverlayHovered] = useState(false);
@@ -201,124 +114,6 @@ const Skills: React.FC = () => {
         };
     }, []);
 
-    // Create a function to determine vertical position for icons
-    const getVerticalOffset = (index: number): number => {
-        // Create a 3-row pattern: -40px, 0px, +40px
-        const position = index % 3;
-        return position === 0 ? -20 : position === 1 ? 80 : 160;
-    };
-
-    // Determine render style based on mode and theme
-    const SkillIcon: React.FC<{ skill: Skill, index: number }> = ({ skill, index }) => {
-        const proficiency = levelToPercentage(skill.level);
-        const yOffset = getVerticalOffset(index); // Use the vertical offset function
-        const isHovered = hoveredIcon === `${skill.name}-${index}`;
-        
-        return (
-            <motion.div 
-                className="relative mx-8 my-4"
-                initial={{ y: yOffset }}
-                style={{ y: yOffset }}
-                whileHover={{ 
-                    scale: 1.3, 
-                    filter: "brightness(1.3)",
-                    transition: { duration: 0.2 } 
-                }}
-                onHoverStart={() => setHoveredIcon(`${skill.name}-${index}`)}
-                onHoverEnd={() => setHoveredIcon(null)}
-            >
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger>
-                            <div className={`relative w-16 h-16 transition-all duration-300 ${
-                                isHovered ? `ring-2 ring-offset-2 ${isDarkMode ? 'ring-offset-gray-900' : 'ring-offset-white'} ring-palette-teal-DEFAULT` : ''
-                            }`}>
-                                <div className={`absolute inset-0 rounded-full overflow-hidden ${
-                                    isDarkMode ? 'bg-gray-800' : 'bg-gray-200'
-                                }`}>
-                                    {/* Colored progress circle */}
-                                    <svg className="w-full h-full" viewBox="0 0 100 100">
-                                        <circle 
-                                            cx="50" 
-                                            cy="50" 
-                                            r="45" 
-                                            fill="none" 
-                                            stroke={isTechnicalMode ? "#3ddc84" : isDarkMode ? "#73d3e7" : "#1791a3"} 
-                                            strokeWidth="10"
-                                            strokeDasharray={`${proficiency * 2.83} ${283 - proficiency * 2.83}`}
-                                            strokeDashoffset="70" // Start from top
-                                            transform="rotate(-90 50 50)"
-                                        />
-                                    </svg>
-                                </div>
-                                
-                                {/* Skill icon */}
-                                <div className="absolute inset-0 flex items-center justify-center p-3">
-                                    {/* {<Image 
-                                        src={`/icons/${skill.icon}`} 
-                                        alt={skill.name}
-                                        width={40}
-                                        height={40}
-                                        priority={index < 10} // Prioritize loading for first few icons
-                                    />} */}
-                                </div>
-                            </div>
-                        </TooltipTrigger>
-                        <TooltipContent 
-                            className={`cyberpunk-tooltip rounded-lg ${
-                                isDarkMode 
-                                    ? 'bg-gray-900 border-palette-teal-light text-palette-teal-light' 
-                                    : 'bg-gray-100 border-palette-teal-DEFAULT text-palette-teal-DEFAULT'
-                            } border-2`}
-                            sideOffset={12}
-                            // Restrict tooltip positioning to left or right only
-                            side="right"  
-                            align="center"
-                            alignOffset={0}
-                            // If right side doesn't have space, use best fit positioning
-                            avoidCollisions={true}
-                        >
-                            <div className="relative px-5 py-3">
-                                {/* Corner decorations - now with rounded corners */}
-                                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-current rounded-tl-md"></div>
-                                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-current rounded-tr-md"></div>
-                                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-current rounded-bl-md"></div>
-                                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-current rounded-br-md"></div>
-                                
-                                {/* Content */}
-                                <div className="flex flex-col items-center">
-                                    <div className="flex items-center gap-1">
-                                        <ChevronRight size={14} className={isTechnicalMode ? 'text-green-400' : 'text-palette-teal-DEFAULT'} />
-                                        <span className="font-bold tracking-wider uppercase">{skill.name}</span>
-                                        <ChevronRight size={14} className={isTechnicalMode ? 'text-green-400' : 'text-palette-teal-DEFAULT'} />
-                                    </div>
-                                    
-                                    <div className="mt-2 w-full bg-gray-800 h-1.5 rounded-sm overflow-hidden">
-                                        <div 
-                                            className={`h-full ${isTechnicalMode ? 'bg-green-400' : 'bg-palette-teal-DEFAULT'}`}
-                                            style={{ width: `${proficiency}%` }}
-                                        ></div>
-                                    </div>
-                                    
-                                    <div className="mt-1 flex justify-between w-full text-xs opacity-90">
-                                        <span className="tracking-wider">{skill.level}</span>
-                                        <span className="font-mono">{proficiency}%</span>
-                                    </div>
-                                    
-                                    {skill.category && (
-                                        <span className="mt-1 text-xs opacity-75 px-2 py-0.5 rounded-sm bg-current bg-opacity-10">
-                                            {skill.category.toUpperCase()}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-            </motion.div>
-        );
-    };
-
     // Update color variables based on both technical mode and theme
     const primaryColor = isTechnicalMode 
         ? "#3ddc84" 
@@ -361,7 +156,7 @@ const Skills: React.FC = () => {
             <div className="absolute bottom-0 left-0 w-8 h-8 border-b-3 border-l-3 border-current opacity-60 rounded-bl-lg"></div>
             <div className="absolute bottom-0 right-0 w-8 h-8 border-b-3 border-r-3 border-current opacity-60 rounded-br-lg"></div>
             
-            {/* Matrix-like background - pass isDarkMode instead of isTechnicalMode */}
+            {/* Matrix-like background */}
             <MatrixRain isDarkMode={isDarkMode} />
             
             {/* Main skills display */}
@@ -377,7 +172,15 @@ const Skills: React.FC = () => {
             >
                 <div className="flex items-center">
                     {allSkills.map((skill, index) => (
-                        <SkillIcon key={`${skill.name}-${index}`} skill={skill as Skill} index={index} />
+                        <SkillIcon 
+                            key={`${skill.name}-${index}`} 
+                            skill={skill as Skill} 
+                            index={index}
+                            isDarkMode={isDarkMode}
+                            isTechnicalMode={isTechnicalMode}
+                            hoveredIcon={hoveredIcon}
+                            setHoveredIcon={setHoveredIcon}
+                        />
                     ))}
                 </div>
             </motion.div>

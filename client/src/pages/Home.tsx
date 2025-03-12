@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Terminal } from '@/components/Terminal';
 import { NonTechnical } from '@/components/NonTechnical';
 import type { RootState } from '@/store/store';
+import ChatWindow from '@/components/chat/ChatWindow';
 
 export const Home = () => {
   const isTechnicalMode = useSelector((state: RootState) => state.mode.isTechnicalMode);
@@ -14,6 +15,7 @@ export const Home = () => {
       className="min-h-screen pt-16"
     >
       {isTechnicalMode ? <Terminal /> : <NonTechnical />}
+      {!isTechnicalMode && <ChatWindow />}
     </motion.div>
   );
 };
