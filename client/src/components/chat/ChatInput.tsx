@@ -28,7 +28,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div 
+    <div
       className={cn(
         "p-3 border-t",
         isTechnicalMode ? "bg-gray-800 border-green-900" : "bg-card border-border"
@@ -43,7 +43,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           placeholder="Type your message..."
           className={cn(
             "text-sm resize-none min-h-[40px] max-h-[120px]",
-            isTechnicalMode 
+            isTechnicalMode
               ? "bg-gray-900 border-green-900 focus-visible:ring-green-500/20 text-green-100"
               : ""
           )}

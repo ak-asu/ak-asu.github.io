@@ -19,10 +19,8 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
                 disabled={currentPage <= 0}
             >
                 Previous
-            </button>
-            
+            </button>  
             <span className="text-sm">Page {currentPage + 1} of {totalPages}</span>
-            
             <button 
                 className={`px-3 py-1 rounded bg-amber-100 hover:bg-amber-200 transition ${currentPage >= totalPages - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => handlePageClick('next')}

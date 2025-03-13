@@ -17,13 +17,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isTechnicalMo
   const isUser = message.sender === 'user';
 
   return (
-    <div 
+    <div
       className={cn(
         "flex flex-col max-w-[80%] mb-2",
         isUser ? "ml-auto items-end" : "mr-auto items-start"
       )}
     >
-      <div 
+      <div
         className={cn(
           "rounded-lg px-3 py-2",
           isUser

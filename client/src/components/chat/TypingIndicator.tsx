@@ -8,10 +8,10 @@ interface TypingIndicatorProps {
 export const TypingIndicator: React.FC<TypingIndicatorProps> = ({ isTechnicalMode }) => {
   return (
     <div className="flex max-w-[80%]">
-      <div 
+      <div
         className={cn(
           "rounded-lg px-4 py-2",
-          isTechnicalMode 
+          isTechnicalMode
             ? "bg-gray-800 border border-green-900/50"
             : "bg-muted"
         )}

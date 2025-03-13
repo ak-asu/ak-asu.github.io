@@ -4,6 +4,7 @@ import * as CANNON from 'cannon';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+import { motion } from 'framer-motion';
 
 // Constants
 const CUBE_SIZE = 15; // Increased from 10
@@ -403,12 +404,16 @@ export const ThreeCube = () => {
   };
 
   return (
-    <div className="w-full h-[600px] relative">
-      <div ref={containerRef} className="w-full h-full"></div>
-      <div className="absolute top-4 left-4 bg-black/50 text-white p-3 rounded text-sm max-w-[250px] pointer-events-none">
-        <p>Click on the colored balls to visit my profiles</p>
+    <motion.div
+      initial={{ y: 50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-4xl mx-auto text-center mb-16"
+    >
+      <div className="w-full h-[600px] relative">
+        <div ref={containerRef} className="w-full h-full"></div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

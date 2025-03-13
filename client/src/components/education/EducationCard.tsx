@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { useAnimation } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { setActiveEducation } from '@/store/features/educationSlice';
 import education from '@/data/education.json';
@@ -7,7 +7,6 @@ import BookPage from './BookPage';
 import NavigationButtons from './NavigationButtons';
 import BookBinding from './BookBinding';
 import DragIndicators from './DragIndicators';
-import DebugInfo from './DebugInfo';
 import PageContent from './PageContent';
 
 const EducationCard: React.FC = () => {
@@ -141,22 +140,12 @@ const EducationCard: React.FC = () => {
                 onTouchMove={handleDragMove}
                 onTouchEnd={handleDragEnd}
             >
-                <DebugInfo 
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    isDragging={isDragging}
-                    dragProgress={dragProgress}
-                />
-
                 <div className="relative w-full h-full" style={{ perspective: '1500px' }}>
                     <BookBinding />
-                    
-                    {/* Pages */}
                     {Array.from({ length: totalPages }).map((_, i) => {
                         const isFlipped = i < currentPage;
                         const zIndex = totalPages - i;
-                        const isCurrentlyFlipping = (i === currentPage - 1 || i === currentPage) && isFlipping;
-                        
+                        const isCurrentlyFlipping = (i === currentPage - 1 || i === currentPage) && isFlipping;    
                         return (
                             <BookPage
                                 key={i}
@@ -184,7 +173,6 @@ const EducationCard: React.FC = () => {
                             </BookPage>
                         );
                     })}
-
                     {/* Click areas for page turning */}
                     <div 
                         className="absolute top-0 left-0 w-1/4 h-full cursor-pointer z-20"
@@ -197,14 +185,12 @@ const EducationCard: React.FC = () => {
                         aria-label="Next page"
                     />
                 </div>
-                
                 <DragIndicators 
                     isDragging={isDragging}
                     dragProgress={dragProgress}
                     currentPage={currentPage}
                     totalPages={totalPages}
                 />
-                
                 <NavigationButtons 
                     currentPage={currentPage}
                     totalPages={totalPages}

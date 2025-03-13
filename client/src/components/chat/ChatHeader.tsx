@@ -19,7 +19,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   closeChat,
 }) => {
   return (
-    <div 
+    <div
       className={cn(
         "p-3 flex items-center justify-between cursor-pointer",
         isTechnicalMode
@@ -29,11 +29,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       onClick={minimizeChat}
     >
       <div className="flex items-center gap-2">
-        <MessageSquare 
+        <MessageSquare
           className={cn(
             "h-5 w-5",
             isTyping && "animate-pulse"
-          )} 
+          )}
         />
         <h3 className="font-medium text-sm">
           {isTyping ? "Bot is typing..." : "Portfolio Assistant"}
@@ -41,9 +41,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       </div>
       <div className="flex items-center gap-1">
         {!isMinimized && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="h-6 w-6 rounded-full hover:bg-background/20"
             onClick={(e) => {
               e.stopPropagation();
@@ -55,18 +55,18 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           </Button>
         )}
         {isMinimized && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="h-6 w-6 rounded-full hover:bg-background/20"
             aria-label="Expand chat"
           >
             <ChevronDown className="h-4 w-4" />
           </Button>
         )}
-        <Button 
-          variant="ghost" 
-          size="icon" 
+        <Button
+          variant="ghost"
+          size="icon"
           className="h-6 w-6 rounded-full hover:bg-background/20"
           onClick={(e) => {
             e.stopPropagation();

@@ -14,7 +14,7 @@ import TypingIndicator from './TypingIndicator';
 const initialMessages: Message[] = [
   {
     id: '1',
-    content: "Hello! I'm Aakash's portfolio assistant. Ask me about his skills, projects, or experience!",
+    content: "Hello! I'm Aakash's portfolio assistant. Ask me about his skills, projects, or experience! Currently I am in experimental mode.",
     sender: 'bot',
     timestamp: new Date(),
   },
@@ -29,7 +29,6 @@ export const ChatWindow: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  
   const { soundEnabled, isTechnicalMode } = useSelector((state: RootState) => state.mode);
 
   // Scroll to bottom when messages change
@@ -50,7 +49,6 @@ export const ChatWindow: React.FC = () => {
     if (soundEnabled) {
       audioManager.playSoundEffect('click');
     }
-    
     if (!isOpen) {
       setIsOpen(true);
       setIsMinimized(false);
@@ -73,7 +71,7 @@ export const ChatWindow: React.FC = () => {
 
   const getSimulatedResponse = (userMessage: string): string => {
     const lowerCaseMessage = userMessage.toLowerCase();
-    
+
     if (lowerCaseMessage.includes('hello') || lowerCaseMessage.includes('hi') || lowerCaseMessage.includes('hey')) {
       return "Hello there! How can I help you today?";
     } else if (lowerCaseMessage.includes('skill')) {
@@ -91,45 +89,35 @@ export const ChatWindow: React.FC = () => {
     }
   };
 
-  // Example API integration
   const handleSendMessageViaAPI = async () => {
     if (!inputValue.trim()) return;
-    
     if (soundEnabled) {
       audioManager.playSoundEffect('message');
     }
-  
     const newUserMessage: Message = {
       id: generateUniqueId(),
       content: inputValue.trim(),
       sender: 'user',
       timestamp: new Date(),
     };
-    
     setMessages(prev => [...prev, newUserMessage]);
     setInputValue('');
     setIsTyping(true);
-    
     try {
-      // Call your API endpoint
       const response = await fetch('your-api-endpoint', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: inputValue.trim() })
       });
-      
       const data = await response.json();
-      
       const botResponse: Message = {
         id: generateUniqueId(),
         content: data.response,
         sender: 'bot',
         timestamp: new Date(),
       };
-      
       setMessages(prev => [...prev, botResponse]);
     } catch (error) {
-      // Handle error
       const errorMessage: Message = {
         id: generateUniqueId(),
         content: "Sorry, I couldn't process your request right now.",
@@ -144,22 +132,18 @@ export const ChatWindow: React.FC = () => {
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
-    
     if (soundEnabled) {
       audioManager.playSoundEffect('message');
     }
-
     const newUserMessage: Message = {
       id: generateUniqueId(),
       content: inputValue.trim(),
       sender: 'user',
       timestamp: new Date(),
     };
-    
     setMessages(prev => [...prev, newUserMessage]);
     setInputValue('');
     setIsTyping(true);
-    
     // Simulate bot typing
     setTimeout(() => {
       const botResponse: Message = {
@@ -168,10 +152,9 @@ export const ChatWindow: React.FC = () => {
         sender: 'bot',
         timestamp: new Date(),
       };
-      
       setMessages(prev => [...prev, botResponse]);
       setIsTyping(false);
-    }, 1000 + Math.random() * 1000); // Random delay between 1-2 seconds
+    }, 1000 + Math.random() * 1000);
   };
 
   return (
@@ -187,25 +170,22 @@ export const ChatWindow: React.FC = () => {
               "bg-background border rounded-lg shadow-lg overflow-hidden flex flex-col",
               isMinimized ? "w-72 h-12" : "w-80 sm:w-96 h-96"
             )}
-            style={{ 
-              boxShadow: isTechnicalMode 
-                ? '0 0 20px rgba(61, 220, 132, 0.2)' 
+            style={{
+              boxShadow: isTechnicalMode
+                ? '0 0 20px rgba(61, 220, 132, 0.2)'
                 : '0 4px 20px rgba(0, 0, 0, 0.1)'
             }}
           >
-            {/* Chat Header */}
-            <ChatHeader 
+            <ChatHeader
               isTyping={isTyping}
               isMinimized={isMinimized}
               isTechnicalMode={isTechnicalMode}
               minimizeChat={minimizeChat}
               closeChat={toggleChat}
             />
-            
-            {/* Chat Body - Only render if not minimized */}
             {!isMinimized && (
               <>
-                <div 
+                <div
                   ref={chatContainerRef}
                   className={cn(
                     "flex-1 overflow-y-auto p-4 space-y-4",
@@ -213,20 +193,18 @@ export const ChatWindow: React.FC = () => {
                   )}
                 >
                   {messages.map((message) => (
-                    <ChatMessage 
+                    <ChatMessage
                       key={message.id}
                       message={message}
                       isTechnicalMode={isTechnicalMode}
                     />
                   ))}
-                  
+
                   {isTyping && <TypingIndicator isTechnicalMode={isTechnicalMode} />}
-                  
+
                   <div ref={messagesEndRef} />
                 </div>
-
-                {/* Chat Input */}
-                <ChatInput 
+                <ChatInput
                   inputValue={inputValue}
                   setInputValue={setInputValue}
                   handleSendMessage={handleSendMessage}
@@ -238,10 +216,8 @@ export const ChatWindow: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Chat Toggle Button */}
       {!isOpen && (
-        <ChatToggleButton 
+        <ChatToggleButton
           toggleChat={toggleChat}
           isTechnicalMode={isTechnicalMode}
         />

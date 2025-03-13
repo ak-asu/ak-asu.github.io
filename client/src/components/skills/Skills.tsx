@@ -7,12 +7,11 @@ import { Slider } from '@/components/ui/slider';
 import { Pause, Play } from 'lucide-react';
 import MatrixRain from './MatrixRain';
 import SkillIcon from './SkillIcon';
-import { AnimationStyle, Skill } from './types';
+import { AnimationStyle, Skill } from './utils';
 
 const Skills: React.FC = () => {
     const isTechnicalMode = useSelector((state: RootState) => state.mode.isTechnicalMode);
-    const animationLevel = useSelector((state: RootState) => 
-        state.mode.animationLevel || 'medium');
+    const animationLevel = useSelector((state: RootState) => state.mode.animationLevel);
     
     const isDarkMode = true;
 

@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export type AnimationLevel = 'basic' | 'medium' | 'expert';
-export type ThemeMode = 'light' | 'dark' | 'system';
+import { AnimationLevel, ThemeMode } from '@/lib/types';
 
 interface ModeState {
   isTechnicalMode: boolean;
@@ -13,8 +11,8 @@ interface ModeState {
 
 const initialState: ModeState = {
   isTechnicalMode: false,
-  animationLevel: 'medium',
-  themeMode: 'system',
+  animationLevel: AnimationLevel.Medium,
+  themeMode: ThemeMode.System,
   soundEnabled: true,
   physicsEnabled: true,
 };
