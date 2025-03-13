@@ -90,10 +90,24 @@ export default {
             height: "0",
           },
         },
+        "tv-flicker": {
+          "0%": { opacity: "1" },
+          "2%": { opacity: "0.8" },
+          "3%": { opacity: "1" },
+          "5%": { opacity: "0.6" },
+          "6%": { opacity: "1" },
+          "100%": { opacity: "1" },
+        },
+        "tv-scanline": {
+          "0%": { transform: "translateY(-100%)" },
+          "100%": { transform: "translateY(100%)" }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "tv-flicker": "tv-flicker 5s linear infinite",
+        "tv-scanline": "tv-scanline 6s linear infinite",
       },
     },
   },

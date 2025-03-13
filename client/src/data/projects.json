@@ -1,42 +1,46 @@
 [
-    {
-        "name": "Project 1",
-        "shortDescription": "This is a short description of Project 1.",
-        "description": "This is a description of Project 1.",
-        "technologies": ["HTML", "CSS", "JavaScript"],
-        "duration": "1 month",
-        "url": "https://example.com/project1",
-        "media": "https://example.com/project1.jpg",
-        "type": "collaborative"
-    },
-    {
-        "name": "Project 2",
-        "shortDescription":"This is a short description of Project 2.",
-        "description": "This is a description of Project 2.",
-        "technologies": ["HTML", "CSS", "JavaScript"],
-        "duration": "2 months",
-        "url": "https://example.com/project2",
-        "media": "https://example.com/project2.jpg",
-        "type": "collaborative"
-    },
-    {
-        "name": "Project 5",
-        "shortDescription": "This is a short description of Project 5.",
-        "description": "This is a description of Project 5.",
-        "technologies": ["HTML", "CSS", "JavaScript"],
-        "duration": "3 months",
-        "url": "https://example.com/project5",
-        "media": "https://example.com/project5.jpg",
-        "type": "personal"
-    },
-    {
-        "name": "Project 6",
-        "shortDescription": "This is a short description of Project 6.",
-        "description": "This is a description of Project 6.",
-        "technologies": ["HTML", "CSS", "JavaScript"],
-        "duration": "4 months",
-        "url": "https://example.com/project6",
-        "media": "https://example.com/project6.jpg",
-        "type": "personal"
-    }
+  {
+    "id": "project1",
+    "name": "E-Commerce Platform",
+    "shortDescription": "A modern online shopping platform with advanced features",
+    "description": "Developed a full-featured e-commerce platform with user authentication, product catalog, shopping cart, payment integration, and admin dashboard. The application follows best practices for security and accessibility.",
+    "technologies": ["React", "Node.js", "MongoDB", "Redux", "Stripe API", "Docker"],
+    "duration": "4 months",
+    "url": "https://ecommerce.example.com",
+    "media": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "type": "collaborative"
+  },
+  {
+    "id": "project2",
+    "name": "Task Management App",
+    "shortDescription": "Collaborative task tracking and management solution",
+    "description": "Built a collaborative task management application that allows teams to organize projects, assign tasks, track progress, and communicate effectively. Features include real-time updates, file sharing, and customizable workflows.",
+    "technologies": ["Vue.js", "Firebase", "Tailwind CSS", "WebSockets", "Vuex"],
+    "duration": "3 months",
+    "url": "https://taskmanager.example.com",
+    "media": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "type": "collaborative"
+  },
+  {
+    "id": "project3",
+    "name": "AI Image Generator",
+    "shortDescription": "Machine learning-based image creation tool",
+    "description": "Created an AI-powered image generation tool that utilizes deep learning models to generate unique images based on text descriptions. The application includes style transfer options, batch processing, and image editing capabilities.",
+    "technologies": ["Python", "TensorFlow", "Flask", "React", "AWS Lambda", "Docker"],
+    "duration": "6 months",
+    "url": "https://ai-image.example.com",
+    "media": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "type": "personal"
+  },
+  {
+    "id": "project4",
+    "name": "Fitness Tracking App",
+    "shortDescription": "Mobile application for fitness and health monitoring",
+    "description": "Developed a comprehensive fitness tracking mobile application that monitors workouts, nutrition, sleep patterns, and provides personalized recommendations. Features include social sharing, achievements, and integration with wearable devices.",
+    "technologies": ["React Native", "GraphQL", "Node.js", "MongoDB", "Apple HealthKit", "Google Fit API"],
+    "duration": "5 months",
+    "url": "https://fitness-app.example.com",
+    "media": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "type": "personal"
+  }
 ]

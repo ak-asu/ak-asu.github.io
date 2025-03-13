@@ -15,7 +15,7 @@ export const Home = () => {
       className="min-h-screen pt-16"
     >
       {isTechnicalMode ? <Terminal /> : <NonTechnical />}
-      {!isTechnicalMode && <ChatWindow />}
+      <ChatWindow />
     </motion.div>
   );
 };

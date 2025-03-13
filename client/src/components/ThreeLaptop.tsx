@@ -9,6 +9,7 @@ import { audioManager } from '@/lib/audio';
 import { ErrorBoundary } from 'react-error-boundary';
 import type { Mesh, PlaneGeometry, MeshStandardMaterial } from 'three';
 import { Html } from '@react-three/drei';
+import { getAnimationLevel } from '@/lib/types';
 
 // Social media link type definition
 interface SocialMediaLink {
@@ -246,7 +247,7 @@ export const ThreeLaptop = () => {
           gravity={[0, -9.81, 0]}
           defaultContactMaterial={{
             friction: 0.1,
-            restitution: animationLevel === 'expert' ? 0.7 : 0.5,
+            restitution: getAnimationLevel(animationLevel, {min: 0.5, max: 0.8}),
           }}
         >
           <Laptop />

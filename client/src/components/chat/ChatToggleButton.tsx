@@ -6,10 +6,9 @@ import { cn } from '@/lib/utils';
 
 interface ChatToggleButtonProps {
   toggleChat: () => void;
-  isTechnicalMode: boolean;
 }
 
-export const ChatToggleButton: React.FC<ChatToggleButtonProps> = ({ toggleChat, isTechnicalMode }) => {
+export const ChatToggleButton: React.FC<ChatToggleButtonProps> = ({ toggleChat }) => {
   return (
     <TooltipProvider>
       <Tooltip>
@@ -21,10 +20,8 @@ export const ChatToggleButton: React.FC<ChatToggleButtonProps> = ({ toggleChat, 
             whileTap={{ scale: 0.9 }}
             onClick={toggleChat}
             className={cn(
-              "h-14 w-14 rounded-full flex items-center justify-center shadow-lg",
-              isTechnicalMode
-                ? "bg-green-700 text-green-100 hover:bg-green-600"
-                : "bg-primary text-primary-foreground hover:bg-primary/90"
+              "h-14 w-14 rounded-full flex items-center justify-center shadow-lg transition-colors",
+              "bg-palette-teal text-white hover:bg-palette-teal-light"
             )}
             aria-label="Open chat"
           >

@@ -8,17 +8,17 @@ import { AnimationLevel } from '@/lib/types';
 import { NavItems } from '@/lib/constants';
 import { ThreeCube } from './ThreeCube';
 import { GameCarousel } from './games/GameCarousel';
-import { ProjectCard } from './projects/ProjectCard';
 import EducationCard from './education/EducationCard';
 import WorkScene from './work/WorkScene';
 import CurtainedAchievements from './achievements/WallOfFame';
 import SkillsShowcase from './skills/Skills';
+import { ProjectList } from './projects/ProjectList';
 
 const sectionComponents = {
   intro: ThreeCube,
   education: EducationCard,
   skills: SkillsShowcase,
-  projects: ProjectCard,
+  projects: ProjectList,
   work: WorkScene,
   achievements: CurtainedAchievements,
   games: GameCarousel,
@@ -102,19 +102,13 @@ export const NonTechnical = () => {
         {title.length > 0 && <motion.h2
           initial={{ x: -50, opacity: 0 }}
           animate={isInView ? { x: 0, opacity: 1 } : { x: -50, opacity: 0 }}
-          transition={{ duration: 0.5 }}
           className="text-4xl font-bold mb-12 text-center"
         >
           {title}
         </motion.h2>}
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={isInView ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="flex-grow"
-        >
+        <div className="flex-grow">
           {children}
-        </motion.div>
+        </div>
       </section>
     );
   };

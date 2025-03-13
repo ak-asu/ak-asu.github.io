@@ -1,19 +1,12 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-
-interface Message {
-  id: string;
-  content: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
-}
+import { Message } from './types';
 
 interface ChatMessageProps {
   message: Message;
-  isTechnicalMode: boolean;
 }
 
-export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isTechnicalMode }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isUser = message.sender === 'user';
 
   return (
@@ -27,12 +20,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isTechnicalMo
         className={cn(
           "rounded-lg px-3 py-2",
           isUser
-            ? isTechnicalMode
-              ? "bg-green-800 text-green-100"
-              : "bg-primary text-primary-foreground"
-            : isTechnicalMode
-              ? "bg-gray-800 text-gray-100 border border-green-900/50"
-              : "bg-muted text-muted-foreground"
+            ? "bg-palette-teal text-white"
+            : "bg-palette-gray-light/20 text-foreground border border-palette-gray-light/30"
         )}
       >
         {message.content}

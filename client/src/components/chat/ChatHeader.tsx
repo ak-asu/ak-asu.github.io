@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 interface ChatHeaderProps {
   isTyping: boolean;
   isMinimized: boolean;
-  isTechnicalMode: boolean;
   minimizeChat: (e: React.MouseEvent) => void;
   closeChat: (e: React.MouseEvent) => void;
 }
@@ -14,7 +13,6 @@ interface ChatHeaderProps {
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   isTyping,
   isMinimized,
-  isTechnicalMode,
   minimizeChat,
   closeChat,
 }) => {
@@ -22,9 +20,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     <div
       className={cn(
         "p-3 flex items-center justify-between cursor-pointer",
-        isTechnicalMode
-          ? "bg-gray-800 text-green-400 border-b border-green-900"
-          : "bg-primary text-primary-foreground"
+        "bg-primary text-primary-foreground"
       )}
       onClick={minimizeChat}
     >

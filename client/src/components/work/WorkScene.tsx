@@ -6,7 +6,7 @@ import { setActiveProject } from '../../store/features/workSlice';
 import Building from './Building';
 import Character from './Character';
 import Home from './Home';
-import ProjectDetails from './ProjectDetails';
+import ProjectDetails from './WorkCard';
 import workData from '@/data/work.json';
 import { WorkData, Company, Project } from '../../lib/types';
 
@@ -308,7 +308,6 @@ const WorkScene: React.FC = () => {
           position={buildingPositions[buildingIndex] || 0}
           isCurrent={currentBuilding === buildingIndex}
           currentFloor={currentFloor}
-          isTechnicalMode={isTechnicalMode}
           onFloorSelect={(floorIndex) => handleFloorSelect(buildingIndex, floorIndex)}
           animationLevel={animationLevel}
         />
@@ -317,7 +316,6 @@ const WorkScene: React.FC = () => {
       {/* Home building at the end */}
       <Home 
         position={(buildingPositions[buildingPositions.length - 1] || 0) + 300}
-        isTechnicalMode={isTechnicalMode}
         isResting={isResting}
       />
       
@@ -329,7 +327,6 @@ const WorkScene: React.FC = () => {
         isInLift={isInLift}
         isWorking={isWorking}
         isResting={isResting}
-        isTechnicalMode={isTechnicalMode}
         physicsEnabled={physicsEnabled}
       />
       
@@ -340,7 +337,6 @@ const WorkScene: React.FC = () => {
             company={activeProject.company}
             project={activeProject.project}
             onClose={() => setShowProjectDetails(false)}
-            isTechnicalMode={isTechnicalMode}
             animationLevel={animationLevel}
           />
         )}

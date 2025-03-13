@@ -9,11 +9,13 @@ import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { SettingsPanel } from './SettingsPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import ContactDialog from './ContactDialog';
 
 export const Navbar = () => {
   const dispatch = useDispatch();
   const isTechnicalMode = useSelector((state: RootState) => state.mode.isTechnicalMode);
   const [isOpen, setIsOpen] = useState(false);
+  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
 
   // Skip to main content link for keyboard users
   const SkipLink = () => (
@@ -32,14 +34,25 @@ export const Navbar = () => {
           <motion.div key={item.label} className="relative">
             <Tooltip>
               <TooltipTrigger asChild>
-                <motion.a
-                  href={item.href}
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   className="flex items-center gap-2 px-4 py-2"
                   role="menuitem"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (item.href === "#contact") {
+                      // document.dispatchEvent(new CustomEvent("toggle-contact-dialog", { detail: { open: true } }));
+                      setIsContactDialogOpen(true);
+                    } else {
+                      const element = document.querySelector(item.href);
+                      if (element) {
+                        element.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }
+                  }}
                 >
                   {item.icon && <item.icon className="w-4 h-4" aria-hidden="true" />}
-                </motion.a>
+                </motion.div>
               </TooltipTrigger>
               <TooltipContent>
                 <span>{item.label}</span>
@@ -62,52 +75,55 @@ export const Navbar = () => {
   );
 
   return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b"
-      role="navigation"
-      aria-label="Main navigation"
-    >
-      <SkipLink />
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-xl font-bold"
-          >
-            <a href="#" className="focus:outline-none focus:ring-2 focus:ring-primary rounded">
-              Portfolio
-            </a>
-          </motion.div>
-          <div
-            className="hidden md:flex items-center space-x-4"
-            role="menubar"
-          >
-            <NavContent />
+    <>
+      <nav
+        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b"
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        <SkipLink />
+        <div className="container mx-auto px-2">
+          <div className="flex items-center justify-between h-16">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-xl font-bold"
+            >
+              <a href="#" className="focus:outline-none focus:ring-2 focus:ring-primary rounded">
+                Portfolio
+              </a>
+            </motion.div>
+            <div
+              className="hidden md:flex items-center space-x-4"
+              role="menubar"
+            >
+              <NavContent />
+            </div>
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild className="md:hidden">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Toggle navigation menu"
+                  aria-expanded={isOpen}
+                >
+                  <Menu className="h-6 w-6" aria-hidden="true" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <div
+                  className="flex flex-col space-y-4 mt-8"
+                  role="menu"
+                  aria-label="Mobile navigation"
+                >
+                  <NavContent />
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className="md:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Toggle navigation menu"
-                aria-expanded={isOpen}
-              >
-                <Menu className="h-6 w-6" aria-hidden="true" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <div
-                className="flex flex-col space-y-4 mt-8"
-                role="menu"
-                aria-label="Mobile navigation"
-              >
-                <NavContent />
-              </div>
-            </SheetContent>
-          </Sheet>
         </div>
-      </div>
-    </nav>
+      </nav>
+      <ContactDialog isOpen={isContactDialogOpen} onClose={() => setIsContactDialogOpen(false)} />
+    </>
   );
 };

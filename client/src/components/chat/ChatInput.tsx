@@ -9,7 +9,6 @@ interface ChatInputProps {
   inputValue: string;
   setInputValue: (value: string) => void;
   handleSendMessage: () => void;
-  isTechnicalMode: boolean;
   inputRef: RefObject<HTMLTextAreaElement>;
 }
 
@@ -17,7 +16,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   inputValue,
   setInputValue,
   handleSendMessage,
-  isTechnicalMode,
   inputRef,
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -31,7 +29,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     <div
       className={cn(
         "p-3 border-t",
-        isTechnicalMode ? "bg-gray-800 border-green-900" : "bg-card border-border"
+        "bg-card border-border"
       )}
     >
       <div className="flex gap-2">
@@ -42,10 +40,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           onKeyDown={handleKeyDown}
           placeholder="Type your message..."
           className={cn(
-            "text-sm resize-none min-h-[40px] max-h-[120px]",
-            isTechnicalMode
-              ? "bg-gray-900 border-green-900 focus-visible:ring-green-500/20 text-green-100"
-              : ""
+            "text-sm resize-none min-h-[40px] max-h-[120px] transition-colors",
+            "focus-visible:ring-palette-teal-light/20"
           )}
           rows={1}
         />
@@ -57,10 +53,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim()}
                 className={cn(
-                  "h-10 w-10 rounded-full shrink-0",
-                  isTechnicalMode
-                    ? "bg-green-800 text-green-100 hover:bg-green-700"
-                    : ""
+                  "h-10 w-10 rounded-full shrink-0 transition-colors",
+                  "bg-palette-teal hover:bg-palette-teal/90"
                 )}
                 aria-label="Send message"
               >

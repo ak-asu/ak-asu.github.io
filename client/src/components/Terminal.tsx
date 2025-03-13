@@ -1,20 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Command } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { RootState } from '@/store/store';
+import { setThemeMode } from '@/store/features/modeSlice';
 import { audioManager } from '@/lib/audio';
+import { AnimationLevel, ThemeMode } from '@/lib/types';
 import achievements from '@/data/achievements.json';
 import education from '@/data/education.json';
 import projects from '@/data/projects.json';
 import skills from '@/data/skills.json';
 import work from '@/data/work.json';
+import contact from '@/data/contact.json';
 
 type Command = {
   input: string;
@@ -37,10 +35,10 @@ const AVAILABLE_COMMANDS = {
   ls: 'List directory contents',
   cd: 'Change directory',
   cat: 'Display file contents',
-  project: 'Get details about a specific project (usage: project <number>)',
 };
 
 export const Terminal = () => {
+  const dispatch = useDispatch();
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<Command[]>([]);
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
@@ -59,7 +57,6 @@ export const Terminal = () => {
 
   useEffect(scrollToBottom, [history]);
 
-  // Add welcome message on component mount
   useEffect(() => {
     const welcomeCommand: Command = {
       input: "welcome",
@@ -96,15 +93,11 @@ export const Terminal = () => {
   const processCommand = (cmd: string): string[] => {
     const command = cmd.toLowerCase().trim();
     const args = command.split(' ');
-
     switch (args[0]) {
       case 'help':
         return Object.entries(AVAILABLE_COMMANDS).map(([cmd, desc]) => `${cmd}: ${desc}`);
-
       case 'clear':
-        // The clear command is now handled in handleSubmit
         return [];
-
       case 'about':
         return [
           'Hi there! I\'m a passionate software developer specializing in full-stack development.',
@@ -112,79 +105,67 @@ export const Terminal = () => {
           'My goal is to build software that makes a difference, focusing on user experience and performance.',
           'Type "skills", "projects", or "contact" to learn more about me.'
         ];
-
+      case 'contact':
+        return [
+          `Email: ${contact.email}`,
+          `GitHub: ${contact.github}`,
+          `LinkedIn: ${contact.linkedin}`
+        ];
+      case 'achievements':
+        return [
+          'My Achievements:',
+          ...achievements.map(achievement => `${achievement.title} - ${achievement.date}`),
+          'For more details on a specific achievement, visit the achievements directory.'
+        ];
+      case 'education':
+        return [
+          'My Education:',
+          ...education.map(edu => `${edu.degree} at ${edu.institution} (${edu.startDate} - ${edu.endDate || 'Present'})`),
+          'For more details on a specific education, visit the education directory'
+        ];
+      case 'skills':
+        const lines: string[] = ['My Skills:'];
+        for (const [category, items] of Object.entries(skills)) {
+          lines.push(`${category}: ${items.map((i) => `${i.name} (${i.level})`).join(', ')}`);
+        }
+        return [
+          'My Skills:',
+          ...lines,
+          'For more details on a specific skill category, visit the skills directory.'
+        ];
       case 'projects':
         return [
           'My Projects:',
           ...projects.map((project, index) => `${index + 1}. ${project.name} - ${project.shortDescription}`),
-          '',
-          'For more details on a specific project, type: "project <number>"'
+          'For more details on a specific project, visit the projects directory.'
         ];
-
-      case 'project':
-        if (args[1] && !isNaN(parseInt(args[1]))) {
-          const projectIndex = parseInt(args[1]) - 1;
-          if (projectIndex >= 0 && projectIndex < projects.length) {
-            const project = projects[projectIndex];
-            return [
-              `Project: ${project.name}`,
-              `Description: ${project.description}`,
-              `Technologies: ${project.technologies.join(', ')}`,
-              `Duration: ${project.duration}`,
-              project.url ? `Link: ${project.url}` : 'Link: Not available',
-            ];
-          }
-          return [`Project number ${args[1]} not found. Type "projects" to see available projects.`];
-        }
-        return ['Usage: project <number>'];
-
-      case 'contact':
-        return [
-          'Email: example@domain.com',
-          'GitHub: github.com/username',
-          'LinkedIn: linkedin.com/in/username',
-          'Twitter: @username'
-        ];
-
-      case 'skills':
-        const lines: string[] = ['My Skills:'];
-        for (const [category, items] of Object.entries(skills)) {
-          lines.push(`${category}: ${items.map((i) => `${i.name} (${i.level}%)`).join(', ')}`);
-        }
-        
-        return lines;
-
-      case 'education':
-        return education.map(edu =>
-          `${edu.degree} at ${edu.institution} (${edu.startDate} - ${edu.endDate || 'Present'})`
-        );
-
       case 'work':
-        return work.map(job =>
-          `${job.position} at ${job.company} (${job.startDate} - ${job.endDate || 'Present'})`
-        );
-
-      case 'achievements':
-        return achievements.map(achievement =>
-          `${achievement.title} - ${achievement.date}`
-        );
-
+        return [
+          'My Work Experience:',
+          ...work.map(job => `${job.position} at ${job.company} (${job.startDate} - ${job.endDate || 'Present'})`),
+          'For more details on a specific job, visit the work directory.'
+        ];
       case 'theme':
-        const theme = themeMode === 'dark' ? 'light' : 'dark';
-        //TODO: Dispatch action to update theme
-        return [`Switched to ${theme === 'dark' ? 'light' : 'dark'} theme`];
-
+        const newTheme = themeMode === ThemeMode.Dark ? 'light' : 'dark';
+        dispatch(setThemeMode(themeMode === ThemeMode.Dark ? ThemeMode.Light : ThemeMode.Dark));
+        return [`Switched to ${newTheme} theme`];
       case 'whoami':
-        return ['visitor@portfolio'];
-
+        return ['You are a visitor exploring my portfolio in technical mode. Welcome!', 'Type "help" to see available commands.'];
       case 'ls':
         if (currentPath === '~/portfolio') {
-          return ['projects/', 'skills.json', 'education.json', 'work.json', 'achievements.json', 'about.md', 'contact.txt'];
+          return ['achievements/', 'education/', 'projects/', 'skills/', 'work/'];
+        } else if (currentPath === '~/portfolio/achievements') {
+          return achievements.map(a => `${a.title.toLowerCase().replace(/\s+/g, '-')}.json`);
+        } else if (currentPath === '~/portfolio/education') {
+          return education.map(edu => `${edu.institution.toLowerCase().replace(/\s+/g, '-')}.json`);
         } else if (currentPath === '~/portfolio/projects') {
           return projects.map((p, i) => `${i + 1}-${p.name.toLowerCase().replace(/\s+/g, '-')}.json`);
+        } else if (currentPath === '~/portfolio/skills') {
+          return Object.keys(skills).map(category => `${category.toLowerCase().replace(/\s+/g, '-')}.json`);
+        } else if (currentPath === '~/portfolio/work') {
+          return work.map((j, i) => `${i + 1}-${j.company.toLowerCase().replace(/\s+/g, '-')}.json`);
         }
         return ['Directory not found'];
-
       case 'cd':
         if (!args[1] || args[1] === '~' || args[1] === '/') {
           setCurrentPath('~/portfolio');
@@ -195,101 +176,92 @@ export const Terminal = () => {
             return ['Changed directory to ~/portfolio'];
           }
           return ['Already at root directory'];
+        } else if (args[1] === 'achievements' && currentPath === '~/portfolio') {
+          setCurrentPath('~/portfolio/achievements');
+          return ['Changed directory to ~/portfolio/achievements'];
+        } else if (args[1] === 'education' && currentPath === '~/portfolio') {
+          setCurrentPath('~/portfolio/education');
+          return ['Changed directory to ~/portfolio/education'];
         } else if (args[1] === 'projects' && currentPath === '~/portfolio') {
           setCurrentPath('~/portfolio/projects');
           return ['Changed directory to ~/portfolio/projects'];
+        } else if (args[1] === 'skills' && currentPath === '~/portfolio') {
+          setCurrentPath('~/portfolio/skills');
+          return ['Changed directory to ~/portfolio/skills'];
+        } else if (args[1] === 'work' && currentPath === '~/portfolio') {
+          setCurrentPath('~/portfolio/work');
+          return ['Changed directory to ~/portfolio/work'];
         }
         return [`Directory ${args[1]} not found`];
-
       case 'cat':
         if (!args[1]) return ['Usage: cat <filename>'];
-
-        if (args[1].match(/^\d+-.*\.json$/) && currentPath === '~/portfolio/projects') {
-          const projectIndex = parseInt(args[1].split('-')[0]) - 1;
-          if (projectIndex >= 0 && projectIndex < projects.length) {
-            const project = projects[projectIndex];
-            return [
-              `{`,
-              `  "name": "${project.name}",`,
-              `  "description": "${project.description}",`,
-              `  "technologies": [${project.technologies.map(t => `"${t}"`).join(', ')}],`,
-              `  "duration": "${project.duration}",`,
-              `  "link": "${project.url || ''}",`,
-              `}`
-            ];
+        if (args[1].match(/^\d+-.*\.json$/)) {
+          if (currentPath === '~/portfolio/achievements') {
+            const achievementIndex = achievements.findIndex(a => a.title.toLowerCase().replace(/\s+/g, '-') === args[1]);
+            if (achievementIndex >= 0) {
+              const achievement = achievements[achievementIndex];
+              return [
+                `{`,
+                `  "title": "${achievement.title}",`,
+                `  "date": "${achievement.date}",`,
+                `  "description": "${achievement.description}",`,
+                `}`
+              ];
+            }
+          } else if (currentPath === '~/portfolio/education') {
+            const educationIndex = education.findIndex(edu => edu.institution.toLowerCase().replace(/\s+/g, '-') === args[1]);
+            if (educationIndex >= 0) {
+              const edu = education[educationIndex];
+              return [
+                `{`,
+                `  "institution": "${edu.institution}",`,
+                `  "date": "${edu.startDate} - ${edu.endDate || 'Present'}",`,
+                `  "degree": "${edu.degree}",`,
+                `  "field": "${edu.field}",`,
+                `  "gpa": "${edu.gpa}",`,
+                `  "courses": [${edu.subjects.map(s => `"${s}"`).join(', ')}],`,
+                `}`
+              ];
+            }
+          } else if (currentPath === '~/portfolio/projects') {
+            const projectIndex = parseInt(args[1].split('-')[0]) - 1;
+            if (projectIndex >= 0 && projectIndex < projects.length) {
+              const project = projects[projectIndex];
+              return [
+                `{`,
+                `  "name": "${project.name}",`,
+                `  "description": "${project.description}",`,
+                `  "technologies": [${project.technologies.map(t => `"${t}"`).join(', ')}],`,
+                `  "duration": "${project.duration}",`,
+                `  "link": "${project.url || ''}",`,
+                `}`
+              ];
+            }
+          } else if (currentPath === '~/portfolio/work') {
+            const jobIndex = parseInt(args[1].split('-')[0]) - 1;
+            if (jobIndex >= 0 && jobIndex < work.length) {
+              const job = work[jobIndex];
+              return [
+                `{`,
+                `  "position": "${job.position}",`,
+                `  "company": "${job.company}",`,
+                `  "date": "${job.startDate} - ${job.endDate || 'Present'}",`,
+                `  "description": "${job.description}",`,
+                `}`
+              ];
+            }
+          } else if (currentPath === '~/portfolio/skills') {
+            const category = args[1].replace('.json', '') as keyof typeof skills;
+            if (Object.keys(skills).includes(category)) {
+              return [
+                `{`,
+                `  "${category}": [${skills[category].map(i => `"${i}"`).join(', ')}],`,
+                `}`
+              ];
+            }
           }
         }
-
-        switch (args[1]) {
-          case 'skills.json':
-            if (currentPath === '~/portfolio') {
-              return [
-                '{',
-                ...Object.entries(skills).map(([category, items]) =>
-                  `  "${category}": [${items.map(i => `"${i}"`).join(', ')}],`
-                ),
-                '}'
-              ];
-            }
-            break;
-          case 'education.json':
-            if (currentPath === '~/portfolio') {
-              return [
-                '[',
-                ...education.map(edu =>
-                  `  { "institution": "${edu.institution}", "degree": "${edu.degree}", "date": "${edu.startDate} - ${edu.endDate || 'Present'}" },`
-                ),
-                ']'
-              ];
-            }
-            break;
-          case 'work.json':
-            if (currentPath === '~/portfolio') {
-              return [
-                '[',
-                ...work.map(job =>
-                  `  { "company": "${job.company}", "position": "${job.position}", "date": "${job.startDate} - ${job.endDate || 'Present'}" },`
-                ),
-                ']'
-              ];
-            }
-            break;
-          case 'achievements.json':
-            if (currentPath === '~/portfolio') {
-              return [
-                '[',
-                ...achievements.map(achievement =>
-                  `  { "title": "${achievement.title}", "date": "${achievement.date}" },`
-                ),
-                ']'
-              ];
-            }
-            break;
-          case 'about.md':
-            if (currentPath === '~/portfolio') {
-              return [
-                '# About Me',
-                '',
-                'I\'m a passionate software developer specializing in full-stack development.',
-                'With expertise in modern web technologies, I create engaging and scalable applications.',
-                'My goal is to build software that makes a difference, focusing on user experience and performance.'
-              ];
-            }
-            break;
-          case 'contact.txt':
-            if (currentPath === '~/portfolio') {
-              return [
-                'Email: example@domain.com',
-                'GitHub: github.com/username',
-                'LinkedIn: linkedin.com/in/username',
-                'Twitter: @username'
-              ];
-            }
-            break;
-        }
-
         return [`File ${args[1]} not found or cannot be displayed`];
-
       default:
         return [`Command not found: ${command}. Type 'help' for available commands.`];
     }
@@ -298,11 +270,9 @@ export const Terminal = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
-
     if (soundEnabled) {
       audioManager.playSoundEffect('click');
     }
-
     // Handle clear command specially
     if (input.trim().toLowerCase() === 'clear') {
       setHistory([]);
@@ -312,19 +282,16 @@ export const Terminal = () => {
       setSuggestions([]);
       return;
     }
-
     const newCommand: Command = {
       input,
       output: processCommand(input),
       timestamp: getTimestamp(),
     };
-
     setHistory([...history, newCommand]);
     setCommandHistory([...commandHistory, input]);
     setHistoryIndex(-1);
     setInput('');
     setSuggestions([]);
-
     // Announce command execution for screen readers
     const announceMessage = `Command executed: ${input}. ${newCommand.output.join('. ')}`;
     const announcement = document.createElement('div');
@@ -367,11 +334,16 @@ export const Terminal = () => {
       target.tagName === 'BUTTON' ||
       target.tagName === 'A' ||
       target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.getAttribute('contenteditable') === 'true' ||
       target.getAttribute('role') === 'option' ||
       target.classList.contains('interactive') ||
       target.closest('[role="option"]') ||
       target.closest('button') ||
-      target.closest('a');
+      target.closest('a') ||
+      target.closest('input') ||
+      target.closest('textarea') ||
+      target.closest('[contenteditable="true"]');
 
     // Only focus the input if not clicking on an interactive element
     if (!isInteractiveElement && inputRef.current) {
@@ -389,13 +361,13 @@ export const Terminal = () => {
   // Determine animation properties based on animation level
   const getAnimationProps = () => {
     switch (animationLevel) {
-      case 'expert':
+      case AnimationLevel.High:
         return {
           initial: { opacity: 0, y: 20, scale: 0.95 },
           animate: { opacity: 1, y: 0, scale: 1 },
           transition: { type: 'spring', damping: 12 }
         };
-      case 'medium':
+      case AnimationLevel.Medium:
         return {
           initial: { opacity: 0, y: 10 },
           animate: { opacity: 1, y: 0 },
@@ -412,41 +384,30 @@ export const Terminal = () => {
   useEffect(() => {
     // Focus the input when the component mounts
     inputRef.current?.focus();
-
     // Add a click event listener to the window to refocus when clicking outside
     const handleWindowClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       // Check if click is outside the terminal
       if (terminalRef.current && !terminalRef.current.contains(target)) {
         // Don't refocus if clicking on another interactive element
-        if (!target.closest('button') && !target.closest('a') && !target.closest('input')) {
+        if (!target.closest('button') && !target.closest('a') && !target.closest('input') && !target.closest('textarea') && !target.closest('[contenteditable="true"]')) {
           inputRef.current?.focus();
         }
       }
     };
-
     window.addEventListener('click', handleWindowClick);
-
-    // Clean up the event listener
-    return () => {
-      window.removeEventListener('click', handleWindowClick);
-    };
+    return () => { window.removeEventListener('click', handleWindowClick); };
   }, []);
-  // ${themeMode === 'dark'
-  //   ? 'bg-gray-900 text-green-500'
-  //   : 'bg-gray-100 text-gray-900'
-  // }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={`font-mono rounded-lg w-full h-[calc(100vh-4rem)] overflow-hidden relative
-        
-        `}
+      className='font-mono w-full h-[calc(100vh-4rem)] overflow-hidden relative bg-background text-foreground'
       role="region"
       aria-label="Interactive Terminal"
-      onClick={handleTerminalClick}
-      style={{ cursor: 'text' }}
+      // Remove the onClick handler from here
+      style={{ cursor: 'default' }} // Change cursor to default
       // Use -1 to make the container focusable but not in tab order
       tabIndex={-1}
       // When container gets focus, forward to input
@@ -458,12 +419,17 @@ export const Terminal = () => {
       }}
       ref={terminalRef}
     >
+      {/* Add a clickable overlay that covers only 2/3 of the width */}
+      <div
+        className="absolute top-0 left-0 w-2/3 h-full cursor-text"
+        onClick={handleTerminalClick}
+        aria-hidden="true"
+      />
+      
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="absolute top-2 right-2 p-2 opacity-50 hover:opacity-100 transition-opacity">
-              <Command className="h-4 w-4" aria-hidden="true" />
-            </div>
+            <Command className="absolute top-2 right-2 opacity-50 hover:opacity-100 transition-opacity h-4 w-4" aria-hidden="true" />
           </TooltipTrigger>
           <TooltipContent>
             <div className="space-y-2">
@@ -477,13 +443,12 @@ export const Terminal = () => {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-
       <div
-        className="overflow-y-auto h-full p-4"
+        className="overflow-y-auto h-full p-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"
         role="log"
         aria-live="polite"
         aria-label="Terminal Output"
-        onClick={handleTerminalClick}
+        // Remove onClick handler from here too to prevent conflicts
       >
         <AnimatePresence mode="popLayout">
           {history.map((cmd, i) => (
@@ -498,7 +463,7 @@ export const Terminal = () => {
                 <span>{currentPath}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span>$</span>
+                <span className="text-primary">$</span>
                 <span>{cmd.input}</span>
               </div>
               {cmd.output.map((line, j) => (
@@ -515,7 +480,6 @@ export const Terminal = () => {
             </motion.div>
           ))}
         </AnimatePresence>
-
         <form
           onSubmit={handleSubmit}
           className="mt-4"
@@ -525,7 +489,7 @@ export const Terminal = () => {
           <div className="flex items-center gap-2 relative">
             <span className="flex items-center gap-2">
               <span className="opacity-50">{currentPath}</span>
-              <span>$</span>
+              <span className="text-primary">$</span>
             </span>
             <input
               ref={inputRef}
@@ -533,7 +497,7 @@ export const Terminal = () => {
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="bg-transparent outline-none flex-1 w-full caret-current focus:caret-visible"
+              className="bg-transparent outline-none flex-1 w-full caret-primary focus:caret-visible"
               autoFocus
               spellCheck={false}
               aria-label="Enter command"
@@ -563,7 +527,7 @@ export const Terminal = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="absolute left-0 right-0 bottom-full mb-2 bg-background/80 backdrop-blur-sm border rounded-lg p-2"
+                className="absolute left-0 right-0 bottom-full mb-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-2"
                 id="command-suggestions"
                 role="listbox"
                 aria-label="Command suggestions"
@@ -596,12 +560,6 @@ export const Terminal = () => {
           </div>
         </form>
       </div>
-
-      {/* Add an invisible overlay to make the entire area clickable */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden="true"
-      />
     </motion.div>
   );
 };

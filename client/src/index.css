@@ -190,3 +190,69 @@ a, button, [role="button"], .interactive {
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+
+@keyframes border-spin {
+  0% {
+    border-color: rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5);
+  }
+  25% {
+    border-color: rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5);
+  }
+  50% {
+    border-color: rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5);
+  }
+  75% {
+    border-color: rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 1);
+  }
+  100% {
+    border-color: rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5);
+  }
+}
+
+.animate-border-spin {
+  animation: border-spin 1s linear infinite;
+}
+
+.animated-border {
+  position: relative;
+  z-index: 0;
+  padding: 2px;
+  border: none;
+  overflow: hidden;
+}
+
+.animated-border::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  left: -50%;
+  top: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    var(--primary), 
+    var(--secondary),
+    var(--primary), 
+    var(--secondary)
+  );
+  animation: rotate 1s linear infinite;
+  border-radius: 50%;
+}
+
+.animated-border::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 2px;
+  top: 2px;
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  background: var(--card);
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(1turn);
+  }
+}
