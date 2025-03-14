@@ -23,7 +23,7 @@ export const workSlice = createSlice({
   name: 'work',
   initialState,
   reducers: {
-    setActiveProject: (state, action: PayloadAction<ActiveProject>) => {
+    setActiveProject: (state, action: PayloadAction<ActiveProject | null>) => {
       state.activeProject = action.payload;
     },
     clearActiveProject: (state) => {

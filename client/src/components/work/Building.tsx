@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimationLevel, Company, getAnimationLevel } from '@/lib/types';
+import { Building as BuildingIcon } from 'lucide-react';
 import Floor from './Floor';
 
 interface BuildingProps {
@@ -14,8 +15,9 @@ interface BuildingProps {
 
 const Building = forwardRef<HTMLDivElement, BuildingProps>(
   ({ company, position, isCurrent, currentFloor, onFloorSelect, animationLevel }, ref) => {
-    const floorHeight = 80;
-    const buildingHeight = Math.max(2, company.projects.length) * floorHeight;
+    const floorHeight = 48; // h-12 equivalent in pixels
+    // Add an extra floor for the ground floor
+    const buildingHeight = (company.projects.length + 1) * floorHeight;
     const buildingWidth = 180;
     const buildingVariants = {
       initial: {
@@ -46,7 +48,7 @@ const Building = forwardRef<HTMLDivElement, BuildingProps>(
     return (
       <motion.div
         ref={ref}
-        className={`absolute bottom-[320px] ${isCurrent ? 'z-20' : 'z-10'}`}
+        className={`absolute bottom-20 ${isCurrent ? 'z-20' : 'z-10'}`}
         style={{ left: position, width: buildingWidth }}
         variants={buildingVariants}
         initial="initial"
@@ -54,49 +56,61 @@ const Building = forwardRef<HTMLDivElement, BuildingProps>(
         whileHover="hover"
         aria-label={`${company.name} building with ${company.projects.length} ${company.projects.length === 1 ? 'project' : 'projects'}`}
       >
-        <div
-          className='absolute -top-8 left-0 right-0 text-center font-bold text-blue-800'
-          aria-hidden="true"
-        >
-          {company.name}
+        {/* Building roof with company name */}
+        <div className='absolute -top-9 left-4 right-4 bg-slate-200 dark:bg-slate-700 py-1 text-center font-medium text-slate-800 dark:text-slate-200 border-2 border-slate-500 border-b-2 rounded-t-sm'>
+          <span>{company.name}</span>
         </div>
         <div
-          className={`relative w-full h-[${buildingHeight}px] bg-amber-200 border-amber-300 border-2 rounded-t-lg overflow-hidden`}
+          className={`relative w-full bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 border-1 overflow-hidden`}
           style={{ height: buildingHeight }}
         >
+          {/* Floor divider lines - start from 1 to create ground floor */}
+          {Array.from({ length: company.projects.length + 1 }).map((_, index) => (
+            index > 0 && (
+              <div 
+                key={`divider-${index}`} 
+                className="absolute left-12 right-0 border-t border-slate-300 dark:border-slate-600"
+                style={{ bottom: index * floorHeight }}
+                aria-hidden="true"
+              />
+            )
+          ))}          
+          {/* Ground floor - empty */}
+          <div className="absolute bottom-0 left-0 right-0" style={{ height: floorHeight }} aria-label="Ground floor" />
           {company.projects.map((project, index) => (
-            <Floor
-              key={`floor-${index}`}
-              project={project}
-              floorIndex={index}
-              position={{
-                bottom: index * floorHeight,
-                height: floorHeight
-              }}
-              isActive={isCurrent && currentFloor === index}
-              onSelect={() => onFloorSelect(index)}
-            />
+            <React.Fragment key={`floor-${index}`}>
+              <Floor
+                project={project}
+                floorIndex={index}
+                position={{
+                  bottom: (index + 1) * floorHeight, // +1 to start from first floor
+                  height: floorHeight
+                }}
+                isActive={isCurrent && currentFloor === index}
+                onSelect={() => onFloorSelect(index)}
+              />
+              <div 
+                className="absolute right-4 flex items-center justify-center text-sm font-medium"
+                style={{ 
+                  bottom: (index + 1) * floorHeight + floorHeight/2 - 10,
+                  height: 20 
+                }}
+                aria-hidden="true"
+              >
+                <div className="group relative">
+                  <span>{index + 1}</span>
+                  <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block px-2 py-1 rounded shadow-md text-xs whitespace-nowrap">
+                    {project.title}
+                  </div>
+                </div>
+              </div>
+            </React.Fragment>
           ))}
-          {/* Building lift shaft */}
-          <div
-            className='absolute left-6 bottom-0 w-12 h-full bg-amber-300 border-r border-amber-400'
-            aria-hidden="true"
-          />
-          {/* Building entrance */}
-          <div
-            className='absolute bottom-0 left-1/4 right-1/4 h-12 bg-amber-800 rounded-t-lg border-t border-l border-r border-amber-900'
-            aria-hidden="true"
-          />
-          {/* Company badge */}
-          <div className="absolute top-2 right-2 bg-gray-900 text-green-400 text-xs font-mono p-1 rounded">
-            {company.name.split(' ')[0]}
-          </div>
-        </div>
-        {/* Building foundation */}
-        <div
-          className='w-full h-6 bg-amber-800 rounded-b-sm'
-          aria-hidden="true"
-        />
+          {/* Building lift */}
+          <div className='absolute left-0 bottom-0 w-12 h-full bg-slate-200 dark:bg-slate-700 border-r border-slate-300 dark:border-slate-600' aria-hidden="true" />
+          {/* Building door */}
+          <div className='absolute bottom-0 left-14 right-14 h-10 bg-palette-slate dark:bg-palette-slate/70 rounded-t-lg border-t border-l border-r border-palette-slate/30' aria-hidden="true" />
+        </div>        
         {/* Building highlight when current */}
         <AnimatePresence>
           {isCurrent && (
@@ -106,7 +120,7 @@ const Building = forwardRef<HTMLDivElement, BuildingProps>(
               animate={{ opacity: 0.2 }}
               exit={{ opacity: 0 }}
               style={{
-                backgroundColor: '#3b82f6'
+                backgroundColor: 'var(--palette-teal)'
               }}
               aria-hidden="true"
             />

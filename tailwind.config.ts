@@ -101,6 +101,15 @@ export default {
         "tv-scanline": {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(100%)" }
+        },
+        "dash": {
+          "to": { 
+            "background-position": "100% 0"
+          }
+        },
+        "bounce-subtle": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-4px)" }
         }
       },
       animation: {
@@ -108,6 +117,8 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "tv-flicker": "tv-flicker 5s linear infinite",
         "tv-scanline": "tv-scanline 6s linear infinite",
+        "dash": "dash 15s linear infinite",
+        "bounce-subtle": "bounce-subtle 0.5s ease-in-out infinite"
       },
     },
   },

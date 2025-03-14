@@ -1,0 +1,12 @@
+/* Dashed road line effect */
+.dashed-road-line {
+  background-image: linear-gradient(to right, #f59e0b 50%, transparent 50%);
+  background-size: 20px 100%;
+  animation: dash 15s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    background-position: 100% 0;
+  }
+}

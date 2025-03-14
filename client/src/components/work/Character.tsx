@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
+import { User, UserCog, Loader, Home, UserCheck } from 'lucide-react';
 
 interface CharacterProps {
   position: { x: number; y: number };
@@ -36,9 +37,11 @@ const Character: React.FC<CharacterProps> = ({
     };
   };
 
-  // Update animation when position changes
+  const getOpacity = () => {
+    return isInBuilding || isResting ? 0.8 : 1;
+  };
+
   useEffect(() => {
-    // Determine if character is moving left or right
     if (position.x < prevPositionRef.current.x) {
       facingLeft.current = true;
     } else if (position.x > prevPositionRef.current.x) {
@@ -52,57 +55,56 @@ const Character: React.FC<CharacterProps> = ({
     prevPositionRef.current = position;
   }, [position, controls, physicsEnabled]);
 
-  const getCharacterSprite = () => {
-    if (isInLift) {
-      return "/assets/character/lift.png";
-    } else if (isWorking) {
-      return "/assets/character/working.png";
-    } else if (isResting) {
-      return "/assets/character/resting.png";
-    } else if (isMoving) {
-      return "/assets/character/walking.png";
-    } else {
-      return "/assets/character/standing.png";
-    }
-  };
+  useEffect(() => {
+    controls.set({ x: position.x, y: position.y });
+  }, []);
 
   return (
     <motion.div
       className="absolute z-40"
-      style={{ originX: 0.5, originY: 1 }}
+      style={{ 
+        originX: 0.5, 
+        originY: 1,
+        opacity: getOpacity(),
+        transition: "opacity 0.3s ease-in-out"
+      }}
       animate={controls}
       initial={{ x: position.x, y: position.y }}
     >
       <div
-        className={`relative w-16 h-32 ${isMoving ? 'animate-bounce-subtle' : ''}`}
+        className={`relative flex items-center justify-center ${isMoving ? 'animate-bounce-subtle' : ''}`}
         style={{
           transform: facingLeft.current ? 'scaleX(-1)' : 'scaleX(1)',
-          filter: 'hue-rotate(120deg) brightness(1.2)'
         }}
       >
-        {/* {<Image
-          src={getCharacterSprite()}
-          alt="Character"
-          layout="fill"
-          objectFit="contain"
-          priority
-        />} */}
+        <div className="w-12 h-12 flex items-center justify-center bg-palette-teal rounded-full shadow-lg">
+          {isInLift ? (
+            <Loader className="text-white animate-spin" size={24} />
+          ) : isWorking ? (
+            <UserCog className="text-white" size={24} />
+          ) : isResting ? (
+            <Home className="text-white" size={24} />
+          ) : isMoving ? (
+            <User className="text-white animate-pulse" size={24} />
+          ) : (
+            <UserCheck className="text-white" size={24} />
+          )}
+        </div>
       </div>
-      {/* Speech bubble for working or resting states */}
       {(isWorking || isResting) && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: -10 }}
-          className='absolute -top-16 left-1/2 -translate-x-1/2 p-2 rounded-lg min-w-[120px] text-center text-sm bg-white text-blue-700 border border-blue-300'
+          className='absolute -top-16 left-1/2 -translate-x-1/2 p-2 rounded-lg min-w-[120px] text-center text-sm bg-white dark:bg-palette-gray-dark text-palette-teal border border-palette-teal/30'
         >
           {isWorking ? (
             <span>Working...</span>
           ) : (
-            <span>Resting at home</span>
+            <span>At home</span>
           )}
           <div
-            className='absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 rotate-45 bg-white border-r border-b border-blue-300'
+            className='absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 rotate-45 bg-white dark:bg-palette-gray-dark border-r border-b border-palette-teal/30'
           />
         </motion.div>
       )}

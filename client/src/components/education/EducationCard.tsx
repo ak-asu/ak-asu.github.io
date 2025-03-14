@@ -91,48 +91,56 @@ const EducationCard: React.FC = () => {
 
   const handlePageFlip = (newPage: number) => {
     if (newPage !== currentPage) {
-      setCurrentPage(newPage);
-      const direction = newPage > currentPage ? -1 : 1;
-      let steps = 10;
-      const interval = 1000 / steps;
-      let step = 0;
-      const animateProgress = () => {
-        step++;
-        const progress = (steps - step) / steps * direction;
-        setDragProgress(progress);
-        if (step < steps/2) {
-          setTimeout(animateProgress, interval);
+      const direction = newPage > currentPage ? -1 : 1; // -1 for forward, 1 for backward
+      // Use requestAnimationFrame for smoother animation
+      let startTime: number | null = null;
+      const duration = 300; // Animation duration in ms
+      
+      const animateFrame = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Calculate the normalized progress value between 0 and 1
+        // For forward: 0 to -1, for backward: 0 to 1
+        const normalizedProgress = (1 - progress) * direction;
+        setDragProgress(normalizedProgress);
+        
+        if (progress < 1) {
+          requestAnimationFrame(animateFrame);
         } else {
           setDragProgress(0);
+          setCurrentPage(newPage);
         }
       };
-      animateProgress();
+      
+      requestAnimationFrame(animateFrame);
     }
   };
 
-  const getDragStyle = (index: number) => {
-    if (dragProgress === 0) return {};
-    
+  const getDragStyle = (index: number) => {    
     // Current page being dragged to the left (going forward)
     if (index === currentPage && dragProgress < 0) {
-      const rotationAmount = dragProgress * 180;
+      // Convert dragProgress (0 to -1) to rotation (0 to -180)
+      const rotationAmount = dragProgress * -180; 
       return {
-        transform: `rotateY(${rotationAmount}deg)`,
-        transformOrigin: 'left center',
+        animate: {
+          rotateY: rotationAmount
+        },
         transition: { duration: 0 }
       };
-    }
-    
+    }    
     // Previous page being dragged to the right (going backward)
     if (index === currentPage - 1 && dragProgress > 0) {
-      const rotationAmount = dragProgress * 180;
+      // Convert dragProgress (0 to 1) to rotation (-180 to 0)
+      const rotationAmount = -180 + (dragProgress * 180);
       return {
-        transform: `rotateY(${rotationAmount}deg)`,
-        transformOrigin: 'right center',
+        animate: {
+          rotateY: rotationAmount
+        },
         transition: { duration: 0 }
       };
-    }
-    
+    }    
     return {};
   };
 
@@ -141,19 +149,20 @@ const EducationCard: React.FC = () => {
       <div
         ref={bookRef}
         className="relative w-[800px] h-[500px] mx-auto"
-        onMouseDown={handleDragStart}
-        onMouseMove={handleDragMove}
-        onMouseUp={handleDragEnd}
-        onMouseLeave={handleDragEnd}
-        onTouchStart={handleDragStart}
-        onTouchMove={handleDragMove}
-        onTouchEnd={handleDragEnd}
+        // onMouseDown={handleDragStart}
+        // onMouseMove={handleDragMove}
+        // onMouseUp={handleDragEnd}
+        // onMouseLeave={handleDragEnd}
+        // onTouchStart={handleDragStart}
+        // onTouchMove={handleDragMove}
+        // onTouchEnd={handleDragEnd}
       >
         <div className="relative w-full h-full" style={{ perspective: '1500px' }}>
           <BookBinding />
           {Array.from({ length: totalPages }).map((_, i) => {
             const isVisible = i === currentPage || i === currentPage - 1 || 
-                             (i < currentPage && i >= currentPage - 3);
+                             (i < currentPage && i >= currentPage - 3) ||
+                             (i > currentPage && i <= currentPage + 3);
             
             return isVisible ? (
               <BookPage

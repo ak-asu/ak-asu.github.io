@@ -24,19 +24,18 @@ const BookPage: React.FC<BookPageProps> = ({
       }}
     >
       <motion.div
-        className="absolute top-0 left-0 w-full h-full origin-right"
+        className="absolute top-0 left-0 w-full h-full"
         style={{
           transformStyle: 'preserve-3d',
-          ...(isFlipped ? { transformOrigin: 'right center' } : { transformOrigin: 'left center' })
+          transformOrigin: isFlipped ? 'right center' : 'left center',
         }}
         initial={false}
-        animate={isFlipped ? { rotateY: -180 } : { rotateY: 0 }}
-        transition={{
-          type: 'spring',
-          stiffness: 70,
-          damping: 15,
-          mass: 1.2
-        }}
+        // transition={{
+        //   type: 'spring',
+        //   stiffness: 70,
+        //   damping: 15,
+        //   mass: 1.2
+        // }}
         {...dragStyle}
       >
         {children}
