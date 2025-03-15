@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import achievements from '@/data/achievements.json';
 
-interface AchievementCreditsProps {
+interface AchievementInfoProps {
   onUserInteract: (isInteracting: boolean) => void;
   userInteracting: boolean;
 }
@@ -67,7 +67,7 @@ const useGroupedAchievements = () => {
   }, []);
 };
 
-const AchievementCredits: React.FC<AchievementCreditsProps> = ({
+const AchievementInfo: React.FC<AchievementInfoProps> = ({
   onUserInteract,
   userInteracting
 }) => {
@@ -233,4 +233,4 @@ const AchievementCredits: React.FC<AchievementCreditsProps> = ({
   );
 };
 
-export default memo(AchievementCredits);
+export default memo(AchievementInfo);

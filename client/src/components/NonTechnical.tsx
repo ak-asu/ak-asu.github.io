@@ -6,21 +6,21 @@ import { setScrollSection } from '@/store/features/navigationSlice';
 import type { RootState } from '@/store/store';
 import { AnimationLevel } from '@/lib/types';
 import { NavItems } from '@/lib/constants';
-import { ThreeCube } from './ThreeCube';
-import { GameCarousel } from './games/GameCarousel';
-import EducationCard from './education/EducationCard';
-import WorkScene from './work/WorkScene';
-import CurtainedAchievements from './achievements/WallOfFame';
-import SkillsShowcase from './skills/Skills';
-import { ProjectList } from './projects/ProjectList';
+import { GameCarousel } from './games';
+import EducationCard from './education';
+import WorkScene from './work';
+import Achievements from './achievements';
+import SkillsShowcase from './skills';
+import { ProjectShow } from './projects';
+import { InteractiveThreeSphere } from './intro';
 
 const sectionComponents = {
-  intro: ThreeCube,
+  intro: InteractiveThreeSphere,
   education: EducationCard,
   skills: SkillsShowcase,
-  projects: ProjectList,
+  projects: ProjectShow,
   work: WorkScene,
-  achievements: CurtainedAchievements,
+  achievements: Achievements,
   games: GameCarousel,
 };
 type SectionKey = keyof typeof sectionComponents;

@@ -10,7 +10,7 @@ import { TV, type Project } from './TV';
 import projects from '@/data/projects.json';
 import { DisplayMode } from './utils';
 
-export const ProjectList = () => {
+export const ProjectShow = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { soundEnabled } = useSelector((state: RootState) => state.mode);
   const [displayMode, setDisplayMode] = useState<DisplayMode>(DisplayMode.Video);

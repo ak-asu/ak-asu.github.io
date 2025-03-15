@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { Minus, Maximize2, Briefcase } from 'lucide-react';
 import { AnimationLevel, getAnimationLevel } from '@/lib/types';
 
-interface ProjectDetailsProps {
+interface WorkDetailsProps {
   company: string;
   project: {
     title: string;
@@ -17,7 +17,7 @@ interface ProjectDetailsProps {
   animationLevel: AnimationLevel;
 }
 
-const ProjectDetails: React.FC<ProjectDetailsProps> = ({
+const WorkDetails: React.FC<WorkDetailsProps> = ({
   company,
   project,
   onMinimize,
@@ -176,4 +176,4 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   );
 };
 
-export default ProjectDetails;
+export default WorkDetails;

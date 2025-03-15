@@ -5,7 +5,7 @@ import { RootState } from '@/store/store';
 import Confetti from 'react-confetti';
 import useWindowSize from '../../hooks/use-window-size';
 import Curtain from './Curtain';
-import AchievementCredits from './AchievementCredits';
+import AchievementInfo from './AchievementInfo';
 import { getAnimationLevel } from '@/lib/types';
 import { Medal } from 'lucide-react';
 
@@ -134,7 +134,7 @@ const WallOfFame: React.FC = () => {
                     </button>
                   </div>
                   <div className='h-[calc(100%-3rem)] rounded-lg shadow-lg overflow-hidden bg-card'>
-                    <AchievementCredits
+                    <AchievementInfo
                       onUserInteract={handleUserInteraction}
                       userInteracting={userInteracting}
                     />

@@ -3,10 +3,9 @@ import { useAnimation } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { setActiveEducation } from '@/store/features/educationSlice';
 import education from '@/data/education.json';
-import BookPage from './BookPage';
+import BookPage from './Page';
 import NavigationButtons from './NavigationButtons';
-import BookBinding from './BookBinding';
-import DragIndicators from './DragIndicators';
+import BookBinding from './Binding';
 import PageContent from './PageContent';
 import { getAnimationLevel } from '@/lib/types';
 
@@ -202,12 +201,6 @@ const EducationCard: React.FC = () => {
             aria-label="Next page"
           />
         </div>
-        <DragIndicators
-          isDragging={dragProgress !== 0}
-          dragProgress={dragProgress}
-          currentPage={currentPage}
-          totalPages={totalPages}
-        />
         <NavigationButtons
           currentPage={currentPage}
           totalPages={totalPages}

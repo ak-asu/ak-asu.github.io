@@ -176,7 +176,8 @@ const ContactDialog: React.FC<ContactDialogProps> = ({ isOpen, onClose }) => {
                     </div>                    
                     <button
                       type="submit"
-                      disabled={isSubmitting}
+                      // disabled={isSubmitting}
+                      disabled={true}
                       className={`w-full py-2.5 px-4 flex items-center justify-center rounded-md text-white bg-palette-teal hover:bg-palette-teal-light transition-colors duration-300 
                         ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                     >
@@ -185,7 +186,7 @@ const ContactDialog: React.FC<ContactDialogProps> = ({ isOpen, onClose }) => {
                       ) : (
                         <Send className="w-4 h-4 mr-2" />
                       )}
-                      {isSubmitting ? 'Sending...' : 'Send Message'}
+                      {isSubmitting ? 'Sending...' : 'Send Message (Work In Progress)'}
                     </button>
                   </form>
                   <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">

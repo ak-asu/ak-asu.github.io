@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 import { audioManager } from '@/lib/audio';
-import { Message } from './types';
+import { Message } from './utils';
 import ChatHeader from './ChatHeader';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';

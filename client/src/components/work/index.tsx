@@ -8,7 +8,7 @@ import { setActiveProject } from '@/store/features/workSlice';
 import Building from './Building';
 import Character from './Character';
 import Home from './Home';
-import ProjectDetails from './WorkCard';
+import WorkDetails from './WorkDetails';
 
 
 const prepareWorkData = (): WorkData => {
@@ -395,7 +395,7 @@ const WorkScene: React.FC = () => {
       {/* Project Details Panel - Only show when there's an active project AND we're not at home */}
       <AnimatePresence>
         {activeProject && currentBuilding !== -1 && (
-          <ProjectDetails
+          <WorkDetails
             company={activeProject.company}
             project={activeProject.project}
             onMinimize={() => {
