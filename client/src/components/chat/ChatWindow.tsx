@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 import { audioManager } from '@/lib/audio';
-import { Message } from './utils';
+import { getSimulatedResponse, Message } from './utils';
 import ChatHeader from './ChatHeader';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
@@ -67,26 +67,6 @@ export const ChatWindow: React.FC = () => {
 
   const generateUniqueId = () => {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  };
-
-  const getSimulatedResponse = (userMessage: string): string => {
-    const lowerCaseMessage = userMessage.toLowerCase();
-
-    if (lowerCaseMessage.includes('hello') || lowerCaseMessage.includes('hi') || lowerCaseMessage.includes('hey')) {
-      return "Hello there! How can I help you today?";
-    } else if (lowerCaseMessage.includes('skill')) {
-      return "I have experience with React, TypeScript, Node.js, and various modern web technologies. I also work with cloud services and enjoy solving complex problems.";
-    } else if (lowerCaseMessage.includes('project')) {
-      return "I've worked on various projects including web applications, mobile apps, and backend systems. You can find more details in the Projects section of my portfolio.";
-    } else if (lowerCaseMessage.includes('contact') || lowerCaseMessage.includes('email')) {
-      return "You can contact me via email or through LinkedIn. Check out the Contact section for details.";
-    } else if (lowerCaseMessage.includes('experience') || lowerCaseMessage.includes('work')) {
-      return "I have professional experience in software development, working with diverse teams on challenging projects. My work experience includes both startup and enterprise environments.";
-    } else if (lowerCaseMessage.includes('education') || lowerCaseMessage.includes('degree')) {
-      return "I have a background in Computer Science with continuous learning through various certifications and courses.";
-    } else {
-      return "That's an interesting question. You can explore more about me through different sections of my portfolio. Is there anything specific you'd like to know?";
-    }
   };
 
   const handleSendMessageViaAPI = async () => {

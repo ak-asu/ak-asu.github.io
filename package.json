@@ -56,6 +56,7 @@
     "cmdk": "^1.0.0",
     "connect-pg-simple": "^10.0.0",
     "date-fns": "^3.6.0",
+    "dotenv": "^16.3.1",
     "drizzle-orm": "^0.39.1",
     "drizzle-zod": "^0.7.0",
     "embla-carousel-react": "^8.3.0",
@@ -75,6 +76,7 @@
     "react-error-boundary": "^5.0.0",
     "react-hook-form": "^7.53.1",
     "react-icons": "^5.4.0",
+    "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
     "react-resizable-panels": "^2.1.4",
     "recharts": "^2.13.0",
@@ -86,8 +88,7 @@
     "wouter": "^3.3.5",
     "ws": "^8.18.0",
     "zod": "^3.23.8",
-    "zod-validation-error": "^3.4.0",
-    "dotenv": "^16.3.1"
+    "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
     "@replit/vite-plugin-cartographer": "^0.0.4",
