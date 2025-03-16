@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { getAnimationLevel, ThemeMode } from '@/lib/types';
 import { DisplayMode } from './utils';
-import { Monitor, PlayCircle, BadgeInfo, Code2, X } from 'lucide-react';
+import { Monitor, PlayCircle, BadgeInfo, Code2 } from 'lucide-react';
 
 interface TVProps {
   selectedProject: Project | null;

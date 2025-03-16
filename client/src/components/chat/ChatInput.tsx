@@ -1,4 +1,4 @@
-import React, { useRef, RefObject } from 'react';
+import React, { RefObject } from 'react';
 import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';

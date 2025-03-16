@@ -23,8 +23,8 @@ export enum AnimationLevel {
 };
 
 export const getAnimationLevel = (level: AnimationLevel, range?: {min: number, max: number}): number => {
-  let tempmin = range?.min || 1;
-  let tempmax = range?.max || 3;
+  const tempmin = range?.min || 1;
+  const tempmax = range?.max || 3;
   switch (level) {
     case AnimationLevel.Low:
       return tempmin;

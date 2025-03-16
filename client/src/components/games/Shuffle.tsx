@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '../ui/button';
 
@@ -7,6 +7,7 @@ type CardType = {
   value: string;
   isFlipped: boolean;
   isTarget: boolean;
+  isRevealed: boolean;
 }
 
 export const Shuffle = () => {
@@ -16,7 +17,9 @@ export const Shuffle = () => {
   const [attempts, setAttempts] = useState(0);
   const [announcement, setAnnouncement] = useState('');
   const shuffleTimersRef = useRef<NodeJS.Timeout[]>([]);
-
+  const [swappingCards, setSwappingCards] = useState<[number, number] | null>(null);
+  const [shuffleSpeed, setShuffleSpeed] = useState(600); // Initial shuffle speed in ms (slower)
+  
   // Initialize or reset the game
   const initializeGame = () => {
     // Clear any existing shuffle timers
@@ -34,7 +37,8 @@ export const Shuffle = () => {
         id: i,
         value: i === targetPosition ? randomAlphabet : String(i + 1),
         isFlipped: true,
-        isTarget: i === targetPosition
+        isTarget: i === targetPosition,
+        isRevealed: false
       });
     }
     
@@ -42,24 +46,38 @@ export const Shuffle = () => {
     setGameState('memorize');
     setAnnouncement(`Game started. Find the card with letter ${randomAlphabet}.`);
     
-    // Schedule the next states
+    // Longer memorize time (5 seconds) before flipping
     setTimeout(() => {
+      // Flip all cards face down
+      setCards(prev => prev.map(card => ({ ...card, isFlipped: false })));
       setGameState('flipping');
       setAnnouncement('Cards are flipping...');
-    }, 3000);
+    }, 5000);
     
     setTimeout(() => {
       setGameState('shuffling');
       setAnnouncement('Cards are shuffling...');
       performShuffles();
-    }, 4000); // 3s for memorizing + 1s for flipping
+    }, 6000); // 5s for memorizing + 1s for flipping
   };
+
+  // Update shuffle speed based on game outcomes
+  useEffect(() => {
+    // Skip initial render
+    if (gameState === 'initial') return;
+    
+    // Speed up when winning (min 300ms)
+    if (gameState === 'won') {
+      setShuffleSpeed(prev => Math.max(300, prev - 50));
+    } 
+    // Slow down when making mistakes (max 800ms)
+    else if (attempts > wins * 2 && attempts > 0) {
+      setShuffleSpeed(prev => Math.min(800, prev + 50));
+    }
+  }, [wins, attempts]);
 
   // Perform multiple card swaps
   const performShuffles = () => {
-    // Initial cards state
-    let currentCards = [...cards];
-    
     // Do 8-12 random swaps with adjacent cards
     const numSwaps = 8 + Math.floor(Math.random() * 5);
     
@@ -94,14 +112,24 @@ export const Shuffle = () => {
             const newCol = col + dc;
             const newIdx = newRow * 4 + newCol;
             
-            // Swap the cards
-            setCards(prev => {
-              const updated = [...prev];
-              [updated[idx], updated[newIdx]] = [updated[newIdx], updated[idx]];
-              return updated;
-            });
+            // Highlight cards being swapped
+            setSwappingCards([idx, newIdx]);
+            
+            // Swap the cards after a short delay to show the highlight
+            setTimeout(() => {
+              setCards(prev => {
+                const updated = [...prev];
+                [updated[idx], updated[newIdx]] = [updated[newIdx], updated[idx]];
+                return updated;
+              });
+              
+              // Clear the swapping highlight
+              setTimeout(() => {
+                setSwappingCards(null);
+              }, Math.max(100, shuffleSpeed / 3));
+            }, Math.max(150, shuffleSpeed / 4));
           }
-        }, i * 500) // Each swap takes 0.5 seconds
+        }, i * shuffleSpeed) // Using dynamic shuffle speed
       );
     }
     
@@ -110,19 +138,19 @@ export const Shuffle = () => {
       setTimeout(() => {
         setGameState('playing');
         setAnnouncement('Find the card with the letter!');
-      }, numSwaps * 500 + 500) // Additional time after last swap
+      }, numSwaps * shuffleSpeed + 500) // Additional time after last swap
     );
   };
   
   // Handle card click
   const handleCardClick = (card: CardType) => {
-    if (gameState !== 'playing') return;
+    if (gameState !== 'playing' || card.isRevealed) return;
     
     setAttempts(prev => prev + 1);
     
-    // Flip the card temporarily
+    // Reveal this card
     setCards(prev => prev.map(c => 
-      c.id === card.id ? { ...c, isFlipped: true } : c
+      c.id === card.id ? { ...c, isFlipped: true, isRevealed: true } : c
     ));
     
     // Check if it's the target card
@@ -133,17 +161,19 @@ export const Shuffle = () => {
       
       // Reveal all cards
       setTimeout(() => {
-        setCards(prev => prev.map(c => ({ ...c, isFlipped: true })));
+        setCards(prev => prev.map(c => ({ ...c, isFlipped: true, isRevealed: true })));
       }, 500);
     } else {
-      // If not the target, flip back after a short delay
-      setTimeout(() => {
-        setCards(prev => prev.map(c => 
-          c.id === card.id ? { ...c, isFlipped: false } : c
-        ));
-        setAnnouncement('Try again, that\'s not the letter card!');
-      }, 1000);
+      // If not the target, keep it revealed but announce wrong selection
+      setAnnouncement('Try again, that\'s not the letter card!');
     }
+  };
+
+  // Format shuffle speed for display (for debugging/info purposes)
+  const getShuffleSpeedText = () => {
+    if (shuffleSpeed <= 350) return 'Fast';
+    if (shuffleSpeed >= 700) return 'Slow';
+    return 'Medium';
   };
 
   // Start the game on initial render
@@ -167,7 +197,7 @@ export const Shuffle = () => {
         aria-live="polite"
         aria-atomic="true"
       >
-        {gameState === 'memorize' && <p>Memorize the cards! (3 seconds)</p>}
+        {gameState === 'memorize' && <p>Memorize the cards! (5 seconds)</p>}
         {gameState === 'flipping' && <p>Cards flipping...</p>}
         {gameState === 'shuffling' && <p>Cards shuffling...</p>}
         {gameState === 'playing' && <p>Find the letter card!</p>}
@@ -182,8 +212,8 @@ export const Shuffle = () => {
         {cards.map((card) => (
           <motion.div
             key={card.id}
-            className="w-16 h-16 cursor-pointer"
-            onClick={() => gameState === 'playing' && handleCardClick(card)}
+            className={`w-16 h-16 ${gameState === 'playing' ? 'cursor-pointer' : ''}`}
+            onClick={() => handleCardClick(card)}
             role="gridcell"
             aria-label={`Card ${card.id + 1}`}
             tabIndex={gameState === 'playing' ? 0 : -1}
@@ -194,17 +224,22 @@ export const Shuffle = () => {
             }}
           >
             <motion.div
-              className="relative w-full h-full"
-              animate={{ rotateY: card.isFlipped ? 0 : 180 }}
+              className={`relative w-full h-full rounded-md overflow-hidden
+                ${swappingCards && (swappingCards[0] === card.id || swappingCards[1] === card.id) 
+                  ? 'ring-2 ring-primary shadow-lg' : ''}`}
+              animate={{ 
+                rotateY: card.isFlipped ? 0 : 180,
+                scale: swappingCards && (swappingCards[0] === card.id || swappingCards[1] === card.id) ? 1.1 : 1
+              }}
               transition={{ duration: 0.5 }}
             >
-              {/* Front of card (showing value) */}
+              {/* Front of card (showing value only if revealed) */}
               <div 
                 className={`absolute w-full h-full flex items-center justify-center 
                   rounded-md text-xl font-bold backface-hidden
-                  ${card.isTarget ? 'bg-primary' : 'bg-secondary'}`}
+                  ${card.isRevealed && card.isTarget ? 'bg-primary' : 'bg-secondary'}`}
               >
-                {card.value}
+                {(card.isRevealed || gameState === 'memorize') && card.value}
               </div>
               
               {/* Back of card */}
@@ -220,7 +255,7 @@ export const Shuffle = () => {
       </div>
       
       <div className="mb-4">
-        <p>Wins: {wins} | Attempts: {attempts}</p>
+        <p>Wins: {wins} | Attempts: {attempts} | Difficulty: {getShuffleSpeedText()}</p>
       </div>
       
       <Button 

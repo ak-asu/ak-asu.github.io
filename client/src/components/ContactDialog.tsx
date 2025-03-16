@@ -12,7 +12,7 @@ interface ContactDialogProps {
 }
 
 const ContactDialog: React.FC<ContactDialogProps> = ({ isOpen, onClose }) => {
-  const { animationLevel, soundEnabled } = useSelector((state: RootState) => state.mode);
+  const { animationLevel } = useSelector((state: RootState) => state.mode);
   const [formState, setFormState] = useState({
     name: '',
     email: '',
@@ -126,7 +126,7 @@ const ContactDialog: React.FC<ContactDialogProps> = ({ isOpen, onClose }) => {
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Message Sent!</h3>
                   <p className="text-gray-500 dark:text-gray-400 text-center">
-                    Thanks for reaching out. I'll get back to you soon.
+                    Thanks for reaching out. I&apos;ll get back to you soon.
                   </p>
                 </motion.div>
               ) : (

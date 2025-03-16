@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { TicTacToe } from './TicTacToe';
 import { Shuffle } from './Shuffle';
@@ -10,7 +10,7 @@ type Game = {
   title: string;
 };
 
-let gameCardHeight = 420; // Adjusted for game card height
+let gameCardHeight = 480; // Adjusted for game card height
 const gameCardWidth = 300; // Adjusted for game card width
 
 export const GameCarousel = () => {
@@ -86,7 +86,7 @@ export const GameCarousel = () => {
       {/* Carousel container with overflow-hidden */}
       <div
         ref={carouselRef}
-        className="relative w-full h-[440px] overflow-hidden"
+        className="relative w-full h-[480px] overflow-hidden"
         aria-live="polite"
       >
         {games.map((game, index) => (

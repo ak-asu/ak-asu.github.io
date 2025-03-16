@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimationLevel, Company, getAnimationLevel } from '@/lib/types';
-import { Building as BuildingIcon } from 'lucide-react';
 import Floor from './Floor';
 
 interface BuildingProps {

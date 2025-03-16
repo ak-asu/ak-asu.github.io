@@ -47,6 +47,7 @@ const WorkDetails: React.FC<WorkDetailsProps> = ({
 
   const handleToggleMinimize = () => {
     setIsMinimized(!isMinimized);
+    onMinimize();
     // Only call the parent's onMinimize when we're completely hiding the card
     // (which we're no longer doing with this implementation)
   };

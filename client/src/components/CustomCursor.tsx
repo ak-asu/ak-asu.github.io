@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
+import { AnimationLevel, getAnimationLevel } from '@/lib/types';
 
 export const CustomCursor = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -11,8 +12,7 @@ export const CustomCursor = () => {
   const { animationLevel, isTechnicalMode } = useSelector((state: RootState) => state.mode);
   
   // Adjust cursor size based on animation level
-  const cursorSize = animationLevel === 'basic' ? 16 : 
-                     animationLevel === 'medium' ? 24 : 32;
+  const cursorSize = getAnimationLevel(animationLevel, {min: 16, max: 32});
 
   useEffect(() => {
     // Show cursor only after component mounts to prevent rendering at position 0,0
@@ -52,7 +52,7 @@ export const CustomCursor = () => {
   // Get animation properties based on animation level
   const getAnimationProps = () => {
     switch (animationLevel) {
-      case 'expert':
+      case AnimationLevel.High:
         return {
           transition: {
             type: 'spring',

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Physics } from '@react-three/cannon';
 import { socialLinks, SPHERE_RADIUS, BALL_RADIUS } from './utils';
 import SphericalContainer from './SphericalContainer';

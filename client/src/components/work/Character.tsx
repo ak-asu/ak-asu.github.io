@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import { User, UserCog, Loader, Home, UserCheck } from 'lucide-react';
+import { User, UserCog, Home, UserCheck } from 'lucide-react';
 import { characterSize, CharacterState } from './utils';
 
 interface CharacterProps {
