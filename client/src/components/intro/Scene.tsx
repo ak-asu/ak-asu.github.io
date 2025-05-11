@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import React, { useEffect, useState } from 'react';
 import { Physics } from '@react-three/cannon';
 import { socialLinks, SPHERE_RADIUS, BALL_RADIUS } from './utils';
@@ -35,7 +36,7 @@ export default function Scene({containerCenter}: {containerCenter?: Vector3}) {
 
   return (
     <group>
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={0} />
       <pointLight position={[10, 10, 10]} intensity={1} castShadow />
       <Physics
         gravity={[0, 0, 0]}

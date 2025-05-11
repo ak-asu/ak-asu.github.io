@@ -9,7 +9,7 @@ interface ModeState {
 }
 
 const initialState: ModeState = {
-  isTechnicalMode: true,
+  isTechnicalMode: false,
   animationLevel: AnimationLevel.Medium,
   themeMode: ThemeMode.System,
   soundEnabled: false,

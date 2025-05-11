@@ -1,8 +1,9 @@
+/* eslint-disable react/no-unknown-property */
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { SPHERE_RADIUS } from './utils';
-
+import { DoubleSide } from 'three';
 
 export default function SphericalContainer() {
   const themeMode = useSelector((state: RootState) => state.mode.themeMode);
@@ -11,7 +12,7 @@ export default function SphericalContainer() {
   return (
     <mesh name="sphere">
       <sphereGeometry args={[SPHERE_RADIUS, 44, 44]} />
-      <meshStandardMaterial color={wallColor} transparent opacity={0.1} side={2} />
+      <meshStandardMaterial color={wallColor} transparent opacity={0.1} side={DoubleSide} />
     </mesh>
   );
 }

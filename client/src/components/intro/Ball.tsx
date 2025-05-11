@@ -1,4 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
+/* eslint-disable react/display-name */
+/* eslint-disable react/no-unknown-property */
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useSphere } from '@react-three/cannon';
 import { Text } from '@react-three/drei';
@@ -15,7 +17,9 @@ interface BallProps {
   containerCenter?: Vector3;
 }
 
-export const Ball = React.forwardRef(({ position, name, url, color, icon, ballIndex, containerCenter = new Vector3(0, 0, 0) }: BallProps, ref: React.ForwardedRef<any>) => {
+export const Ball = forwardRef<any, BallProps>((props, ref) => {
+  const { position, name, url, color, ballIndex } = props;
+  const containerCenter = props.containerCenter || new Vector3(0, 0, 0);
   const [sphereRef, api] = useSphere(() => ({
     mass: 1,
     position,
