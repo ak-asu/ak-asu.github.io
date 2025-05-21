@@ -7,7 +7,7 @@ import type { RootState } from '@/store/store';
 import { AnimationLevel } from '@/lib/types';
 import { NavItems } from '@/lib/constants';
 import { GameCarousel } from './games';
-import BookExample from './education2/BookExample';
+import BookExample from './education2';
 import WorkScene from './work';
 import Achievements from './achievements';
 import SkillsShowcase from './skills';

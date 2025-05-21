@@ -4,9 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setActiveEducation } from '@/store/features/educationSlice';
 import education from '@/data/education.json';
 import BookPage from './BookPage';
-import NavigationButtons from './NavigationButtons';
-import BookBinding from './BookBinding';
-import PageContent from './PageContent';
+import NavigationButtons from '../education2/NavigationButtons';
+import BookBinding from '../education2/BookBinding';
+import PageContent from '../education2/PageContent';
 import { getAnimationLevel } from '@/lib/types';
 
 const EducationCard: React.FC = () => {
