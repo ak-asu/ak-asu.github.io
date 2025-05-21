@@ -2,10 +2,9 @@
 import React, { useRef, useState, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Vector3, Mesh, Box3, Raycaster } from 'three';
-import { SPHERE_RADIUS, PUSH_FORCE } from './utils';
+import { SPHERE_RADIUS } from './utils';
 
-// Update type to match Scene.tsx implementation
-export default function Face({ ballsRef }: { ballsRef: React.MutableRefObject<any>[] }) {
+export default function Face({ handleFaceClick }: { handleFaceClick: () => void }) {
   const mesh = useRef<Mesh>(null);
   const [isAngry, setIsAngry] = useState(false);
   const { camera, mouse, scene } = useThree();
@@ -23,32 +22,9 @@ export default function Face({ ballsRef }: { ballsRef: React.MutableRefObject<an
     }
   });
 
-  // Handle face click with stronger push and spin
   const handleClick = () => {
     setIsAngry(true);
-    ballsRef.forEach((ballRef) => {
-      // Properly check if the ball ref and its properties exist
-      if (!ballRef?.current?.ref?.current || !ballRef?.current?.api) return;
-      
-      const ballPos = new Vector3();
-      ballRef.current.ref.current.getWorldPosition(ballPos);
-      
-      const direction = ballPos.sub(mesh.current!.position).normalize();
-      
-      // Apply impulse using the api from the ref
-      ballRef.current.api.applyImpulse(
-        [direction.x * PUSH_FORCE, direction.y * PUSH_FORCE, direction.z * PUSH_FORCE],
-        [0, 0, 0]
-      );
-      
-      // Use angularVelocity method instead of applyAngularImpulse
-      // Apply random angular velocity for spinning effect
-      ballRef.current.api.angularVelocity.set(
-        (Math.random() - 0.5) * 5,
-        (Math.random() - 0.5) * 5,
-        (Math.random() - 0.5) * 5
-      );
-    });
+    handleFaceClick();
     setTimeout(() => setIsAngry(false), 320);
   };
 
@@ -56,7 +32,6 @@ export default function Face({ ballsRef }: { ballsRef: React.MutableRefObject<an
     <mesh ref={mesh} onClick={handleClick} position={[0, 0, 0]}>
       <sphereGeometry args={[0.4, 16, 16]} />
       <meshStandardMaterial color="#555" />
-
       {/* Eyes */}
       <mesh position={[-0.15, 0.12, 0.3]}>
         <sphereGeometry args={[0.12, 8, 8]} />
@@ -65,8 +40,7 @@ export default function Face({ ballsRef }: { ballsRef: React.MutableRefObject<an
       <mesh position={[0.15, 0.12, 0.3]}>
         <sphereGeometry args={[0.12, 8, 8]} />
         <meshBasicMaterial color="#ffffff" />
-      </mesh>
-      
+      </mesh>      
       {/* Happy/Angry Mouth */}
       {isAngry ? (
         // Happy smiling mouth - upward curve
@@ -94,8 +68,7 @@ export default function Face({ ballsRef }: { ballsRef: React.MutableRefObject<an
             <meshBasicMaterial color="#ff0000" />
           </mesh>
         </>
-      )}
-      
+      )}      
       {/* Eyebrows - only visible when angry */}
       {!isAngry && (
         <>

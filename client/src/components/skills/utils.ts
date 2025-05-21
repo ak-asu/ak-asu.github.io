@@ -5,8 +5,6 @@ export interface Skill {
   category: string;
 }
 
-export type AnimationStyle = 'linear' | 'easeInOut' | 'bounce';
-
 export const levelToPercentage = (level: string): number => {
   switch (level.toLowerCase()) {
     case 'beginner': return 25;

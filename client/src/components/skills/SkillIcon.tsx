@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -27,7 +27,6 @@ const SkillIcon: React.FC<SkillIconProps> = ({
   const isHovered = hoveredIcon === iconId;
   const controls = useAnimation();
   const iconRef = useRef<HTMLDivElement>(null);
-  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     if (isPaused) {
@@ -56,102 +55,56 @@ const SkillIcon: React.FC<SkillIconProps> = ({
   // Handle hover state separately from animation state
   const handlePointerEnter = () => {
     setHoveredIcon(iconId);
-    setShowTooltip(true);
   };
 
   const handlePointerLeave = () => {
     setHoveredIcon(null);
-    setShowTooltip(false);
   };
 
   return (
     <div className="relative mx-8 my-4">
-      <TooltipProvider>
-        <Tooltip open={showTooltip}>
-          <TooltipTrigger asChild>
-            <motion.div
-              ref={iconRef}
-              initial={{ y: yOffset }}
-              animate={controls}
-              style={{ y: yOffset }}
-              whileHover={{
-                scale: 1.3,
-                filter: "brightness(1.3)",
-                transition: { duration: 0.2 }
-              }}
-              onPointerEnter={handlePointerEnter}
-              onPointerLeave={handlePointerLeave}
-              className="cursor-pointer"
-            >
-              <div className={`relative w-16 h-16 transition-all duration-300 ${isHovered ? `ring-2 ring-offset-2 ${isDarkMode ? 'ring-offset-gray-900' : 'ring-offset-white'} ring-palette-teal-DEFAULT` : ''
-                }`}>
-                <div className={`absolute inset-0 rounded-full overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'
-                  }`}>
-                  {/* Colored progress circle */}
-                  <svg className="w-full h-full" viewBox="0 0 100 100">
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="45"
-                      fill="none"
-                      stroke={isDarkMode ? "#73d3e7" : "#1791a3"}
-                      strokeWidth="10"
-                      strokeDasharray={`${proficiency * 2.83} ${283 - proficiency * 2.83}`}
-                      strokeDashoffset="70"
-                      transform="rotate(-90 50 50)"
-                    />
-                  </svg>
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center p-3">
-                  <img
-                    src={`${skill.icon}`}
-                    alt={skill.name}
-                    className="w-10 h-10 object-contain"
-                  />
-                </div>
-              </div>
-            </motion.div>
-          </TooltipTrigger>
-          <TooltipContent
-            className={`cyberpunk-tooltip rounded-lg ${isDarkMode
-              ? 'bg-gray-900 border-palette-teal-light text-palette-teal-light'
-              : 'bg-gray-100 border-palette-teal-DEFAULT text-palette-teal-DEFAULT'
-              } border-2`}
-            sideOffset={12}
-            side="right"
-            align="center"
-            alignOffset={0}
-            avoidCollisions={true}
-          >
-            <div className="relative px-5 py-3">
-              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-current rounded-tl-md"></div>
-              <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-current rounded-tr-md"></div>
-              <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-current rounded-bl-md"></div>
-              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-current rounded-br-md"></div>
-              <div className="flex flex-col items-center">
-                <div className="flex items-center gap-1">
-                  <ChevronRight size={14} className='text-palette-teal-DEFAULT' />
-                  <span className="font-bold tracking-wider uppercase">{skill.name}</span>
-                  <ChevronRight size={14} className='text-palette-teal-DEFAULT' />
-                </div>
-                <div className="mt-2 w-full bg-gray-800 h-1.5 rounded-sm overflow-hidden">
-                  <div
-                    className={`h-full ${'bg-palette-teal-DEFAULT'}`}
-                    style={{ width: `${proficiency}%` }}
-                  ></div>
-                </div>
-                <div className="mt-1 flex justify-between w-full text-xs opacity-90">
-                  <span className="tracking-wider">{skill.level}</span>
-                  <span className="font-mono">{proficiency}%</span>
-                </div>
-                <span className="mt-1 text-xs opacity-75 px-2 py-0.5 rounded-sm bg-current bg-opacity-10">
-                  {skill.category.toUpperCase()}
-                </span>
-              </div>
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <motion.div
+        ref={iconRef}
+        initial={{ y: yOffset }}
+        animate={controls}
+        style={{ y: yOffset }}
+        whileHover={{
+          scale: 1.3,
+          filter: "brightness(1.3)",
+          transition: { duration: 0.2 }
+        }}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        className="cursor-pointer"
+      >
+        <div className={`relative w-16 h-16 transition-all duration-300 ${isHovered ? `ring-2 ring-offset-2 ${isDarkMode ? 'ring-offset-gray-900' : 'ring-offset-white'} ring-palette-teal-DEFAULT` : ''
+          }`}>
+          <div className={`absolute inset-0 rounded-full overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'
+            }`}>
+            {/* Colored progress circle */}
+            <svg className="w-full h-full" viewBox="0 0 100 100">
+              <circle
+                cx="50"
+                cy="50"
+                r="45"
+                fill="none"
+                stroke={isDarkMode ? "#73d3e7" : "#1791a3"}
+                strokeWidth="10"
+                strokeDasharray={`${proficiency * 2.83} ${283 - proficiency * 2.83}`}
+                strokeDashoffset="70"
+                transform="rotate(-90 50 50)"
+              />
+            </svg>
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center p-3">
+            <img
+              src={`${skill.icon}`}
+              alt={skill.name}
+              className="w-10 h-10 object-contain"
+            />
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

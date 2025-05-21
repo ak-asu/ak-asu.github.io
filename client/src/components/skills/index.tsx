@@ -7,7 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import { Pause, Play } from 'lucide-react';
 import MatrixRain from './MatrixRain';
 import SkillIcon from './SkillIcon';
-import { AnimationStyle, Skill } from './utils';
+import { Skill } from './utils';
 import { getAnimationLevel, ThemeMode } from '@/lib/types';
 
 const Skills: React.FC = () => {
@@ -15,122 +15,133 @@ const Skills: React.FC = () => {
   const themeMode = useSelector((state: RootState) => state.mode.themeMode);
   const containerRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
-  const isMounted = useRef(true); // Add this ref to track mounted state
+  const isMounted = useRef(true);
   const [isPaused, setIsPaused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const x = useMotionValue(0);
   const dragging = useRef(false);
   const dragStartX = useRef(0);
   const [speed, setSpeed] = useState(getAnimationLevel(animationLevel, { min: 30, max: 60 }));
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [animationStyle, setAnimationStyle] = useState<AnimationStyle>('linear');
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const [isOverlayHovered, setIsOverlayHovered] = useState(false);
   const [containerWidth, setContainerWidth] = useState(0);
   const [contentWidth, setContentWidth] = useState(0);
+  const [needsScrolling, setNeedsScrolling] = useState(false);
   const categories = Array.from(new Set(Object.values(skillsData).flat().map(skill => skill.category || 'Other')));
-  const filteredSkills = selectedCategory
-    ? Object.values(skillsData).flat().filter(skill => (skill.category || 'Other') === selectedCategory)
-    : Object.values(skillsData).flat();
 
-  const getAnimationEasing = (): string | number[] => {
-    switch (animationStyle) {
-      case 'easeInOut': return 'easeInOut';
-      case 'bounce': return [0.6, -0.05, 0.01, 0.99];
-      case 'linear':
-      default: return 'linear';
+  // Improved filtering logic to handle categories more robustly
+  const filteredSkills = React.useMemo(() => {
+    const allSkills = Object.values(skillsData).flat();
+    if (!selectedCategory) {
+      return allSkills;
     }
-  };
+    return allSkills.filter(skill => {
+      const skillCategory = skill.category || 'Other';
+      return skillCategory === selectedCategory;
+    });
+  }, [selectedCategory]);
+
+  // Debug count of filtered skills
+  useEffect(() => {
+    console.log(`Filtered skills count: ${filteredSkills.length} for category: ${selectedCategory || 'ALL'}`);
+  }, [filteredSkills, selectedCategory]);
 
   // Create a wrapper ref to measure the actual content width
   const contentRef = useRef<HTMLDivElement>(null);
   const animationProgressRef = useRef(0);
   const currentPositionRef = useRef(0);
+  const lastScrollPosition = useRef(0);
+  const lastAnimationTimeRef = useRef(0);
 
-  // Effect to initialize measurements
+  // Fix measurement logic and improve scrolling detection
   useEffect(() => {
-    if (containerRef.current) {
-      setContainerWidth(containerRef.current.offsetWidth);
-    }
+    if (!containerRef.current) return;
+    
+    setContainerWidth(containerRef.current.offsetWidth);
     
     requestAnimationFrame(() => {
-      if (contentRef.current) {
-        setContentWidth(contentRef.current.scrollWidth);
-      }
+      setTimeout(() => {
+        if (!contentRef.current || !containerRef.current) return;
+        
+        currentPositionRef.current = 0;
+        x.set(0);
+        
+        if (contentRef.current.children.length > 0) {
+          const singleSetWidth = contentRef.current.children[0].scrollWidth;
+          setContentWidth(singleSetWidth);
+          const shouldScroll = singleSetWidth > containerRef.current.offsetWidth;
+          setNeedsScrolling(shouldScroll);
+          console.log(`Content width: ${singleSetWidth}, Container width: ${containerRef.current.offsetWidth}, Needs scrolling: ${shouldScroll}`);
+        }
+      }, 50);
     });
-  }, []);
+  }, [filteredSkills, x]);
 
-  // Main animation effect
+  // Store position when hovering starts
   useEffect(() => {
-    // Set mounted flag to true when the effect runs
-    isMounted.current = true;
-    
-    if (isPaused) {
-      // Store the current position when pausing
+    if (isHovered || isPaused) {
       currentPositionRef.current = x.get();
+      lastAnimationTimeRef.current = Date.now();
+    }
+  }, [isHovered, isPaused, x]);
+
+  // Improved animation effect for continuous scrolling
+  useEffect(() => {
+    controls.stop();
+    
+    if (!isMounted.current || (isPaused && !isHovered) || containerWidth <= 0 || contentWidth <= 0 || !needsScrolling) {
       return;
     }
-    if (containerWidth <= 0 || contentWidth <= 0) {
-      return; // Don't animate if we don't have valid measurements
+
+    if (filteredSkills.length === 0) {
+      return;
     }
-    // Get current x position if animation is already running
-    const currentX = x.get();
-    if (currentX !== 0) {
-      currentPositionRef.current = currentX;
+
+    if (isHovered) {
+      return;
     }
-    // Calculate total distance and remaining distance
-    const totalDistance = contentWidth + containerWidth;
-    const remainingDistance = currentPositionRef.current <= 0 
-      ? Math.abs(currentPositionRef.current) + contentWidth
-      : totalDistance - (currentPositionRef.current - containerWidth);
-    // Adjust duration based on remaining distance
-    const fullDuration = 15 + (60 - speed) / 3; // Full animation duration in seconds
-    const remainingDuration = (remainingDistance / totalDistance) * fullDuration;
-    // Calculate the end position (should be -contentWidth)
-    const animateToPosition = -contentWidth;
+
+    const duration = 30 - ((speed - 30) / 30) * 20;
+    let startPosition = 0;
+    let remainingDuration = duration;
     
-    // Handle animation with proper mounting checks
-    const animateFirstCycle = () => {
-      if (!isMounted.current) return;
+    if (currentPositionRef.current !== 0) {
+      startPosition = currentPositionRef.current;
+      const normalizedPosition = (startPosition / -contentWidth);
+      remainingDuration = duration * (1 - normalizedPosition);
       
-      controls.start({
-        x: animateToPosition,
-        transition: {
-          duration: remainingDuration,
-          ease: getAnimationEasing(),
-        }
-      }).then(() => {
-        if (isMounted.current && !dragging.current && !isPaused) {
-          animateInfiniteCycle();
-        }
-      }).catch(err => {
-        // Handle potential animation errors
-        console.error("Animation error:", err);
-      });
-    };
+      if (remainingDuration <= 0) {
+        startPosition = 0;
+        remainingDuration = duration;
+      }
+    }
     
-    const animateInfiniteCycle = () => {
-      if (!isMounted.current) return;
-      
-      controls.start({
-        x: [containerWidth, animateToPosition],
-        transition: {
-          duration: fullDuration,
-          ease: getAnimationEasing(),
-          repeat: Infinity,
+    controls.start({
+      x: [startPosition, -contentWidth],
+      transition: {
+        duration: remainingDuration,
+        ease: "linear",
+        onComplete: () => {
+          if (isMounted.current && !isPaused && !isHovered) {
+            controls.start({
+              x: [0, -contentWidth],
+              transition: {
+                duration: duration,
+                ease: "linear",
+                repeat: Infinity,
+                repeatType: "loop",
+              }
+            });
+          }
         }
-      });
-    };
+      }
+    }).catch(err => console.error("Animation error:", err));
     
-    // Start the animation sequence
-    animateFirstCycle();
-    
-    // Cleanup function - mark component as unmounted and stop animations
     return () => {
-      isMounted.current = false;
       currentPositionRef.current = x.get();
-      controls.stop();
     };
-  }, [isPaused, containerWidth, contentWidth, speed, animationStyle, filteredSkills.length]);
+  }, [isPaused, isHovered, containerWidth, contentWidth, speed, needsScrolling, filteredSkills]);
 
   // Update container width on window resize with debounce
   useEffect(() => {
@@ -139,11 +150,13 @@ const Skills: React.FC = () => {
     const handleResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        if (containerRef.current) {
-          setContainerWidth(containerRef.current.offsetWidth);
-        }
-        if (contentRef.current) {
-          setContentWidth(contentRef.current.scrollWidth);
+        if (containerRef.current && contentRef.current) {
+          const containerSize = containerRef.current.offsetWidth;
+          setContainerWidth(containerSize);
+          
+          const singleSetWidth = contentRef.current.children[0].scrollWidth;
+          setContentWidth(singleSetWidth);
+          setNeedsScrolling(singleSetWidth > containerSize);
         }
       }, 100);
     };
@@ -154,31 +167,19 @@ const Skills: React.FC = () => {
     };
   }, []);
 
-  // Reset animation when filter changes
-  useEffect(() => {
-    // Reset position reference when filters change
-    currentPositionRef.current = containerWidth;
-    // Allow a frame for the DOM to update with new content
-    requestAnimationFrame(() => {
-      if (contentRef.current) {
-        setContentWidth(contentRef.current.scrollWidth);
-      }
-    });
-  }, [filteredSkills]);
-
   const handleDragStart = (event: any, info: any) => {
     dragStartX.current = x.get();
     setIsPaused(true);
     dragging.current = true;
-    // Store current position to resume from later
     currentPositionRef.current = x.get();
   };
 
   const handleDragEnd = (event: any, info: any) => {
-    // Calculate the new position after dragging
     currentPositionRef.current = x.get();
     dragging.current = false;
-    setIsPaused(false);
+    if (needsScrolling) {
+      setIsPaused(false);
+    }
   };
 
   const handleMouseDown = () => {
@@ -198,13 +199,28 @@ const Skills: React.FC = () => {
     };
   }, []);
 
+  const handleContainerMouseEnter = () => {
+    currentPositionRef.current = x.get();
+    setIsHovered(true);
+  };
+
+  const handleContainerMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const handleCategoryChange = (category: string | null) => {
+    controls.stop();
+    x.set(0);
+    currentPositionRef.current = 0;
+    setSelectedCategory(category);
+  };
+
   const primaryColor = themeMode !== ThemeMode.Light ? "#73d3e7" : "#1791a3";
   const bgColor = themeMode !== ThemeMode.Light ? "bg-gray-900" : "bg-gray-50";
   const darkBgColor = themeMode !== ThemeMode.Light ? "bg-gray-800" : "bg-gray-200";
   const textColor = themeMode !== ThemeMode.Light ? "text-palette-teal-light" : "text-palette-teal-DEFAULT";
   const borderColor = themeMode !== ThemeMode.Light ? "border-palette-teal-light" : "border-palette-teal-DEFAULT";
 
-  // Function to get button style based on selection
   const getButtonStyle = (currentStyle: string, selectedStyle: string) => {
     return currentStyle === selectedStyle
       ? `bg-palette-teal-DEFAULT text-white`
@@ -217,6 +233,8 @@ const Skills: React.FC = () => {
         border-2 ${borderColor} rounded-xl shadow-lg mx-auto max-w-[95%] my-10`}
       ref={containerRef}
       onMouseDown={handleMouseDown}
+      onMouseEnter={handleContainerMouseEnter}
+      onMouseLeave={handleContainerMouseLeave}
     >
       <div className="absolute top-0 left-0 w-8 h-8 border-t-3 border-l-3 border-current opacity-60 rounded-tl-lg"></div>
       <div className="absolute top-0 right-0 w-8 h-8 border-t-3 border-r-3 border-current opacity-60 rounded-tr-lg"></div>
@@ -226,8 +244,8 @@ const Skills: React.FC = () => {
       <div className="relative">
         <motion.div
           className="flex items-center"
-          animate={controls}
-          drag="x"
+          animate={needsScrolling ? controls : {}}
+          drag={needsScrolling ? "x" : false}
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.1}
           onDragStart={handleDragStart}
@@ -235,22 +253,44 @@ const Skills: React.FC = () => {
           style={{ x }}
           ref={contentRef}
         >
-          <div className="flex items-center">
-            {filteredSkills.map((skill, index) => (
-              <SkillIcon
-                key={`${skill.name}-${index}`}
-                skill={skill as Skill}
-                index={index}
-                isDarkMode={themeMode !== ThemeMode.Light}
-                hoveredIcon={hoveredIcon}
-                setHoveredIcon={setHoveredIcon}
-                isPaused={dragging.current || isPaused}
-              />
-            ))}
-          </div>
+          {filteredSkills.length > 0 ? (
+            <>
+              <div className="flex items-center">
+                {filteredSkills.map((skill, index) => (
+                  <SkillIcon
+                    key={`${skill.name}-${index}`}
+                    skill={skill as Skill}
+                    index={index}
+                    isDarkMode={themeMode !== ThemeMode.Light}
+                    hoveredIcon={hoveredIcon}
+                    setHoveredIcon={setHoveredIcon}
+                    isPaused={dragging.current || isPaused || isHovered}
+                  />
+                ))}
+              </div>
+              {needsScrolling && (
+                <div className="flex items-center">
+                  {filteredSkills.map((skill, index) => (
+                    <SkillIcon
+                      key={`${skill.name}-dup-${index}`}
+                      skill={skill as Skill}
+                      index={index}
+                      isDarkMode={themeMode !== ThemeMode.Light}
+                      hoveredIcon={hoveredIcon}
+                      setHoveredIcon={setHoveredIcon}
+                      isPaused={dragging.current || isPaused || isHovered}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className={`px-8 py-4 text-center ${textColor}`}>
+              No skills found for this category.
+            </div>
+          )}
         </motion.div>
       </div>
-      {/* Control panel overlay with dynamic transparency */}
       <div
         className={`absolute top-3 right-3 ${themeMode !== ThemeMode.Light ? 'bg-gray-800' : 'bg-gray-200'} 
           ${isOverlayHovered ? 'bg-opacity-60' : 'bg-opacity-20'} 
@@ -261,12 +301,11 @@ const Skills: React.FC = () => {
         onMouseLeave={() => setIsOverlayHovered(false)}
       >
         <div className="relative mb-4 border-b border-opacity-50 pb-2 border-current">
-          {/* Decorative corners */}
           <div className="absolute -top-3 -left-3 w-4 h-4 border-t-2 border-l-2 border-current rounded-tl-md"></div>
           <div className="absolute -top-3 -right-3 w-4 h-4 border-t-2 border-r-2 border-current rounded-tr-md"></div>
           <div className="flex justify-between items-center">
             <code className="text-xs">
-              {isPaused ? '[ PAUSED ]' : '[ RUNNING ]'}
+              {isPaused ? '[ PAUSED ]' : isHovered ? '[ HOVER ]' : '[ RUNNING ]'}
             </code>
             <div className="flex space-x-2">
               <button
@@ -296,27 +335,12 @@ const Skills: React.FC = () => {
             className={'[&_[role=slider]]:bg-palette-teal-DEFAULT'}
           />
         </div>
-        <div className="mb-3">
-          <div className="text-xs mb-1">ANIMATION</div>
-          <div className="flex flex-wrap gap-1 mb-1">
-            {['easeInOut', 'bounce', 'linear'].map(style => (
-              <button
-                key={style}
-                className={`text-xs px-2 py-1 rounded-sm ${getButtonStyle(animationStyle, style)}`}
-                onClick={() => setAnimationStyle(style as AnimationStyle)}
-              >
-                {style.toUpperCase()}
-              </button>
-            )
-            )}
-          </div>
-        </div>
         <div className="mb-1">
           <div className="text-xs mb-1">FILTER</div>
           <div className="flex flex-wrap gap-1">
             <button
               className={`text-xs px-2 py-1 rounded-sm ${getButtonStyle(selectedCategory || 'null', 'null')}`}
-              onClick={() => setSelectedCategory(null)}
+              onClick={() => handleCategoryChange(null)}
             >
               ALL
             </button>
@@ -324,7 +348,7 @@ const Skills: React.FC = () => {
               <button
                 key={category}
                 className={`text-xs px-2 py-1 rounded-sm ${getButtonStyle(selectedCategory || '', category)}`}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => handleCategoryChange(category)}
               >
                 {category.toUpperCase()}
               </button>
