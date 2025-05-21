@@ -13,9 +13,10 @@ import Achievements from './achievements';
 import SkillsShowcase from './skills';
 import { ProjectShow } from './projects';
 import { InteractiveThreeSphere } from './intro';
+import RotatableSphere from './intro2/Sphere';
 
 const sectionComponents = {
-  intro: InteractiveThreeSphere,
+  intro: RotatableSphere,
   education: EducationCard,
   skills: SkillsShowcase,
   projects: ProjectShow,

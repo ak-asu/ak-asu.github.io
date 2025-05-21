@@ -30,6 +30,9 @@ const Skills: React.FC = () => {
   const [needsScrolling, setNeedsScrolling] = useState(false);
   const categories = Array.from(new Set(Object.values(skillsData).flat().map(skill => skill.category || 'Other')));
 
+  // Create a separate ref for the content area to handle hover independently
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
   // Improved filtering logic to handle categories more robustly
   const filteredSkills = React.useMemo(() => {
     const allSkills = Object.values(skillsData).flat();
@@ -102,21 +105,32 @@ const Skills: React.FC = () => {
       return;
     }
 
-    const duration = 30 - ((speed - 30) / 30) * 20;
+    // Calculate pixels per second based on speed setting (higher speed = more pixels per second)
+    // Map speed range (30-60) to pixels per second (50-200)
+    const pixelsPerSecond = 50 + ((speed - 30) / 30) * 150;
+    
+    // Calculate duration based on content width and pixels per second
+    // This ensures consistent movement speed regardless of content width
+    const duration = contentWidth / pixelsPerSecond;
+    
     let startPosition = 0;
     let remainingDuration = duration;
     
     if (currentPositionRef.current !== 0) {
       startPosition = currentPositionRef.current;
-      const normalizedPosition = (startPosition / -contentWidth);
-      remainingDuration = duration * (1 - normalizedPosition);
+      // Calculate what fraction of the distance is remaining
+      const fractionRemaining = (startPosition + contentWidth) / contentWidth;
+      remainingDuration = duration * fractionRemaining;
       
-      if (remainingDuration <= 0) {
+      if (remainingDuration <= 0 || remainingDuration > duration) {
         startPosition = 0;
         remainingDuration = duration;
       }
     }
     
+    console.log(`Speed: ${pixelsPerSecond.toFixed(1)} px/s, Duration: ${duration.toFixed(1)}s, Content width: ${contentWidth}px`);
+    
+    // Rest of animation code remains the same
     controls.start({
       x: [startPosition, -contentWidth],
       transition: {
@@ -199,13 +213,24 @@ const Skills: React.FC = () => {
     };
   }, []);
 
-  const handleContainerMouseEnter = () => {
+  // Handle content area hover separately from container hover
+  const handleContentMouseEnter = () => {
     currentPositionRef.current = x.get();
     setIsHovered(true);
   };
 
-  const handleContainerMouseLeave = () => {
+  const handleContentMouseLeave = () => {
     setIsHovered(false);
+  };
+
+  // Remove the mouse enter/leave handlers from the container
+  // and don't stop scrolling when hovering over the control panel
+  const handleOverlayMouseEnter = () => {
+    setIsOverlayHovered(true);
+  };
+
+  const handleOverlayMouseLeave = () => {
+    setIsOverlayHovered(false);
   };
 
   const handleCategoryChange = (category: string | null) => {
@@ -227,21 +252,33 @@ const Skills: React.FC = () => {
       : `${darkBgColor} bg-opacity-50`;
   };
 
+  // Calculate pixels per second for display in UI
+  const getSpeedDisplayValue = () => {
+    // Map speed range (30-60) to pixels per second (50-200)
+    const pixelsPerSecond = 50 + ((speed - 30) / 30) * 150;
+    return `${Math.round(pixelsPerSecond)} px/s`;
+  };
+
   return (
     <div
       className={`w-full overflow-hidden py-12 relative ${bgColor} min-h-[360px] 
         border-2 ${borderColor} rounded-xl shadow-lg mx-auto max-w-[95%] my-10`}
       ref={containerRef}
       onMouseDown={handleMouseDown}
-      onMouseEnter={handleContainerMouseEnter}
-      onMouseLeave={handleContainerMouseLeave}
     >
       <div className="absolute top-0 left-0 w-8 h-8 border-t-3 border-l-3 border-current opacity-60 rounded-tl-lg"></div>
       <div className="absolute top-0 right-0 w-8 h-8 border-t-3 border-r-3 border-current opacity-60 rounded-tr-lg"></div>
       <div className="absolute bottom-0 left-0 w-8 h-8 border-b-3 border-l-3 border-current opacity-60 rounded-bl-lg"></div>
       <div className="absolute bottom-0 right-0 w-8 h-8 border-b-3 border-r-3 border-current opacity-60 rounded-br-lg"></div>
       <MatrixRain isDarkMode={themeMode !== ThemeMode.Light} />
-      <div className="relative">
+      
+      {/* Add hover handlers to this div specifically */}
+      <div 
+        className="relative" 
+        ref={scrollAreaRef}
+        onMouseEnter={handleContentMouseEnter}
+        onMouseLeave={handleContentMouseLeave}
+      >
         <motion.div
           className="flex items-center"
           animate={needsScrolling ? controls : {}}
@@ -291,14 +328,17 @@ const Skills: React.FC = () => {
           )}
         </motion.div>
       </div>
+      
+      {/* Control panel with fixed cursor styles */}
       <div
         className={`absolute top-3 right-3 ${themeMode !== ThemeMode.Light ? 'bg-gray-800' : 'bg-gray-200'} 
           ${isOverlayHovered ? 'bg-opacity-60' : 'bg-opacity-20'} 
           ${textColor} font-mono p-4 rounded-lg border-2 ${borderColor} 
           shadow-lg shadow-${primaryColor}/20 
-          backdrop-blur-sm w-56 z-10 transition-all duration-300`}
-        onMouseEnter={() => setIsOverlayHovered(true)}
-        onMouseLeave={() => setIsOverlayHovered(false)}
+          backdrop-blur-sm w-56 z-10 transition-all duration-300
+          cursor-auto`}
+        onMouseEnter={handleOverlayMouseEnter}
+        onMouseLeave={handleOverlayMouseLeave}
       >
         <div className="relative mb-4 border-b border-opacity-50 pb-2 border-current">
           <div className="absolute -top-3 -left-3 w-4 h-4 border-t-2 border-l-2 border-current rounded-tl-md"></div>
@@ -309,7 +349,7 @@ const Skills: React.FC = () => {
             </code>
             <div className="flex space-x-2">
               <button
-                className='w-6 h-6 rounded-full flex items-center justify-center'
+                className='w-6 h-6 rounded-full flex items-center justify-center cursor-pointer'
                 onClick={() => setIsPaused(!isPaused)}
                 aria-label={isPaused ? "Play animation" : "Pause animation"}
               >
@@ -321,10 +361,11 @@ const Skills: React.FC = () => {
             </div>
           </div>
         </div>
+        
         <div className="mb-3">
           <div className="flex justify-between text-xs mb-1">
             <span>SPEED</span>
-            <span>{Math.round((speed - 30) / 0.3)}%</span>
+            <span>{getSpeedDisplayValue()}</span>
           </div>
           <Slider
             value={[speed]}
@@ -332,14 +373,15 @@ const Skills: React.FC = () => {
             max={60}
             step={1}
             onValueChange={(values) => setSpeed(values[0])}
-            className={'[&_[role=slider]]:bg-palette-teal-DEFAULT'}
+            className={'[&_[role=slider]]:bg-palette-teal-DEFAULT [&_[role=slider]]:cursor-grab [&_[role=slider]:active]:cursor-grabbing'}
           />
         </div>
+        
         <div className="mb-1">
           <div className="text-xs mb-1">FILTER</div>
           <div className="flex flex-wrap gap-1">
             <button
-              className={`text-xs px-2 py-1 rounded-sm ${getButtonStyle(selectedCategory || 'null', 'null')}`}
+              className={`text-xs px-2 py-1 rounded-sm cursor-pointer ${getButtonStyle(selectedCategory || 'null', 'null')}`}
               onClick={() => handleCategoryChange(null)}
             >
               ALL
@@ -347,7 +389,7 @@ const Skills: React.FC = () => {
             {categories.map(category => (
               <button
                 key={category}
-                className={`text-xs px-2 py-1 rounded-sm ${getButtonStyle(selectedCategory || '', category)}`}
+                className={`text-xs px-2 py-1 rounded-sm cursor-pointer ${getButtonStyle(selectedCategory || '', category)}`}
                 onClick={() => handleCategoryChange(category)}
               >
                 {category.toUpperCase()}

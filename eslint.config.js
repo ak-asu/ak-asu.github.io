@@ -11,4 +11,29 @@ export default [
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
+  // Add configuration for Three.js specific properties
+  {
+    rules: {
+      "react/no-unknown-property": [
+        "error",
+        {
+          ignore: [
+            "position",
+            "intensity",
+            "args",
+            "transparent",
+            "opacity",
+            "roughness",
+            "metalness",
+            "map",
+            "envMapIntensity",
+            "color",
+            "makeDefault",
+            "rotation",
+            "preset"
+          ]
+        }
+      ]
+    }
+  }
 ];

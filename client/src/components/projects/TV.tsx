@@ -28,6 +28,27 @@ export interface Project {
   type: string;
 }
 
+// Utility function to convert YouTube URLs to embed format
+const getEmbedUrl = (url: string): string => {
+  // Return empty string if no URL
+  if (!url) return '';
+  
+  // Check if it's already an embed URL
+  if (url.includes('youtube.com/embed/')) return url;
+  
+  // Extract video ID from various YouTube URL formats
+  let videoId = '';
+  
+  // Standard YouTube URL: https://www.youtube.com/watch?v=VIDEO_ID
+  const standardMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?]+)/);
+  if (standardMatch && standardMatch[1]) {
+    videoId = standardMatch[1];
+  }
+  
+  // Return the embed URL if we found a video ID, otherwise return original URL
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+};
+
 export const TV = ({ selectedProject, displayMode, setDisplayMode }: TVProps) => {
   const { soundEnabled, animationLevel } = useSelector((state: RootState) => state.mode);
   const themeMode = useSelector((state: RootState) => state.mode.themeMode);
@@ -75,10 +96,11 @@ export const TV = ({ selectedProject, displayMode, setDisplayMode }: TVProps) =>
               <div className="w-full h-full">
                 {displayMode === 'video' && (
                   <iframe
-                    src={selectedProject.media}
+                    src={getEmbedUrl(selectedProject.media)}
                     title={`${selectedProject.name} demo video`}
                     className="w-full h-full"
                     allowFullScreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   />
                 )}
                 {displayMode === 'description' && (
