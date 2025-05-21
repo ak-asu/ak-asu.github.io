@@ -10,8 +10,8 @@ type Game = {
   title: string;
 };
 
-let gameCardHeight = 480; // Adjusted for game card height
-const gameCardWidth = 300; // Adjusted for game card width
+const gameCardHeight = 480;
+const gameCardWidth = 300;
 
 export const GameCarousel = () => {
   const games: Game[] = [
@@ -23,115 +23,142 @@ export const GameCarousel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
+  const [containerWidth, setContainerWidth] = useState(0);
 
-  const [dimensions, setDimensions] = useState({
-    width: 0,
-    height: 0,
-    centerX: 0,
-    centerY: 0,
-    radius: 0,
-  });
-
-  // Update dimensions based on container size
+  // Update container width when resized
   useEffect(() => {
     const updateDimensions = () => {
       if (carouselRef.current) {
-        const width = carouselRef.current.offsetWidth;
-        const height = carouselRef.current.offsetHeight;
-        // Calculate radius for inner circle of an n-sided polygon
-        const radius = (gameCardWidth / 2) / Math.tan(Math.PI / games.length);
-        const centerX = width / 2;
-        const centerY = height + radius;
-        gameCardHeight = Math.min(height, gameCardHeight);
-        setDimensions({ width, height, centerX, centerY, radius });
+        setContainerWidth(carouselRef.current.offsetWidth);
       }
     };
+    
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
+  // Add keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        goToGame(activeIndex - 1);
+      } else if (e.key === 'ArrowRight') {
+        goToGame(activeIndex + 1);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeIndex]);
+
   const getItemStyles = (index: number) => {
-    const totalItems = games.length;
-    const angleStep = 360 / totalItems;
-    // Angle positions active card at bottom (θ = 90°)
-    const th = (angleStep * (index - activeIndex) + 90) % 360;
-    const rad = (th * Math.PI) / 180;
-    const x = dimensions.centerX + dimensions.radius * Math.cos(rad);
-    const innerCircleY = dimensions.centerY;
-    const y = innerCircleY - (gameCardHeight + dimensions.radius) * Math.sin(rad);
-    // Rotation aligns card's bottom with circle's tangent
-    const rotation = th - 90;
     const isActive = index === activeIndex;
-    const zIndex = isActive ? 10 : 1; // Active card on top
+    // Position items horizontally, centered in container
+    const xOffset = (containerWidth - gameCardWidth) / 2;
+    const x = xOffset + (index - activeIndex) * containerWidth;
+    
     return {
-      x: x - gameCardWidth / 2,
-      y: y,
-      rotateZ: rotation,
-      zIndex,
-      opacity: 1,
-      scale: 1,
+      x,
+      opacity: isActive ? 1 : 0, // Only show active item
+      scale: isActive ? 1 : 0.8,
+      zIndex: isActive ? 10 : 1,
     };
   };
 
   const goToGame = (index: number) => {
-    const newIndex = index % games.length;
-    console.log('newIndex', newIndex)
-    setActiveIndex(newIndex);
+    if (index < 0 || index >= games.length) return;
+    setActiveIndex(index);
     controls.start((i) => getItemStyles(i));
   };
 
+  // Use a more straightforward sizing and positioning approach
+  useEffect(() => {
+    controls.start((i) => getItemStyles(i));
+  }, [containerWidth]);
+
   return (
-    <div className="w-full h-full">
-      {/* Carousel container with overflow-hidden */}
-      <div
-        ref={carouselRef}
-        className="relative w-full h-[480px] overflow-hidden"
-        aria-live="polite"
-      >
-        {games.map((game, index) => (
-          <motion.div
-            key={game.id}
-            custom={index}
-            initial={getItemStyles(index)}
-            animate={controls}
-            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-            className="absolute top-0 left-0"
-            style={{
-              width: `${gameCardWidth}px`,
-              height: `${gameCardHeight}px`,
-              transformOrigin: '50% 100%', // Rotate around bottom center
-              borderRadius: '12px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-              background: 'var(--background)',
-              border: '1px solid var(--border)',
-              overflow: 'hidden',
-            }}
-          >
-            <div className="w-full h-full overflow-auto p-4">
-              <div className="transform-origin-top">
-                {game.component}
+    <div className="w-full h-full relative flex justify-center">
+      {/* Constrained width container for the carousel */}
+      <div className="relative max-w-[400px] w-full h-[480px] flex items-center justify-center">
+        {/* Carousel container */}
+        <div
+          ref={carouselRef}
+          className="relative w-full h-full overflow-hidden flex items-center justify-center"
+          aria-live="polite"
+        >
+          {games.map((game, index) => (
+            <motion.div
+              key={game.id}
+              custom={index}
+              initial={{ opacity: 0 }}
+              animate={{
+                x: (index - activeIndex) * containerWidth,
+                opacity: index === activeIndex ? 1 : 0,
+                scale: index === activeIndex ? 1 : 0.8,
+                zIndex: index === activeIndex ? 10 : 1
+              }}
+              transition={{ 
+                type: 'spring', 
+                stiffness: 300, 
+                damping: 30,
+                restDelta: 0.001 
+              }}
+              className="absolute"
+              style={{
+                width: `${gameCardWidth}px`,
+                height: `${gameCardHeight}px`,
+                borderRadius: '12px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+                background: 'var(--background)',
+                border: '1px solid var(--border)',
+                overflow: 'hidden',
+                visibility: Math.abs(index - activeIndex) <= 1 ? 'visible' : 'hidden',
+              }}
+            >
+              <div className="w-full h-full overflow-auto p-4">
+                <h3 className="text-xl font-bold mb-4">{game.title}</h3>
+                <div>{game.component}</div>
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-      {/* Navigation buttons */}
-      <div className="flex justify-center gap-4 mt-4">
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Left arrow button - now closer to the content */}
         <button
           onClick={() => goToGame(activeIndex - 1)}
           disabled={activeIndex === 0}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+          className="absolute left-[-20px] top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 shadow-md flex items-center justify-center disabled:opacity-30 z-20 hover:bg-white transition-colors"
+          aria-label="Previous game"
         >
-          Previous
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
         </button>
+
+        {/* Right arrow button - now closer to the content */}
         <button
           onClick={() => goToGame(activeIndex + 1)}
           disabled={activeIndex === games.length - 1}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+          className="absolute right-[-20px] top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 shadow-md flex items-center justify-center disabled:opacity-30 z-20 hover:bg-white transition-colors"
+          aria-label="Next game"
         >
-          Next
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
         </button>
+
+        {/* Progress indicators */}
+        <div className="absolute bottom-[-30px] left-0 right-0 flex justify-center gap-2">
+          {games.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToGame(index)}
+              className={`w-2 h-2 rounded-full transition-colors ${index === activeIndex ? 'bg-blue-500' : 'bg-gray-300'}`}
+              aria-label={`Go to game ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

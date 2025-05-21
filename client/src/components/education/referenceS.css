@@ -19,18 +19,19 @@
     font-family: sans-serif;
 }
 
-/* Book - adjusted to 7:4 aspect ratio */
+/* Enhanced Book Styling */
 .book {
     position: relative;
     width: 280px;
-    height: 160px;
+    height: 400px;
     transition: transform 0.5s;
     perspective: 1500px;
-    margin-bottom: 50px; /* Add space for navigation buttons */
     transform-style: preserve-3d;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 50px; /* Add space for navigation buttons */
 }
 
-/* Style adjustments for BookBinding */
+/* Paper styling */
 .paper {
     position: absolute;
     width: 100%;
@@ -39,6 +40,7 @@
     left: 0;
     perspective: 1500px;
     transform-style: preserve-3d;
+    border-radius: 5px;
 }
 
 .front,
@@ -51,18 +53,21 @@
     left: 0;
     transform-origin: left;
     transition: transform 0.5s;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .front {
     z-index: 1;
     backface-visibility: hidden;
-    border-left: none; /* Remove border as BookBinding will handle this */
 }
 
 .back {
     z-index: 0;
+    backface-visibility: visible;
 }
 
+/* Enhanced content containers */
 .front-content,
 .back-content {
     width: 100%;
@@ -71,7 +76,6 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: 0;
     border-radius: 5px;
 }
 
@@ -84,8 +88,10 @@
 .back-content > div {
     width: 100%;
     height: 100%;
-    overflow: auto;
-    scrollbar-width: thin;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -101,10 +107,14 @@
     border-radius: 10px;
 }
 
-/* Paper flip effect */
+/* Paper flip effect with enhanced timing */
 .flipped .front,
 .flipped .back {
     transform: rotateY(-180deg);
+}
+
+.flipped .back {
+    z-index: 1;
 }
 
 /* Controller Buttons - Enhanced styling */
@@ -227,7 +237,7 @@
 @media (max-width: 768px) {
     .book {
         width: 245px;
-        height: 140px; /* Maintaining 7:4 ratio */
+        height: 140px;
     }
     
     i {
@@ -263,7 +273,7 @@
 @media (max-width: 480px) {
     .book {
         width: 210px;
-        height: 120px; /* Maintaining 7:4 ratio */
+        height: 120px;
     }
     
     i {
@@ -278,5 +288,17 @@
     
     .book-container i {
         font-size: 20px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .book {
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .front,
+    .back {
+        background-color: #1e293b;
     }
 }

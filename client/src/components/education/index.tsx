@@ -1,214 +1,266 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAnimation } from 'framer-motion';
-import { useSelector, useDispatch } from 'react-redux';
-import { setActiveEducation } from '@/store/features/educationSlice';
-import education from '@/data/education.json';
-import BookPage from './BookPage';
-import NavigationButtons from '../education2/NavigationButtons';
-import BookBinding from '../education2/BookBinding';
-import PageContent from '../education2/PageContent';
-import { getAnimationLevel } from '@/lib/types';
+import './referenceS.css';
+import NavigationButtons from './NavigationButtons';
+import PageContent from './PageContent';
+import educationData from '@/data/education.json';
 
-const EducationCard: React.FC = () => {
-  const dispatch = useDispatch();
-  const activeEducation = useSelector((state: any) => state.education.activeEducation);
-  const animationLevel = useSelector((state: any) => state.mode.animationLevel);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [dragStartX, setDragStartX] = useState(0);
+const Education2: React.FC = () => {
+  // State to track current page location
+  const [currentLocation, setCurrentLocation] = useState(1);
+  const numOfPapers = 3;
+  const maxLocation = numOfPapers + 1;
+  
+  // Add state for animation and content
   const [textWritten, setTextWritten] = useState(false);
-  const bookRef = useRef<HTMLDivElement>(null);
   const pencilAnimation = useAnimation();
-  const textAnimation = useAnimation();
-  const [dragProgress, setDragProgress] = useState(0);
-  const totalPages = education.length + 1;
+  
+  // Use education data from JSON file
+  const [education] = useState(educationData);
+  
+  // Refs for DOM elements
+  const bookRef = useRef<HTMLDivElement>(null);
+  const prevBtnRef = useRef<HTMLButtonElement>(null);
+  const nextBtnRef = useRef<HTMLButtonElement>(null);
+  const paper1Ref = useRef<HTMLDivElement>(null);
+  const paper2Ref = useRef<HTMLDivElement>(null);
+  const paper3Ref = useRef<HTMLDivElement>(null);
 
-  const animateWriting = async () => {
-    if (currentPage === 0 || currentPage === totalPages - 1) {
-      setTextWritten(true);
-      return;
-    }
-    setTextWritten(false);
-    const contentHeight = 300; // Estimated content height
-    await pencilAnimation.start({
-      x: [0, 300, 0, 300, 0],
-      y: [0, 50, 100, 150, 200],
-      transition: { duration: getAnimationLevel(animationLevel, { min: 0.5, max: 2 }) }
-    });
-    setTextWritten(true);
-  };
-
+  // Load Font Awesome
   useEffect(() => {
-    if (activeEducation !== currentPage - 1 && currentPage > 0 && currentPage < totalPages - 1) {
-      dispatch(setActiveEducation(currentPage - 1));
-    }
-    animateWriting();
-  }, [currentPage]);
-
-  const handleDragStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    if ('touches' in e) {
-      setDragStartX(e.touches[0].clientX);
-    } else {
-      setDragStartX(e.clientX);
-    }
-  };
-
-  const handleDragMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const diff = clientX - dragStartX;
-    const w = bookRef.current?.clientWidth || 800;
-    const distanceFromCenter = Math.abs(w/2 - dragStartX);
-    const maxDiff = 2 * distanceFromCenter;
-    const normalizedDiff = Math.max(Math.min(Math.abs(diff), maxDiff), -maxDiff) * Math.sign(diff);
-    const threshold = 100;
-    const progressPercentage = Math.min(Math.abs(normalizedDiff) / threshold, 1);
-    setDragProgress(normalizedDiff > 0 ? progressPercentage : -progressPercentage);
-    if (Math.abs(normalizedDiff) > threshold) {
-      if (normalizedDiff > 0 && currentPage > 0) {
-        handlePageFlip(currentPage - 1);
-      } else if (normalizedDiff < 0 && currentPage < totalPages - 1) {
-        handlePageFlip(currentPage + 1);
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://kit.fontawesome.com/b0f29e9bfe.css';
+    document.head.appendChild(link);
+    
+    const script = document.createElement('script');
+    script.src = 'https://kit.fontawesome.com/b0f29e9bfe.js';
+    script.crossOrigin = 'anonymous';
+    document.head.appendChild(script);
+    
+    return () => {
+      document.head.removeChild(script);
+      if (link.parentNode) {
+        document.head.removeChild(link);
       }
-      setDragProgress(0);
+    };
+  }, []);
+
+  // Start the writing animation when page is flipped
+  useEffect(() => {
+    if (currentLocation > 1) {
+      setTextWritten(false);
+      const animateWriting = async () => {
+        await pencilAnimation.start({
+          x: [0, 150, 0, 150, 0],
+          y: [0, 20, 40, 60, 80],
+          transition: { duration: 2 }
+        });
+        setTextWritten(true);
+      };
+      animateWriting();
+    }
+  }, [currentLocation, pencilAnimation]);
+
+  // Book functions
+  const openBook = () => {
+    if (bookRef.current && prevBtnRef.current && nextBtnRef.current) {
+      bookRef.current.style.transform = "translateX(50%)";
+      prevBtnRef.current.style.transform = "translateX(-180px)";
+      nextBtnRef.current.style.transform = "translateX(180px)";
     }
   };
 
-  const handleDragEnd = () => {
-    setDragProgress(0);
+  const closeBook = (isAtBeginning: boolean) => {
+    if (bookRef.current && prevBtnRef.current && nextBtnRef.current) {
+      if(isAtBeginning) {
+        bookRef.current.style.transform = "translateX(0%)";
+      } else {
+        bookRef.current.style.transform = "translateX(100%)";
+      }
+      
+      prevBtnRef.current.style.transform = "translateX(0px)";
+      nextBtnRef.current.style.transform = "translateX(0px)";
+    }
   };
 
+  // Page turning functions
+  const goNextPage = () => {
+    if(currentLocation < maxLocation) {
+      switch(currentLocation) {
+        case 1:
+          openBook();
+          paper1Ref.current?.classList.add("flipped");
+          if (paper1Ref.current) paper1Ref.current.style.zIndex = "1";
+          break;
+        case 2:
+          paper2Ref.current?.classList.add("flipped");
+          if (paper2Ref.current) paper2Ref.current.style.zIndex = "2";
+          break;
+        case 3:
+          paper3Ref.current?.classList.add("flipped");
+          if (paper3Ref.current) paper3Ref.current.style.zIndex = "3";
+          closeBook(false);
+          break;
+        default:
+          throw new Error("unknown state");
+      }
+      setCurrentLocation(currentLocation + 1);
+    }
+  };
+
+  const goPrevPage = () => {
+    if(currentLocation > 1) {
+      switch(currentLocation) {
+        case 2:
+          closeBook(true);
+          paper1Ref.current?.classList.remove("flipped");
+          if (paper1Ref.current) paper1Ref.current.style.zIndex = "3";
+          break;
+        case 3:
+          paper2Ref.current?.classList.remove("flipped");
+          if (paper2Ref.current) paper2Ref.current.style.zIndex = "2";
+          break;
+        case 4:
+          openBook();
+          paper3Ref.current?.classList.remove("flipped");
+          if (paper3Ref.current) paper3Ref.current.style.zIndex = "1";
+          break;
+        default:
+          throw new Error("unknown state");
+      }
+
+      setCurrentLocation(currentLocation - 1);
+    }
+  };
+
+  // Handle page navigation for the NavigationButtons component
   const handlePageClick = (direction: 'prev' | 'next') => {
-    let newPage = currentPage;
-    if (direction === 'prev' && currentPage > 0) {
-      newPage = currentPage - 1;
-    } else if (direction === 'next' && currentPage < totalPages - 1) {
-      newPage = currentPage + 1;
-    }
-    if (newPage !== currentPage) {
-      handlePageFlip(newPage);
+    if (direction === 'next') {
+      goNextPage();
+    } else {
+      goPrevPage();
     }
   };
 
-  const handlePageFlip = (newPage: number) => {
-    if (newPage !== currentPage) {
-      const direction = newPage > currentPage ? -1 : 1; // -1 for forward, 1 for backward
-      // Use requestAnimationFrame for smoother animation
-      let startTime: number | null = null;
-      const duration = 300; // Animation duration in ms
-      
-      const animateFrame = (timestamp: number) => {
-        if (!startTime) startTime = timestamp;
-        const elapsed = timestamp - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        // Calculate the normalized progress value between 0 and 1
-        // For forward: 0 to -1, for backward: 0 to 1
-        const normalizedProgress = (1 - progress) * direction;
-        setDragProgress(normalizedProgress);
-        
-        if (progress < 1) {
-          requestAnimationFrame(animateFrame);
-        } else {
-          setDragProgress(0);
-          setCurrentPage(newPage);
-        }
-      };
-      
-      requestAnimationFrame(animateFrame);
-    }
-  };
-
-  const getDragStyle = (index: number) => {    
-    // Current page being dragged to the left (going forward)
-    if (index === currentPage && dragProgress < 0) {
-      // Convert dragProgress (0 to -1) to rotation (0 to -180)
-      const rotationAmount = dragProgress * -180; 
-      return {
-        animate: {
-          rotateY: rotationAmount
-        },
-        transition: { duration: 0 }
-      };
-    }    
-    // Previous page being dragged to the right (going backward)
-    if (index === currentPage - 1 && dragProgress > 0) {
-      // Convert dragProgress (0 to 1) to rotation (-180 to 0)
-      const rotationAmount = -180 + (dragProgress * 180);
-      return {
-        animate: {
-          rotateY: rotationAmount
-        },
-        transition: { duration: 0 }
-      };
-    }    
-    return {};
-  };
+  // Convert currentLocation to zero-based page index for NavigationButtons
+  const currentPage = currentLocation - 1;
+  const totalPages = numOfPapers + 1;
 
   return (
-    <div className="flex items-center justify-center w-full py-12">
-      <div
-        ref={bookRef}
-        className="relative w-[800px] h-[500px] mx-auto"
-        // onMouseDown={handleDragStart}
-        // onMouseMove={handleDragMove}
-        // onMouseUp={handleDragEnd}
-        // onMouseLeave={handleDragEnd}
-        // onTouchStart={handleDragStart}
-        // onTouchMove={handleDragMove}
-        // onTouchEnd={handleDragEnd}
-      >
-        <div className="relative w-full h-full" style={{ perspective: '1500px' }}>
-          <BookBinding />
-          {Array.from({ length: totalPages }).map((_, i) => {
-            const isVisible = i === currentPage || i === currentPage - 1 || 
-                             (i < currentPage && i >= currentPage - 3) ||
-                             (i > currentPage && i <= currentPage + 3);
-            
-            return isVisible ? (
-              <BookPage
-                key={i}
-                isFlipped={currentPage > i}
-                zIndex={totalPages - Math.abs(currentPage - i)}
-                dragStyle={getDragStyle(i)}
-              >
-                <PageContent
-                  pageIndex={2 * i}
-                  totalPages={2 * totalPages}
-                  textWritten={textWritten}
-                  pencilAnimation={pencilAnimation}
-                  education={education}
-                  isBackSide={i < currentPage}
-                />
-                <PageContent
-                  pageIndex={2 * i + 1}
-                  totalPages={2 * totalPages}
-                  textWritten={textWritten}
-                  pencilAnimation={pencilAnimation}
-                  education={education}
-                  isBackSide={i >= currentPage}
-                />
-              </BookPage>
-            ) : null;
-          })}
-          {/* Click areas for page turning */}
-          <div
-            className="absolute top-0 left-0 w-1/4 h-full cursor-pointer z-20"
-            onClick={() => handlePageClick('prev')}
-            aria-label="Previous page"
-          />
-          <div
-            className="absolute top-0 right-0 w-1/4 h-full cursor-pointer z-20"
-            onClick={() => handlePageClick('next')}
-            aria-label="Next page"
-          />
+    <div className="book-container">
+      {/* Book */}
+      <div id="book" className="book" ref={bookRef}>
+        {/* Paper 1 */}
+        <div id="p1" className="paper" ref={paper1Ref}>
+          <div className="front">
+            <div id="f1" className="front-content">
+              <PageContent 
+                pageIndex={0}
+                totalPages={totalPages}
+                textWritten={textWritten}
+                pencilAnimation={pencilAnimation}
+                education={education}
+              />
+            </div>
+          </div>
+          <div className="back">
+            <div id="b1" className="back-content">
+              <PageContent 
+                pageIndex={1}
+                totalPages={totalPages}
+                textWritten={textWritten}
+                pencilAnimation={pencilAnimation}
+                education={education}
+                isBackSide={true}
+              />
+            </div>
+          </div>
         </div>
-        <NavigationButtons
-          currentPage={currentPage}
-          totalPages={totalPages}
-          handlePageClick={handlePageClick}
-        />
+        
+        {/* Paper 2 */}
+        <div id="p2" className="paper" ref={paper2Ref}>
+          <div className="front">
+            <div id="f2" className="front-content">
+              <PageContent 
+                pageIndex={2}
+                totalPages={totalPages}
+                textWritten={textWritten}
+                pencilAnimation={pencilAnimation}
+                education={education}
+              />
+            </div>
+          </div>
+          <div className="back">
+            <div id="b2" className="back-content">
+              <PageContent 
+                pageIndex={3}
+                totalPages={totalPages}
+                textWritten={textWritten}
+                pencilAnimation={pencilAnimation}
+                education={education}
+                isBackSide={true}
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Paper 3 */}
+        <div id="p3" className="paper" ref={paper3Ref}>
+          <div className="front">
+            <div id="f3" className="front-content">
+              <PageContent 
+                pageIndex={4}
+                totalPages={totalPages}
+                textWritten={textWritten}
+                pencilAnimation={pencilAnimation}
+                education={education}
+              />
+            </div>
+          </div>
+          <div className="back">
+            <div id="b3" className="back-content">
+              <PageContent 
+                pageIndex={5}
+                totalPages={totalPages}
+                textWritten={textWritten}
+                pencilAnimation={pencilAnimation}
+                education={education}
+                isBackSide={true}
+              />
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Navigation Buttons */}
+      <NavigationButtons 
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageClick={handlePageClick}
+      />
+
+      {/* Hidden buttons for keyboard accessibility */}
+      <button 
+        id="prev-btn" 
+        ref={prevBtnRef} 
+        onClick={goPrevPage}
+        className="sr-only"
+        aria-label="Previous page"
+      >
+        Previous
+      </button>
+      <button 
+        id="next-btn" 
+        ref={nextBtnRef} 
+        onClick={goNextPage}
+        className="sr-only"
+        aria-label="Next page"
+      >
+        Next
+      </button>
     </div>
   );
 };
 
-export default EducationCard;
+export default Education2;
