@@ -1,48 +1,48 @@
 import React, { useState } from 'react';
+import contact from '../../data/contact.json';
+import { Github, Linkedin, Mail, Globe } from 'lucide-react';
 
 type SocialLink = {
   id: string;
   name: string;
   url: string;
-  icon: string;
+  icon: React.ReactNode;
   color: string;
+  darkColor: string;
 };
 
 const DEFAULT_SOCIALS: SocialLink[] = [
   {
     id: 'github',
     name: 'GitHub',
-    url: 'https://github.com/yourusername',
-    icon: '🐙',
-    color: '#24292e'
+    url: contact.github,
+    icon: <Github size={18} />,
+    color: '#24292e',
+    darkColor: '#ffffff'
   },
   {
     id: 'linkedin',
     name: 'LinkedIn',
-    url: 'https://linkedin.com/in/yourusername',
-    icon: '💼',
-    color: '#0077b5'
-  },
-  {
-    id: 'twitter',
-    name: 'Twitter',
-    url: 'https://twitter.com/yourusername',
-    icon: '🐦',
-    color: '#1DA1F2'
+    url: contact.linkedin,
+    icon: <Linkedin size={18} />,
+    color: '#0077b5',
+    darkColor: '#0a66c2'
   },
   {
     id: 'email',
     name: 'Email',
-    url: 'mailto:your@email.com',
-    icon: '✉️',
-    color: '#D44638'
+    url: contact.email,
+    icon: <Mail size={18} />,
+    color: '#D44638',
+    darkColor: '#ea4335'
   },
   {
-    id: 'portfolio',
-    name: 'Portfolio',
-    url: 'https://yourportfolio.com',
-    icon: '🌐',
-    color: '#9C27B0'
+    id: 'website',
+    name: 'Website',
+    url: contact.website,
+    icon: <Globe size={18} />,
+    color: '#9C27B0',
+    darkColor: '#b388ff'
   }
 ];
 
@@ -65,7 +65,8 @@ const Board: React.FC<BoardProps> = ({ socials = DEFAULT_SOCIALS }) => {
             target="_blank"
             rel="noopener noreferrer"
             className={`
-              flex items-center p-3 rounded border-l-4 text-white no-underline
+              flex items-center p-3 rounded border-l-4 
+              text-gray-800 dark:text-white no-underline
               transition-all duration-200 shadow-md overflow-hidden
               whitespace-nowrap text-ellipsis cursor-pointer
               w-full max-w-[220px]
@@ -79,14 +80,22 @@ const Board: React.FC<BoardProps> = ({ socials = DEFAULT_SOCIALS }) => {
               ${isHovered ? 'sm:min-w-[180px] sm:max-w-[180px] sm:justify-start' : ''}
             `}
             style={{
-              backgroundColor: isHovered ? `${social.color}30` : `${social.color}15`,
-              borderColor: social.color
-            }}
+              backgroundColor: isHovered 
+                ? `var(--color-${social.id}-hover)`
+                : `var(--color-${social.id}-bg)`,
+              borderColor: `var(--color-${social.id}-border)`,
+              ['--color-' + social.id + '-hover' as any]: `${social.color}30`,
+              ['--color-' + social.id + '-bg' as any]: `${social.color}15`,
+              ['--color-' + social.id + '-border' as any]: social.color,
+              ['--dark-color-' + social.id + '-hover' as any]: `${social.darkColor}30`,
+              ['--dark-color-' + social.id + '-bg' as any]: `${social.darkColor}15`,
+              ['--dark-color-' + social.id + '-border' as any]: social.darkColor,
+            } as React.CSSProperties}
             onMouseEnter={() => setHoveredCard(social.id)}
             onMouseLeave={() => setHoveredCard(null)}
             aria-label={`${social.name} link`}
           >
-            <div className="text-xl mr-2.5 min-w-[20px] flex justify-center">
+            <div className="text-xl mr-2.5 min-w-[20px] flex justify-center text-gray-700 dark:text-gray-200">
               {social.icon}
             </div>
             <span className='text-sm font-medium'>

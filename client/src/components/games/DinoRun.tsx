@@ -9,7 +9,7 @@ export const DinoRun = () => {
   const [score, setScore] = useState<number>(0);
   const [highScore, setHighScore] = useState<number>(0);
   const [gameSpeed, setGameSpeed] = useState<number>(5);
-  const [obstacles, setObstacles] = useState<{ id: number; position: number }[]>([]);
+  const [obstacles, setObstacles] = useState<{ id: number; position: number; height: number }[]>([]);
   const [gameOver, setGameOver] = useState<boolean>(false);
 
   // References for animation frames and game loop
@@ -17,12 +17,14 @@ export const DinoRun = () => {
   const lastObstacleTimeRef = useRef<number>(0);
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const dinoRef = useRef<HTMLDivElement>(null);
-  const obstacleIntervalRef = useRef<number>(1500); // Milliseconds between obstacles
+  const obstacleIntervalRef = useRef<number>(2000); // Milliseconds between obstacles
+  const keyHeldRef = useRef<boolean>(false); // Add a reference to track if a key is being held down
 
   // Jump mechanics
   const jump = useCallback(() => {
-    if (!isJumping && isGameRunning && !gameOver) {
+    if (!isJumping && isGameRunning && !gameOver && !keyHeldRef.current) {
       setIsJumping(true);
+      keyHeldRef.current = true;
       
       // Reset jumping state after animation completes
       setTimeout(() => {
@@ -41,9 +43,15 @@ export const DinoRun = () => {
           setGameOver(false);
           setObstacles([]);
           setScore(0);
-        } else {
+        } else if (!keyHeldRef.current) {
           jump();
         }
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.key === 'ArrowUp') {
+        keyHeldRef.current = false;
       }
     };
 
@@ -54,17 +62,23 @@ export const DinoRun = () => {
           setGameOver(false);
           setObstacles([]);
           setScore(0);
-        } else {
+        } else if (!keyHeldRef.current) {
           jump();
+          // For touch, we'll reset the key held state after the jump animation
+          setTimeout(() => {
+            keyHeldRef.current = false;
+          }, 500);
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
     document.addEventListener('touchstart', handleTouch);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
       document.removeEventListener('touchstart', handleTouch);
     };
   }, [isGameRunning, gameOver, jump]);
@@ -106,23 +120,32 @@ export const DinoRun = () => {
       return newScore;
     });
 
-    // Increase game speed over time
-    if (score > 0 && score % 500 === 0) {
-      setGameSpeed(prevSpeed => Math.min(prevSpeed + 0.5, 15));
-      obstacleIntervalRef.current = Math.max(obstacleIntervalRef.current - 100, 800);
+    // Increase game speed over time - more gradual increase
+    if (score > 0 && score % 1000 === 0) {
+      setGameSpeed(prevSpeed => Math.min(prevSpeed + 0.25, 12));
+      obstacleIntervalRef.current = Math.max(obstacleIntervalRef.current - 50, 1200);
     }
 
-    // Generate new obstacles
+    // Generate new obstacles - ensure proper spacing
     if (timestamp - lastObstacleTimeRef.current > obstacleIntervalRef.current) {
-      lastObstacleTimeRef.current = timestamp;
-      setObstacles(prev => [...prev, { id: Date.now(), position: 100 }]);
+      // Only add a new obstacle if the rightmost obstacle has moved far enough
+      const lastObstacle = obstacles[obstacles.length - 1];
+      const canAddObstacle = !lastObstacle || lastObstacle.position < 70;
+      
+      if (canAddObstacle) {
+        lastObstacleTimeRef.current = timestamp;
+        // Random height between 25-40 (short enough to jump over)
+        const height = Math.floor(Math.random() * 16) + 25;
+        // Start exactly at the right edge (0% from right)
+        setObstacles(prev => [...prev, { id: Date.now(), position: 0, height }]);
+      }
     }
 
-    // Move obstacles
+    // Move obstacles from right to left
     setObstacles(prev => 
       prev
-        .map(obstacle => ({ ...obstacle, position: obstacle.position - gameSpeed / 10 }))
-        .filter(obstacle => obstacle.position > -10) // Remove obstacles that have moved off-screen
+        .map(obstacle => ({ ...obstacle, position: obstacle.position + gameSpeed / 5 }))
+        .filter(obstacle => obstacle.position < 110) // Remove obstacles that have moved past the left edge
     );
 
     // Check for collisions
@@ -133,7 +156,7 @@ export const DinoRun = () => {
     }
 
     requestRef.current = requestAnimationFrame(gameLoop);
-  }, [isGameRunning, score, highScore, gameSpeed, checkCollision]);
+  }, [isGameRunning, score, highScore, gameSpeed, obstacles, checkCollision]);
 
   // Start/stop game loop
   useEffect(() => {
@@ -155,7 +178,7 @@ export const DinoRun = () => {
     setObstacles([]);
     setScore(0);
     setGameSpeed(5);
-    obstacleIntervalRef.current = 1500;
+    obstacleIntervalRef.current = 2000;
   };
 
   return (
@@ -180,35 +203,36 @@ export const DinoRun = () => {
           }
         }}
       >
-        {/* Dino character */}
+        {/* Character - simple block */}
         <motion.div
           ref={dinoRef}
-          className="absolute bottom-0 left-10 w-12 h-12 bg-black dark:bg-white"
+          className="absolute bottom-0 left-10 w-6 h-6 bg-black dark:bg-white"
           animate={{
-            bottom: isJumping ? '100px' : '0px'
+            bottom: isJumping ? '70px' : '0px'
           }}
           transition={{
-            type: 'spring',
-            stiffness: 500,
-            damping: 15
+            type: 'tween',
+            duration: 0.25,
+            ease: "linear"
           }}
-          style={{ borderRadius: '4px' }}
+          style={{ borderRadius: '2px' }}
           role="img"
-          aria-label="Dinosaur character"
+          aria-label="Character"
         />
 
-        {/* Obstacles */}
+        {/* Obstacles - thin towers */}
         {obstacles.map(obstacle => (
           <div
             id={`obstacle-${obstacle.id}`}
             key={obstacle.id}
-            className="absolute bottom-0 w-6 h-16 bg-green-600"
+            className="absolute bottom-0 w-3 bg-gray-700 dark:bg-gray-300"
             style={{ 
               right: `${obstacle.position}%`,
-              borderRadius: '2px'
+              height: `${obstacle.height}px`,
+              borderRadius: '1px'
             }}
             role="img"
-            aria-label="Cactus obstacle"
+            aria-label="Obstacle"
           />
         ))}
 
@@ -230,7 +254,7 @@ export const DinoRun = () => {
         {!isGameRunning && !gameOver && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center p-4 rounded shadow-lg">
-              <h2 className="text-2xl font-bold mb-4">Dino Run</h2>
+              <h2 className="text-2xl font-bold mb-4">Chrome Dino Run</h2>
               <p className="mb-4">Press Space, Up Arrow, or Tap to Start/Jump</p>
               <Button onClick={() => setIsGameRunning(true)}>Start Game</Button>
             </div>

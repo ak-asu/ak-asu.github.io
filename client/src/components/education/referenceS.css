@@ -113,10 +113,6 @@
     transform: rotateY(-180deg);
 }
 
-.flipped .back {
-    z-index: 1;
-}
-
 /* Controller Buttons - Enhanced styling */
 .book-container #prev-btn,
 .book-container #next-btn {
@@ -172,15 +168,15 @@
 }
 
 /* Paper stack order */
-#p1 {
+#p0 {
     z-index: 3;
 }
 
-#p2 {
+#p1 {
     z-index: 2;
 }
 
-#p3 {
+#p2 {
     z-index: 1;
 }
 

@@ -7,48 +7,20 @@ import educationData from '@/data/education.json';
 
 const Education2: React.FC = () => {
   // State to track current page location
-  const [currentLocation, setCurrentLocation] = useState(1);
-  const numOfPapers = 3;
-  const maxLocation = numOfPapers + 1;
-  
+  const [currentLocation, setCurrentLocation] = useState(0);
+  const numOfPapers = educationData.length + 1; // Extra one for the front/back cover page  
   // Add state for animation and content
   const [textWritten, setTextWritten] = useState(false);
   const pencilAnimation = useAnimation();
-  
-  // Use education data from JSON file
-  const [education] = useState(educationData);
-  
   // Refs for DOM elements
   const bookRef = useRef<HTMLDivElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
   const nextBtnRef = useRef<HTMLButtonElement>(null);
-  const paper1Ref = useRef<HTMLDivElement>(null);
-  const paper2Ref = useRef<HTMLDivElement>(null);
-  const paper3Ref = useRef<HTMLDivElement>(null);
-
-  // Load Font Awesome
-  useEffect(() => {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://kit.fontawesome.com/b0f29e9bfe.css';
-    document.head.appendChild(link);
-    
-    const script = document.createElement('script');
-    script.src = 'https://kit.fontawesome.com/b0f29e9bfe.js';
-    script.crossOrigin = 'anonymous';
-    document.head.appendChild(script);
-    
-    return () => {
-      document.head.removeChild(script);
-      if (link.parentNode) {
-        document.head.removeChild(link);
-      }
-    };
-  }, []);
+  const paperRefs = Array.from({ length: numOfPapers }, () => useRef<HTMLDivElement>(null));
 
   // Start the writing animation when page is flipped
   useEffect(() => {
-    if (currentLocation > 1) {
+    if (currentLocation > 0 && currentLocation < numOfPapers) {
       setTextWritten(false);
       const animateWriting = async () => {
         await pencilAnimation.start({
@@ -73,12 +45,11 @@ const Education2: React.FC = () => {
 
   const closeBook = (isAtBeginning: boolean) => {
     if (bookRef.current && prevBtnRef.current && nextBtnRef.current) {
-      if(isAtBeginning) {
+      if (isAtBeginning) {
         bookRef.current.style.transform = "translateX(0%)";
       } else {
         bookRef.current.style.transform = "translateX(100%)";
       }
-      
       prevBtnRef.current.style.transform = "translateX(0px)";
       nextBtnRef.current.style.transform = "translateX(0px)";
     }
@@ -86,50 +57,27 @@ const Education2: React.FC = () => {
 
   // Page turning functions
   const goNextPage = () => {
-    if(currentLocation < maxLocation) {
-      switch(currentLocation) {
-        case 1:
-          openBook();
-          paper1Ref.current?.classList.add("flipped");
-          if (paper1Ref.current) paper1Ref.current.style.zIndex = "1";
-          break;
-        case 2:
-          paper2Ref.current?.classList.add("flipped");
-          if (paper2Ref.current) paper2Ref.current.style.zIndex = "2";
-          break;
-        case 3:
-          paper3Ref.current?.classList.add("flipped");
-          if (paper3Ref.current) paper3Ref.current.style.zIndex = "3";
-          closeBook(false);
-          break;
-        default:
-          throw new Error("unknown state");
+    if (currentLocation < numOfPapers) {
+      if (currentLocation === 0) {
+        openBook();
+      } else if (currentLocation === numOfPapers - 1) {
+        closeBook(false);
       }
+      paperRefs[currentLocation]?.current?.classList.add("flipped");
+      if (paperRefs[currentLocation]?.current) paperRefs[currentLocation].current.style.zIndex = `${currentLocation + 1}`;
       setCurrentLocation(currentLocation + 1);
     }
   };
 
   const goPrevPage = () => {
-    if(currentLocation > 1) {
-      switch(currentLocation) {
-        case 2:
-          closeBook(true);
-          paper1Ref.current?.classList.remove("flipped");
-          if (paper1Ref.current) paper1Ref.current.style.zIndex = "3";
-          break;
-        case 3:
-          paper2Ref.current?.classList.remove("flipped");
-          if (paper2Ref.current) paper2Ref.current.style.zIndex = "2";
-          break;
-        case 4:
-          openBook();
-          paper3Ref.current?.classList.remove("flipped");
-          if (paper3Ref.current) paper3Ref.current.style.zIndex = "1";
-          break;
-        default:
-          throw new Error("unknown state");
+    if (currentLocation > 0) {
+      if (currentLocation === 1) {
+        closeBook(true);
+      } else if (currentLocation === numOfPapers) {
+        openBook();
       }
-
+      paperRefs[currentLocation-1]?.current?.classList.remove("flipped");
+      if (paperRefs[currentLocation-1]?.current) paperRefs[currentLocation-1].current.style.zIndex = `${numOfPapers + 1 - currentLocation}`;
       setCurrentLocation(currentLocation - 1);
     }
   };
@@ -143,116 +91,57 @@ const Education2: React.FC = () => {
     }
   };
 
-  // Convert currentLocation to zero-based page index for NavigationButtons
-  const currentPage = currentLocation - 1;
-  const totalPages = numOfPapers + 1;
-
   return (
     <div className="book-container">
       {/* Book */}
       <div id="book" className="book" ref={bookRef}>
-        {/* Paper 1 */}
-        <div id="p1" className="paper" ref={paper1Ref}>
-          <div className="front">
-            <div id="f1" className="front-content">
-              <PageContent 
-                pageIndex={0}
-                totalPages={totalPages}
-                textWritten={textWritten}
-                pencilAnimation={pencilAnimation}
-                education={education}
-              />
+        {paperRefs.map((ref, index) => (
+          <div key={`p${index}`} id={`p${index}`} className="paper" ref={ref}>
+            <div className="front">
+              <div id={`f${index}`} className="front-content">
+                <PageContent
+                  pageIndex={2 * index}
+                  totalPages={numOfPapers}
+                  textWritten={textWritten}
+                  pencilAnimation={pencilAnimation}
+                  education={educationData}
+                />
+              </div>
+            </div>
+            <div className="back">
+              <div id={`b${index}`} className="back-content">
+                <PageContent
+                  pageIndex={2 * index + 1}
+                  totalPages={numOfPapers}
+                  textWritten={textWritten}
+                  pencilAnimation={pencilAnimation}
+                  education={educationData}
+                  isBackSide={true}
+                />
+              </div>
             </div>
           </div>
-          <div className="back">
-            <div id="b1" className="back-content">
-              <PageContent 
-                pageIndex={1}
-                totalPages={totalPages}
-                textWritten={textWritten}
-                pencilAnimation={pencilAnimation}
-                education={education}
-                isBackSide={true}
-              />
-            </div>
-          </div>
-        </div>
-        
-        {/* Paper 2 */}
-        <div id="p2" className="paper" ref={paper2Ref}>
-          <div className="front">
-            <div id="f2" className="front-content">
-              <PageContent 
-                pageIndex={2}
-                totalPages={totalPages}
-                textWritten={textWritten}
-                pencilAnimation={pencilAnimation}
-                education={education}
-              />
-            </div>
-          </div>
-          <div className="back">
-            <div id="b2" className="back-content">
-              <PageContent 
-                pageIndex={3}
-                totalPages={totalPages}
-                textWritten={textWritten}
-                pencilAnimation={pencilAnimation}
-                education={education}
-                isBackSide={true}
-              />
-            </div>
-          </div>
-        </div>
-        
-        {/* Paper 3 */}
-        <div id="p3" className="paper" ref={paper3Ref}>
-          <div className="front">
-            <div id="f3" className="front-content">
-              <PageContent 
-                pageIndex={4}
-                totalPages={totalPages}
-                textWritten={textWritten}
-                pencilAnimation={pencilAnimation}
-                education={education}
-              />
-            </div>
-          </div>
-          <div className="back">
-            <div id="b3" className="back-content">
-              <PageContent 
-                pageIndex={5}
-                totalPages={totalPages}
-                textWritten={textWritten}
-                pencilAnimation={pencilAnimation}
-                education={education}
-                isBackSide={true}
-              />
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
-
       {/* Navigation Buttons */}
-      <NavigationButtons 
-        currentPage={currentPage}
-        totalPages={totalPages}
+      <NavigationButtons
+        currentPage={currentLocation}
+        totalPages={numOfPapers}
         handlePageClick={handlePageClick}
       />
-
       {/* Hidden buttons for keyboard accessibility */}
-      <button 
-        id="prev-btn" 
-        ref={prevBtnRef} 
+      <button
+        id="prev-btn"
+        ref={prevBtnRef}
         onClick={goPrevPage}
         className="sr-only"
         aria-label="Previous page"
       >
         Previous
       </button>
-      <button 
-        id="next-btn" 
-        ref={nextBtnRef} 
+      <button
+        id="next-btn"
+        ref={nextBtnRef}
         onClick={goNextPage}
         className="sr-only"
         aria-label="Next page"
