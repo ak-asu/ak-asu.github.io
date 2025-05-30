@@ -51,13 +51,12 @@ const WorkDetails: React.FC<WorkDetailsProps> = ({
     // Only call the parent's onMinimize when we're completely hiding the card
     // (which we're no longer doing with this implementation)
   };
-
   return (
     <motion.div
-      className='absolute left-4 top-0 w-full max-w-md rounded-lg shadow-lg z-50 bg-white dark:bg-palette-gray-dark border border-palette-teal/30'
-      initial={{ opacity: 0, y: 0 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 0 }}
+      className='absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-lg shadow-lg z-50 bg-white dark:bg-palette-gray-dark border border-palette-teal/30'
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -20, scale: 0.9 }}
       transition={{
         type: animationLevel === AnimationLevel.High ? 'spring' : 'tween',
         stiffness: 300,

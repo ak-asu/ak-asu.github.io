@@ -19,6 +19,9 @@ export default defineConfig({
     runtimeErrorOverlay(),
     themePlugin(),
   ],
+  optimizeDeps: {
+    exclude: ['lucide-react'],
+  },
   publicDir: path.resolve(__dirname, "client/public"),
   resolve: {
     alias: {
