@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { Minus, Maximize2, Briefcase } from 'lucide-react';
 import { AnimationLevel, getAnimationLevel } from '@/lib/types';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface WorkDetailsProps {
   company: string;
@@ -23,6 +24,7 @@ const WorkDetails: React.FC<WorkDetailsProps> = ({
   onMinimize,
   animationLevel
 }) => {
+  const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState<'description' | 'details'>('description');
   const [isLoading, setIsLoading] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -50,10 +52,9 @@ const WorkDetails: React.FC<WorkDetailsProps> = ({
     onMinimize();
     // Only call the parent's onMinimize when we're completely hiding the card
     // (which we're no longer doing with this implementation)
-  };
-  return (
+  }; return (
     <motion.div
-      className='absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-lg shadow-lg z-50 bg-white dark:bg-palette-gray-dark border border-palette-teal/30'
+      className={`absolute left-1/2 top-1/2 w-full ${isMobile ? 'max-w-sm mx-2' : 'max-w-md'} z-50`}
       initial={{ opacity: 0, y: 20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.9 }}
@@ -63,115 +64,116 @@ const WorkDetails: React.FC<WorkDetailsProps> = ({
         damping: 20
       }}
     >
-      <div className='px-3 py-1 flex justify-between items-center bg-palette-teal text-white'>
-        <h3 className="text-lg font-bold truncate flex items-center gap-2">
-          <Briefcase size={18} />
-          {project.title}
-        </h3>
-        <button
-          onClick={handleToggleMinimize}
-          className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/20"
-          aria-label={isMinimized ? "Maximize details" : "Minimize details"}
-        >
-          {isMinimized ? <Maximize2 size={16} /> : <Minus size={16} />}
-        </button>
-      </div>      
-      <AnimatePresence>
-        {!isMinimized && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
+      <div className='transform -translate-x-1/2 -translate-y-1/2'>
+        <div className='px-3 py-1 flex justify-between items-center bg-palette-teal text-white'>
+          <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold truncate flex items-center gap-2`}>
+            <Briefcase size={isMobile ? 16 : 18} />
+            {project.title}
+          </h3>
+          <button
+            onClick={handleToggleMinimize}
+            className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'} rounded-full flex items-center justify-center hover:bg-white/20`}
+            aria-label={isMinimized ? "Maximize details" : "Minimize details"}
           >
-            <div className='mx-3 px-2 py-1 text-xs inline-block rounded bg-palette-teal-light dark:bg-palette-teal/70 text-white'>
-              {company}
-            </div>
-            <div className="flex border-b border-slate-200 dark:border-slate-700 px-2 pt-1">
-              <button
-                className={`px-3 py-1 text-sm font-medium rounded-t-md ${activeTab === 'description'
-                  ? 'bg-palette-teal/10 text-palette-teal dark:text-palette-teal-light border-b-2 border-palette-teal'
-                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
-                  }`}
-                onClick={() => handleTabSwitch('description')}
-              >
-                Description
-              </button>
-              <button
-                className={`px-3 py-1 text-sm font-medium rounded-t-md ${activeTab === 'details'
-                  ? 'bg-palette-teal/10 text-palette-teal dark:text-palette-teal-light border-b-2 border-palette-teal'
-                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
-                  }`}
-                onClick={() => handleTabSwitch('details')}
-              >
-                Details
-              </button>
-            </div>
-            <div className="p-2 max-h-[128px] overflow-auto">
-              {isLoading && (
-                <div className="flex justify-center items-center h-[128px]">
-                  <div className='w-8 h-8 rounded-full border-t-2 border-b-2 animate-spin border-palette-teal' />
-                </div>
-              )}
-              {!isLoading && (
-                <AnimatePresence mode="wait">
-                  {activeTab === 'description' ? (
-                    <motion.div
-                      key="description"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className='text-sm text-slate-700 dark:text-slate-200'
-                    >
-                      <p>{project.description}</p>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="details"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="space-y-3"
-                    >
-                      <div>
-                        <div className='text-xs font-medium text-slate-500 dark:text-slate-400'>
-                          Position
+            {isMinimized ? <Maximize2 size={isMobile ? 14 : 16} /> : <Minus size={isMobile ? 14 : 16} />}
+          </button>
+        </div>
+        <AnimatePresence>
+          {!isMinimized && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className={`mx-3 px-2 py-1 ${isMobile ? 'text-xs' : 'text-xs'} inline-block rounded bg-palette-teal-light dark:bg-palette-teal/70 text-white`}>
+                {company}
+              </div>
+              <div className="flex border-b border-slate-200 dark:border-slate-700 px-2 pt-1">
+                <button
+                  className={`px-3 py-1 ${isMobile ? 'text-xs' : 'text-sm'} font-medium rounded-t-md ${activeTab === 'description'
+                    ? 'bg-palette-teal/10 text-palette-teal dark:text-palette-teal-light border-b-2 border-palette-teal'
+                    : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
+                    }`}
+                  onClick={() => handleTabSwitch('description')}
+                >
+                  Description
+                </button>
+                <button
+                  className={`px-3 py-1 ${isMobile ? 'text-xs' : 'text-sm'} font-medium rounded-t-md ${activeTab === 'details'
+                    ? 'bg-palette-teal/10 text-palette-teal dark:text-palette-teal-light border-b-2 border-palette-teal'
+                    : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
+                    }`}
+                  onClick={() => handleTabSwitch('details')}
+                >
+                  Details
+                </button>
+              </div>
+              <div className={`p-2 ${isMobile ? 'max-h-[100px]' : 'max-h-[128px]'} overflow-auto`}>
+                {isLoading && (
+                  <div className={`flex justify-center items-center ${isMobile ? 'h-[100px]' : 'h-[128px]'}`}>
+                    <div className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} rounded-full border-t-2 border-b-2 animate-spin border-palette-teal`} />
+                  </div>
+                )}
+                {!isLoading && (
+                  <AnimatePresence mode="wait">
+                    {activeTab === 'description' ? (
+                      <motion.div
+                        key="description"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className={`${isMobile ? 'text-xs' : 'text-sm'} text-slate-700 dark:text-slate-200`}
+                      >
+                        <p>{project.description}</p>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="details"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className={`${isMobile ? 'space-y-2' : 'space-y-3'}`}
+                      >                      <div>
+                          <div className={`${isMobile ? 'text-xs' : 'text-xs'} font-medium text-slate-500 dark:text-slate-400`}>
+                            Position
+                          </div>
+                          <div className={`${isMobile ? 'text-xs' : 'text-slate-700'} text-slate-700 dark:text-slate-200`}>
+                            {project.title}
+                          </div>
                         </div>
-                        <div className='text-slate-700 dark:text-slate-200'>
-                          {project.title}
+                        <div>
+                          <div className={`${isMobile ? 'text-xs' : 'text-xs'} font-medium text-slate-500 dark:text-slate-400`}>
+                            Duration
+                          </div>
+                          <div className={`${isMobile ? 'text-xs' : 'text-slate-700'} text-slate-700 dark:text-slate-200`}>
+                            {formatDate(project.startDate)} - {formatDate(project.endDate)}
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <div className='text-xs font-medium text-slate-500 dark:text-slate-400'>
-                          Duration
-                        </div>
-                        <div className='text-slate-700 dark:text-slate-200'>
-                          {formatDate(project.startDate)} - {formatDate(project.endDate)}
-                        </div>
-                      </div>
-                      <div>
-                        <div className='text-xs font-medium text-slate-500 dark:text-slate-400'>
-                          Type
-                        </div>
-                        <div
-                          className={`inline-block px-2 py-1 text-xs rounded-full
+                        <div>
+                          <div className={`${isMobile ? 'text-xs' : 'text-xs'} font-medium text-slate-500 dark:text-slate-400`}>
+                            Type
+                          </div>
+                          <div
+                            className={`inline-block px-2 py-1 ${isMobile ? 'text-xs' : 'text-xs'} rounded-full
                             ${project.type === 'professional'
-                              ? 'bg-palette-teal-light/20 text-palette-teal dark:bg-palette-teal/30 dark:text-palette-teal-light'
-                              : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
-                            }`}
-                        >
-                          {project.type.charAt(0).toUpperCase() + project.type.slice(1)}
+                                ? 'bg-palette-teal-light/20 text-palette-teal dark:bg-palette-teal/30 dark:text-palette-teal-light'
+                                : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
+                              }`}
+                          >
+                            {project.type.charAt(0).toUpperCase() + project.type.slice(1)}
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { audioManager } from '@/lib/audio';
 import { useSelector, useDispatch } from 'react-redux';
 import { setScrollSection } from '@/store/features/navigationSlice';
@@ -99,13 +99,11 @@ export const NonTechnical = () => {
         className="py-16 min-h-screen flex flex-col justify-center snap-start"
         aria-label={title}
       >
-        {title.length > 0 && <motion.h2
-          initial={{ x: -50, opacity: 0 }}
-          animate={isInView ? { x: 0, opacity: 1 } : { x: -50, opacity: 0 }}
+        {title.length > 0 && <h2
           className="text-4xl font-bold mb-12 text-center"
         >
           {title}
-        </motion.h2>}
+        </h2>}
         <div className="flex-grow">
           {children}
         </div>
@@ -156,22 +154,20 @@ export const NonTechnical = () => {
   }
 
   return (
-    <AnimatePresence>
-      <div className="min-h-screen">
-        <div className="container mx-auto px-4">
-          {sections.map((section, index) => (
-            <Section
-              key={index}
-              id={section.id}
-              title={section.label}
-            >
-              <div className="max-w-6xl mx-auto">
-                {React.createElement(section.component)}
-              </div>
-            </Section>
-          ))}
-        </div>
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4">
+        {sections.map((section, index) => (
+          <Section
+            key={index}
+            id={section.id}
+            title={section.label}
+          >
+            <div className="max-w-6xl mx-auto">
+              {React.createElement(section.component)}
+            </div>
+          </Section>
+        ))}
       </div>
-    </AnimatePresence>
+    </div>
   );
 };

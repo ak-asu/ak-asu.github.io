@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { Building2, Calendar, MapPin } from 'lucide-react';
 import { AnimationLevel, getAnimationLevel } from '@/lib/types';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface WorkEntry {
   position: string;
@@ -31,6 +32,8 @@ const TimelineCircle: React.FC<TimelineCircleProps> = ({
   onClick,
   animationLevel
 }) => {
+  const isMobile = useIsMobile();
+  
   const formatDate = (dateString: string) => {
     try {
       return format(new Date(dateString), 'MMM yyyy');
@@ -48,16 +51,13 @@ const TimelineCircle: React.FC<TimelineCircleProps> = ({
       default:
         return 'bg-slate-500 text-white';
     }
-  };
-  return (
+  };  return (
     <motion.div
-      className="absolute left-3/4"
-      style={{ top: `${index * 140 + 50}px` }}
-      initial={{ opacity: 0, scale: 0.8 }}
+      className={isMobile ? "relative flex-shrink-0" : "absolute left-3/4"}
+      style={isMobile ? { left: `${index * 120 + 60}px` } : { top: `${index * 140 + 50}px` }}
+      initial={{ scale: 0.8 }}
       animate={{
-        opacity: 1,
         scale: isActive ? 1.2 : 1,
-        x: isActive ? '10%' : '0%'
       }}
       transition={{
         type: animationLevel === AnimationLevel.High ? 'spring' : 'tween',
@@ -68,14 +68,15 @@ const TimelineCircle: React.FC<TimelineCircleProps> = ({
       onClick={onClick}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
-    >{/* Main Circle */}
+    >    
+      {/* Main Circle */}
       <div className={`
-        relative w-20 h-20 rounded-full shadow-lg transition-all duration-300 transform -translate-x-1/2
+        relative ${isMobile ? 'w-16 h-16' : 'w-20 h-20'} rounded-full shadow-lg transition-all duration-300 ${isMobile ? '' : 'transform -translate-x-1/2'}
         ${isActive
-          ? `${getTypeColor(work.type)} ring-4 ring-palette-teal/30 ring-offset-2`
+          ? `${getTypeColor(work.type)} ring-4 ring-palette-teal ring-offset-2`
           : isSelected
-            ? `${getTypeColor(work.type)} ring-2 ring-palette-teal/50`
-            : `${getTypeColor(work.type)} opacity-80 hover:opacity-100`
+            ? `${getTypeColor(work.type)} ring-2 ring-palette-teal`
+            : `${getTypeColor(work.type)}`
         }
       `}>
         {/* Icon */}
@@ -106,38 +107,37 @@ const TimelineCircle: React.FC<TimelineCircleProps> = ({
             }}
           />
         )}
-      </div>
-      {/* Info Card */}
+      </div>     
+       {/* Info Card */}
       <motion.div
         className={`
-          relative h-24 w-40 right-56 -top-20 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3
+          relative ${isMobile ? 'h-20 w-32 left-1/2 top-20 -translate-x-1/2' : 'h-24 w-40 right-56 -top-20'} bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3
           border border-palette-teal/20 dark:border-palette-teal/10
           ${isActive ? 'opacity-100 translate-x-0' : 'opacity-70 translate-x-2'}
         `}
-        initial={{ opacity: 0, x: 10 }}
+        initial={{ opacity: 0, x: isMobile ? 0 : 10 }}
         animate={{
           opacity: isActive ? 100 : 70,
-          x: isActive ? 0 : 8,
+          x: isActive ? 0 : (isMobile ? 0 : 8),
+          y: isActive && isMobile ? -5 : 0,
           scale: isActive ? 1.05 : 1
         }}
         transition={{ delay: 0.1 }}
-      >
-        {/* Position */}
-        <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 mb-1">
+      >        {/* Position */}
+        <h3 className={`font-bold ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 dark:text-gray-100 mb-1`}>
           {work.position}
         </h3>
         {/* Company */}
-        <div className="flex items-center text-xs text-gray-600 dark:text-gray-300 mb-1">
-          <Building2 size={12} className="mr-1 text-palette-teal" />
+        <div className={`flex items-center ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-600 dark:text-gray-300 mb-1`}>
+          <Building2 size={isMobile ? 10 : 12} className="mr-1 text-palette-teal" />
           <span className="truncate">{work.company}</span>
         </div>
         {/* Location */}
-        <div className="flex items-center text-xs text-gray-600 dark:text-gray-300 mb-1">
-          <MapPin size={12} className="mr-1 text-palette-teal" />
+        <div className={`flex items-center ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-600 dark:text-gray-300 mb-1`}>
+          <MapPin size={isMobile ? 10 : 12} className="mr-1 text-palette-teal" />
           <span className="truncate">{work.location}</span>
-        </div>
-        {/* Arrow pointing to circle */}
-        <div className="absolute right-[-6px] top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-l-[6px] border-transparent border-l-white dark:border-l-gray-800" />
+        </div>{/* Arrow pointing to circle */}
+        <div className={`absolute ${isMobile ? 'top-[-6px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-b-[6px] border-transparent border-b-white dark:border-b-gray-800' : 'right-[-6px] top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-l-[6px] border-transparent border-l-white dark:border-l-gray-800'}`} />
       </motion.div>
     </motion.div>
   );
