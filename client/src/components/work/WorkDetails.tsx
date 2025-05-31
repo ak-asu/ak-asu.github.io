@@ -126,9 +126,9 @@ const WorkDetails: React.FC<WorkDetailsProps> = ({
                         exit={{ opacity: 0, y: -10 }}
                         className={`${isMobile ? 'text-xs' : 'text-sm'} text-slate-700 dark:text-slate-200`}
                       >
-                        <ul>
+                        <ul className="text-sm space-y-1">
                           {project.description.map((desc, index) => (
-                            <li key={index}>{desc}</li>
+                            <li key={`work-detail-${index}`}>{desc}</li>
                           ))}
                         </ul>
                       </motion.div>
