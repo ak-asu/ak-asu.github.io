@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import contact from '@/data/contact.json';
-import { Github, Linkedin, Mail, Globe } from 'lucide-react';
+import { Github, Linkedin, Mail, Globe, TabletSmartphoneIcon } from 'lucide-react';
 
 type SocialLink = {
   id: string;
@@ -51,6 +51,14 @@ const DEFAULT_SOCIALS: SocialLink[] = [
     icon: <Globe size={18} />,
     color: '#FF6F00',
     darkColor: '#ff9800'
+  },
+  {
+    id: 'mobile',
+    name: 'Mobile',
+    url: contact.additional[0],
+    icon: <TabletSmartphoneIcon size={18} />,
+    color: '#1DA1F2',
+    darkColor: '#00acee'
   }
 ];
 
