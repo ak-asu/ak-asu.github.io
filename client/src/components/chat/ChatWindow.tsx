@@ -1,21 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { useSelector } from 'react-redux';
-import type { RootState } from '@/store/store';
-import { audioManager } from '@/lib/audio';
-import { getSimulatedResponse, Message } from './utils';
-import ChatHeader from './ChatHeader';
-import ChatMessage from './ChatMessage';
-import ChatInput from './ChatInput';
-import ChatToggleButton from './ChatToggleButton';
-import TypingIndicator from './TypingIndicator';
+import React, { useState, useRef, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { audioManager } from "@/lib/audio";
+import { getSimulatedResponse, Message } from "./utils";
+import ChatHeader from "./ChatHeader";
+import ChatMessage from "./ChatMessage";
+import ChatInput from "./ChatInput";
+import ChatToggleButton from "./ChatToggleButton";
+import TypingIndicator from "./TypingIndicator";
 
 const initialMessages: Message[] = [
   {
-    id: '1',
-    content: "Hello! I'm Aakash's portfolio assistant. Ask me about his skills, projects, or experience! Currently I am in experimental mode with no AI integration.",
-    sender: 'bot',
+    id: "1",
+    content:
+      "Hello! I'm Aakash's portfolio assistant. Ask me about his skills, projects, or experience! Currently I am in experimental mode with no AI integration.",
+    sender: "bot",
     timestamp: new Date(),
   },
 ];
@@ -23,7 +24,7 @@ const initialMessages: Message[] = [
 export const ChatWindow: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -33,7 +34,7 @@ export const ChatWindow: React.FC = () => {
 
   // Scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   // Focus input when opening chat
@@ -47,7 +48,7 @@ export const ChatWindow: React.FC = () => {
 
   const toggleChat = () => {
     if (soundEnabled) {
-      audioManager.playSoundEffect('click');
+      audioManager.playSoundEffect("click");
     }
     if (!isOpen) {
       setIsOpen(true);
@@ -60,7 +61,7 @@ export const ChatWindow: React.FC = () => {
   const minimizeChat = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (soundEnabled) {
-      audioManager.playSoundEffect('click');
+      audioManager.playSoundEffect("click");
     }
     setIsMinimized(!isMinimized);
   };
@@ -72,39 +73,39 @@ export const ChatWindow: React.FC = () => {
   const handleSendMessageViaAPI = async () => {
     if (!inputValue.trim()) return;
     if (soundEnabled) {
-      audioManager.playSoundEffect('message');
+      audioManager.playSoundEffect("message");
     }
     const newUserMessage: Message = {
       id: generateUniqueId(),
       content: inputValue.trim(),
-      sender: 'user',
+      sender: "user",
       timestamp: new Date(),
     };
-    setMessages(prev => [...prev, newUserMessage]);
-    setInputValue('');
+    setMessages((prev) => [...prev, newUserMessage]);
+    setInputValue("");
     setIsTyping(true);
     try {
-      const response = await fetch('your-api-endpoint', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: inputValue.trim() })
+      const response = await fetch("your-api-endpoint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: inputValue.trim() }),
       });
       const data = await response.json();
       const botResponse: Message = {
         id: generateUniqueId(),
         content: data.response,
-        sender: 'bot',
+        sender: "bot",
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, botResponse]);
+      setMessages((prev) => [...prev, botResponse]);
     } catch (error) {
       const errorMessage: Message = {
         id: generateUniqueId(),
         content: "Sorry, I couldn't process your request right now.",
-        sender: 'bot',
+        sender: "bot",
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsTyping(false);
     }
@@ -113,28 +114,31 @@ export const ChatWindow: React.FC = () => {
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
     if (soundEnabled) {
-      audioManager.playSoundEffect('message');
+      audioManager.playSoundEffect("message");
     }
     const newUserMessage: Message = {
       id: generateUniqueId(),
       content: inputValue.trim(),
-      sender: 'user',
+      sender: "user",
       timestamp: new Date(),
     };
-    setMessages(prev => [...prev, newUserMessage]);
-    setInputValue('');
+    setMessages((prev) => [...prev, newUserMessage]);
+    setInputValue("");
     setIsTyping(true);
     // Simulate bot typing
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: generateUniqueId(),
-        content: getSimulatedResponse(inputValue),
-        sender: 'bot',
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, botResponse]);
-      setIsTyping(false);
-    }, 1000 + Math.random() * 1000);
+    setTimeout(
+      () => {
+        const botResponse: Message = {
+          id: generateUniqueId(),
+          content: getSimulatedResponse(inputValue),
+          sender: "bot",
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, botResponse]);
+        setIsTyping(false);
+      },
+      1000 + Math.random() * 1000,
+    );
   };
 
   return (
@@ -148,10 +152,11 @@ export const ChatWindow: React.FC = () => {
             transition={{ duration: 0.2 }}
             className={cn(
               "bg-background border rounded-lg shadow-lg overflow-hidden flex flex-col",
-              isMinimized ? "w-72 h-12" : "w-80 sm:w-96 h-96"
+              isMinimized ? "w-72 h-12" : "w-80 sm:w-96 h-96",
             )}
             style={{
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15), 0 0 15px rgba(115, 211, 231, 0.15)'
+              boxShadow:
+                "0 4px 20px rgba(0, 0, 0, 0.15), 0 0 15px rgba(115, 211, 231, 0.15)",
             }}
           >
             <ChatHeader
@@ -166,14 +171,11 @@ export const ChatWindow: React.FC = () => {
                   ref={chatContainerRef}
                   className={cn(
                     "flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin",
-                    "bg-card scrollbar-thumb-palette-gray-light/40 scrollbar-track-transparent"
+                    "bg-card scrollbar-thumb-palette-gray-light/40 scrollbar-track-transparent",
                   )}
                 >
                   {messages.map((message) => (
-                    <ChatMessage
-                      key={message.id}
-                      message={message}
-                    />
+                    <ChatMessage key={message.id} message={message} />
                   ))}
                   {isTyping && <TypingIndicator />}
                   <div ref={messagesEndRef} />
@@ -189,11 +191,7 @@ export const ChatWindow: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      {!isOpen && (
-        <ChatToggleButton
-          toggleChat={toggleChat}
-        />
-      )}
+      {!isOpen && <ChatToggleButton toggleChat={toggleChat} />}
     </div>
   );
 };

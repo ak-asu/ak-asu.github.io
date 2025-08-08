@@ -1,44 +1,44 @@
 [
-    {
-        "degree": "Master of Science",
-        "field": "Computer Science",
-        "institution": "Arizona State University",
-        "image": "/images/education/asu.jpg",
-        "subjects": [
-            {
-                "name": "CSE 507: Image Processing and Analysis",
-                "grade": "A+"
-            },
-            {
-                "name": "CSE 535: Mobile Computing",
-                "grade": "A+"
-            },
-            {
-                "name": "CSE 330: Operating Systems",
-                "grade": "A+"
-            }
-        ],
-        "gpa": 4.33,
-        "startDate": 2024,
-        "endDate": 2026
-    },
-    {
-        "degree": "Bachelor in Technology",
-        "field": "Engineering Physics",
-        "institution": "Indian Institute of Technology, Roorkee",
-        "image": "/images/education/iitr.jpg",
-        "subjects": [
-            {
-                "name": "Database Management Systems",
-                "grade": "A+"
-            },
-            {
-                "name": "Machine Learning",
-                "grade": "A"
-            }
-        ],
-        "gpa": 3.12,
-        "startDate": 2017,
-        "endDate": 2021
-    }
+  {
+    "degree": "Master of Science",
+    "field": "Computer Science",
+    "institution": "Arizona State University",
+    "image": "/images/education/asu.jpg",
+    "subjects": [
+      {
+        "name": "CSE 507: Image Processing and Analysis",
+        "grade": "A+"
+      },
+      {
+        "name": "CSE 535: Mobile Computing",
+        "grade": "A+"
+      },
+      {
+        "name": "CSE 330: Operating Systems",
+        "grade": "A+"
+      }
+    ],
+    "gpa": 4.33,
+    "startDate": 2024,
+    "endDate": 2026
+  },
+  {
+    "degree": "Bachelor in Technology",
+    "field": "Engineering Physics",
+    "institution": "Indian Institute of Technology, Roorkee",
+    "image": "/images/education/iitr.jpg",
+    "subjects": [
+      {
+        "name": "Database Management Systems",
+        "grade": "A+"
+      },
+      {
+        "name": "Machine Learning",
+        "grade": "A"
+      }
+    ],
+    "gpa": 3.12,
+    "startDate": 2017,
+    "endDate": 2021
+  }
 ]

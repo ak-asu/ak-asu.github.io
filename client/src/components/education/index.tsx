@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useAnimation } from 'framer-motion';
-import './referenceS.css';
-import NavigationButtons from './NavigationButtons';
-import PageContent from './PageContent';
-import educationData from '@/data/education.json';
+import React, { useState, useRef, useEffect } from "react";
+import { useAnimation } from "framer-motion";
+import "./referenceS.css";
+import NavigationButtons from "./NavigationButtons";
+import PageContent from "./PageContent";
+import educationData from "@/data/education.json";
 
 const Education2: React.FC = () => {
   // State to track current page location
   const [currentLocation, setCurrentLocation] = useState(0);
-  const numOfPapers = educationData.length + 1; // Extra one for the front/back cover page  
+  const numOfPapers = educationData.length + 1; // Extra one for the front/back cover page
   // Add state for animation and content
   const [textWritten, setTextWritten] = useState(false);
   const pencilAnimation = useAnimation();
@@ -16,7 +16,9 @@ const Education2: React.FC = () => {
   const bookRef = useRef<HTMLDivElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
   const nextBtnRef = useRef<HTMLButtonElement>(null);
-  const paperRefs = Array.from({ length: numOfPapers }, () => useRef<HTMLDivElement>(null));
+  const paperRefs = Array.from({ length: numOfPapers }, () =>
+    useRef<HTMLDivElement>(null),
+  );
 
   // Start the writing animation when page is flipped
   useEffect(() => {
@@ -26,7 +28,7 @@ const Education2: React.FC = () => {
         await pencilAnimation.start({
           x: [0, 150, 0, 150, 0],
           y: [0, 20, 40, 60, 80],
-          transition: { duration: 2 }
+          transition: { duration: 2 },
         });
         setTextWritten(true);
       };
@@ -64,7 +66,9 @@ const Education2: React.FC = () => {
         closeBook(false);
       }
       paperRefs[currentLocation]?.current?.classList.add("flipped");
-      if (paperRefs[currentLocation]?.current) paperRefs[currentLocation].current.style.zIndex = `${currentLocation + 1}`;
+      if (paperRefs[currentLocation]?.current)
+        paperRefs[currentLocation].current.style.zIndex =
+          `${currentLocation + 1}`;
       setCurrentLocation(currentLocation + 1);
     }
   };
@@ -76,15 +80,17 @@ const Education2: React.FC = () => {
       } else if (currentLocation === numOfPapers) {
         openBook();
       }
-      paperRefs[currentLocation-1]?.current?.classList.remove("flipped");
-      if (paperRefs[currentLocation-1]?.current) paperRefs[currentLocation-1].current.style.zIndex = `${numOfPapers + 1 - currentLocation}`;
+      paperRefs[currentLocation - 1]?.current?.classList.remove("flipped");
+      if (paperRefs[currentLocation - 1]?.current)
+        paperRefs[currentLocation - 1].current.style.zIndex =
+          `${numOfPapers + 1 - currentLocation}`;
       setCurrentLocation(currentLocation - 1);
     }
   };
 
   // Handle page navigation for the NavigationButtons component
-  const handlePageClick = (direction: 'prev' | 'next') => {
-    if (direction === 'next') {
+  const handlePageClick = (direction: "prev" | "next") => {
+    if (direction === "next") {
       goNextPage();
     } else {
       goPrevPage();

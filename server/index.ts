@@ -14,7 +14,7 @@ const __dirname = dirname(__filename);
 
 // Get environment variables with defaults
 const PORT = process.env.PORT || 5000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 // Check if this script was called with a build argument
 const shouldBuild = process.argv.includes("--build");
@@ -41,14 +41,17 @@ function buildProductionAssets() {
       process.exit(1);
       return;
     }
-    
+
     console.log(stdout);
-    
+
     if (stderr) {
       console.error(stderr);
     }
-    
-    log("Build complete! You can now deploy the content of the server/public directory.", "build");
+
+    log(
+      "Build complete! You can now deploy the content of the server/public directory.",
+      "build",
+    );
     process.exit(0);
   });
 }
@@ -60,17 +63,20 @@ function startServer() {
   app.use(express.json());
 
   // Set environment explicitly
-  app.set('env', NODE_ENV);
+  app.set("env", NODE_ENV);
 
   (async () => {
     // Create basic HTTP server
-    const server = app.listen({
-      port: PORT,
-      host: "0.0.0.0",
-      reusePort: true,
-    }, () => {
-      log(`serving on port ${PORT} in ${NODE_ENV} mode`);
-    });
+    const server = app.listen(
+      {
+        port: PORT,
+        host: "0.0.0.0",
+        reusePort: true,
+      },
+      () => {
+        log(`serving on port ${PORT} in ${NODE_ENV} mode`);
+      },
+    );
 
     // Only setup vite in development or serve static files in production
     if (app.get("env") === "development") {

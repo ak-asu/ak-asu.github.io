@@ -1,21 +1,21 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface NavigationState {
   scrollSection: string;
 }
 
 const initialState: NavigationState = {
-  scrollSection: 'intro'
+  scrollSection: "intro",
 };
 
 export const navigationSlice = createSlice({
-  name: 'navigation',
+  name: "navigation",
   initialState,
   reducers: {
     setScrollSection: (state, action: PayloadAction<string>) => {
       state.scrollSection = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const { setScrollSection } = navigationSlice.actions;

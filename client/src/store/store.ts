@@ -1,8 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
-import modeReducer from './features/modeSlice';
-import navigationReducer from './features/navigationSlice';
-import workReducer from './features/workSlice';
-import educationReducer from './features/educationSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import modeReducer from "./features/modeSlice";
+import navigationReducer from "./features/navigationSlice";
+import workReducer from "./features/workSlice";
+import educationReducer from "./features/educationSlice";
 
 export const store = configureStore({
   reducer: {

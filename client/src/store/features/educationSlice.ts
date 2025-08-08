@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface EducationState {
   activeEducation: number;
@@ -9,7 +9,7 @@ const initialState: EducationState = {
 };
 
 export const educationSlice = createSlice({
-  name: 'education',
+  name: "education",
   initialState,
   reducers: {
     setActiveEducation: (state, action: PayloadAction<number>) => {

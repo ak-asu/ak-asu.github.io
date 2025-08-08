@@ -1,17 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion, useAnimation, useMotionValue } from 'framer-motion';
-import { useSelector } from 'react-redux';
-import type { RootState } from '@/store/store';
-import skillsData from '@/data/skills.json';
-import { Slider } from '@/components/ui/slider';
-import { Pause, Play } from 'lucide-react';
-import MatrixRain from './MatrixRain';
-import SkillIcon from './SkillIcon';
-import { Skill } from './utils';
-import { getAnimationLevel, ThemeMode } from '@/lib/types';
+import React, { useEffect, useRef, useState } from "react";
+import { motion, useAnimation, useMotionValue } from "framer-motion";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import skillsData from "@/data/skills.json";
+import { Slider } from "@/components/ui/slider";
+import { Pause, Play } from "lucide-react";
+import MatrixRain from "./MatrixRain";
+import SkillIcon from "./SkillIcon";
+import { Skill } from "./utils";
+import { getAnimationLevel, ThemeMode } from "@/lib/types";
 
 const Skills: React.FC = () => {
-  const animationLevel = useSelector((state: RootState) => state.mode.animationLevel);
+  const animationLevel = useSelector(
+    (state: RootState) => state.mode.animationLevel,
+  );
   const themeMode = useSelector((state: RootState) => state.mode.themeMode);
   const containerRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
@@ -21,14 +23,22 @@ const Skills: React.FC = () => {
   const x = useMotionValue(0);
   const dragging = useRef(false);
   const dragStartX = useRef(0);
-  const [speed, setSpeed] = useState(getAnimationLevel(animationLevel, { min: 30, max: 60 }));
+  const [speed, setSpeed] = useState(
+    getAnimationLevel(animationLevel, { min: 30, max: 60 }),
+  );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const [isOverlayHovered, setIsOverlayHovered] = useState(false);
   const [containerWidth, setContainerWidth] = useState(0);
   const [contentWidth, setContentWidth] = useState(0);
   const [needsScrolling, setNeedsScrolling] = useState(false);
-  const categories = Array.from(new Set(Object.values(skillsData).flat().map(skill => skill.category || 'Other')));
+  const categories = Array.from(
+    new Set(
+      Object.values(skillsData)
+        .flat()
+        .map((skill) => skill.category || "Other"),
+    ),
+  );
 
   // Create a separate ref for the content area to handle hover independently
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -39,15 +49,17 @@ const Skills: React.FC = () => {
     if (!selectedCategory) {
       return allSkills;
     }
-    return allSkills.filter(skill => {
-      const skillCategory = skill.category || 'Other';
+    return allSkills.filter((skill) => {
+      const skillCategory = skill.category || "Other";
       return skillCategory === selectedCategory;
     });
   }, [selectedCategory]);
 
   // Debug count of filtered skills
   useEffect(() => {
-    console.log(`Filtered skills count: ${filteredSkills.length} for category: ${selectedCategory || 'ALL'}`);
+    console.log(
+      `Filtered skills count: ${filteredSkills.length} for category: ${selectedCategory || "ALL"}`,
+    );
   }, [filteredSkills, selectedCategory]);
 
   // Create a wrapper ref to measure the actual content width
@@ -60,22 +72,25 @@ const Skills: React.FC = () => {
   // Fix measurement logic and improve scrolling detection
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     setContainerWidth(containerRef.current.offsetWidth);
-    
+
     requestAnimationFrame(() => {
       setTimeout(() => {
         if (!contentRef.current || !containerRef.current) return;
-        
+
         currentPositionRef.current = 0;
         x.set(0);
-        
+
         if (contentRef.current.children.length > 0) {
           const singleSetWidth = contentRef.current.children[0].scrollWidth;
           setContentWidth(singleSetWidth);
-          const shouldScroll = singleSetWidth > containerRef.current.offsetWidth;
+          const shouldScroll =
+            singleSetWidth > containerRef.current.offsetWidth;
           setNeedsScrolling(shouldScroll);
-          console.log(`Content width: ${singleSetWidth}, Container width: ${containerRef.current.offsetWidth}, Needs scrolling: ${shouldScroll}`);
+          console.log(
+            `Content width: ${singleSetWidth}, Container width: ${containerRef.current.offsetWidth}, Needs scrolling: ${shouldScroll}`,
+          );
         }
       }, 50);
     });
@@ -92,8 +107,14 @@ const Skills: React.FC = () => {
   // Improved animation effect for continuous scrolling
   useEffect(() => {
     controls.stop();
-    
-    if (!isMounted.current || (isPaused && !isHovered) || containerWidth <= 0 || contentWidth <= 0 || !needsScrolling) {
+
+    if (
+      !isMounted.current ||
+      (isPaused && !isHovered) ||
+      containerWidth <= 0 ||
+      contentWidth <= 0 ||
+      !needsScrolling
+    ) {
       return;
     }
 
@@ -108,75 +129,87 @@ const Skills: React.FC = () => {
     // Calculate pixels per second based on speed setting (higher speed = more pixels per second)
     // Map speed range (30-60) to pixels per second (50-200)
     const pixelsPerSecond = 50 + ((speed - 30) / 30) * 150;
-    
+
     // Calculate duration based on content width and pixels per second
     // This ensures consistent movement speed regardless of content width
     const duration = contentWidth / pixelsPerSecond;
-    
+
     let startPosition = 0;
     let remainingDuration = duration;
-    
+
     if (currentPositionRef.current !== 0) {
       startPosition = currentPositionRef.current;
       // Calculate what fraction of the distance is remaining
       const fractionRemaining = (startPosition + contentWidth) / contentWidth;
       remainingDuration = duration * fractionRemaining;
-      
+
       if (remainingDuration <= 0 || remainingDuration > duration) {
         startPosition = 0;
         remainingDuration = duration;
       }
     }
-    
-    console.log(`Speed: ${pixelsPerSecond.toFixed(1)} px/s, Duration: ${duration.toFixed(1)}s, Content width: ${contentWidth}px`);
-    
+
+    console.log(
+      `Speed: ${pixelsPerSecond.toFixed(1)} px/s, Duration: ${duration.toFixed(1)}s, Content width: ${contentWidth}px`,
+    );
+
     // Rest of animation code remains the same
-    controls.start({
-      x: [startPosition, -contentWidth],
-      transition: {
-        duration: remainingDuration,
-        ease: "linear",
-        onComplete: () => {
-          if (isMounted.current && !isPaused && !isHovered) {
-            controls.start({
-              x: [0, -contentWidth],
-              transition: {
-                duration: duration,
-                ease: "linear",
-                repeat: Infinity,
-                repeatType: "loop",
-              }
-            });
-          }
-        }
-      }
-    }).catch(err => console.error("Animation error:", err));
-    
+    controls
+      .start({
+        x: [startPosition, -contentWidth],
+        transition: {
+          duration: remainingDuration,
+          ease: "linear",
+          onComplete: () => {
+            if (isMounted.current && !isPaused && !isHovered) {
+              controls.start({
+                x: [0, -contentWidth],
+                transition: {
+                  duration: duration,
+                  ease: "linear",
+                  repeat: Infinity,
+                  repeatType: "loop",
+                },
+              });
+            }
+          },
+        },
+      })
+      .catch((err) => console.error("Animation error:", err));
+
     return () => {
       currentPositionRef.current = x.get();
     };
-  }, [isPaused, isHovered, containerWidth, contentWidth, speed, needsScrolling, filteredSkills]);
+  }, [
+    isPaused,
+    isHovered,
+    containerWidth,
+    contentWidth,
+    speed,
+    needsScrolling,
+    filteredSkills,
+  ]);
 
   // Update container width on window resize with debounce
   useEffect(() => {
     let resizeTimeout: NodeJS.Timeout;
-    
+
     const handleResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
         if (containerRef.current && contentRef.current) {
           const containerSize = containerRef.current.offsetWidth;
           setContainerWidth(containerSize);
-          
+
           const singleSetWidth = contentRef.current.children[0].scrollWidth;
           setContentWidth(singleSetWidth);
           setNeedsScrolling(singleSetWidth > containerSize);
         }
       }, 100);
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       clearTimeout(resizeTimeout);
     };
   }, []);
@@ -207,9 +240,9 @@ const Skills: React.FC = () => {
   };
 
   useEffect(() => {
-    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener("mouseup", handleMouseUp);
     return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
   }, []);
 
@@ -242,9 +275,16 @@ const Skills: React.FC = () => {
 
   const primaryColor = themeMode !== ThemeMode.Light ? "#73d3e7" : "#1791a3";
   const bgColor = themeMode !== ThemeMode.Light ? "bg-gray-900" : "bg-gray-50";
-  const darkBgColor = themeMode !== ThemeMode.Light ? "bg-gray-800" : "bg-gray-200";
-  const textColor = themeMode !== ThemeMode.Light ? "text-palette-teal-light" : "text-palette-teal-DEFAULT";
-  const borderColor = themeMode !== ThemeMode.Light ? "border-palette-teal-light" : "border-palette-teal-DEFAULT";
+  const darkBgColor =
+    themeMode !== ThemeMode.Light ? "bg-gray-800" : "bg-gray-200";
+  const textColor =
+    themeMode !== ThemeMode.Light
+      ? "text-palette-teal-light"
+      : "text-palette-teal-DEFAULT";
+  const borderColor =
+    themeMode !== ThemeMode.Light
+      ? "border-palette-teal-light"
+      : "border-palette-teal-DEFAULT";
 
   const getButtonStyle = (currentStyle: string, selectedStyle: string) => {
     return currentStyle === selectedStyle
@@ -271,10 +311,10 @@ const Skills: React.FC = () => {
       <div className="absolute bottom-0 left-0 w-8 h-8 border-b-3 border-l-3 border-current opacity-60 rounded-bl-lg"></div>
       <div className="absolute bottom-0 right-0 w-8 h-8 border-b-3 border-r-3 border-current opacity-60 rounded-br-lg"></div>
       <MatrixRain isDarkMode={themeMode !== ThemeMode.Light} />
-      
+
       {/* Add hover handlers to this div specifically */}
-      <div 
-        className="relative" 
+      <div
+        className="relative"
         ref={scrollAreaRef}
         onMouseEnter={handleContentMouseEnter}
         onMouseLeave={handleContentMouseLeave}
@@ -328,11 +368,11 @@ const Skills: React.FC = () => {
           )}
         </motion.div>
       </div>
-      
+
       {/* Control panel with fixed cursor styles */}
       <div
-        className={`absolute top-3 right-3 ${themeMode !== ThemeMode.Light ? 'bg-gray-800' : 'bg-gray-200'} 
-          ${isOverlayHovered ? 'bg-opacity-60' : 'bg-opacity-20'} 
+        className={`absolute top-3 right-3 ${themeMode !== ThemeMode.Light ? "bg-gray-800" : "bg-gray-200"} 
+          ${isOverlayHovered ? "bg-opacity-60" : "bg-opacity-20"} 
           ${textColor} font-mono p-4 rounded-lg border-2 ${borderColor} 
           shadow-lg shadow-${primaryColor}/20 
           backdrop-blur-sm w-56 z-10 transition-all duration-300
@@ -345,23 +385,31 @@ const Skills: React.FC = () => {
           <div className="absolute -top-3 -right-3 w-4 h-4 border-t-2 border-r-2 border-current rounded-tr-md"></div>
           <div className="flex justify-between items-center">
             <code className="text-xs">
-              {isPaused ? '[ PAUSED ]' : isHovered ? '[ HOVER ]' : '[ RUNNING ]'}
+              {isPaused
+                ? "[ PAUSED ]"
+                : isHovered
+                  ? "[ HOVER ]"
+                  : "[ RUNNING ]"}
             </code>
             <div className="flex space-x-2">
               <button
-                className='w-6 h-6 rounded-full flex items-center justify-center cursor-pointer'
+                className="w-6 h-6 rounded-full flex items-center justify-center cursor-pointer"
                 onClick={() => setIsPaused(!isPaused)}
                 aria-label={isPaused ? "Play animation" : "Pause animation"}
               >
-                {isPaused ?
-                  <Play size={14} className={`${textColor} hover:bg-current`} /> :
-                  <Pause size={14} className={`${textColor} hover:bg-current`} />
-                }
+                {isPaused ? (
+                  <Play size={14} className={`${textColor} hover:bg-current`} />
+                ) : (
+                  <Pause
+                    size={14}
+                    className={`${textColor} hover:bg-current`}
+                  />
+                )}
               </button>
             </div>
           </div>
         </div>
-        
+
         <div className="mb-3">
           <div className="flex justify-between text-xs mb-1">
             <span>SPEED</span>
@@ -373,23 +421,25 @@ const Skills: React.FC = () => {
             max={60}
             step={1}
             onValueChange={(values) => setSpeed(values[0])}
-            className={'[&_[role=slider]]:bg-palette-teal-DEFAULT [&_[role=slider]]:cursor-grab [&_[role=slider]:active]:cursor-grabbing'}
+            className={
+              "[&_[role=slider]]:bg-palette-teal-DEFAULT [&_[role=slider]]:cursor-grab [&_[role=slider]:active]:cursor-grabbing"
+            }
           />
         </div>
-        
+
         <div className="mb-1">
           <div className="text-xs mb-1">FILTER</div>
           <div className="flex flex-wrap gap-1">
             <button
-              className={`text-xs px-2 py-1 rounded-sm cursor-pointer ${getButtonStyle(selectedCategory || 'null', 'null')}`}
+              className={`text-xs px-2 py-1 rounded-sm cursor-pointer ${getButtonStyle(selectedCategory || "null", "null")}`}
               onClick={() => handleCategoryChange(null)}
             >
               ALL
             </button>
-            {categories.map(category => (
+            {categories.map((category) => (
               <button
                 key={category}
-                className={`text-xs px-2 py-1 rounded-sm cursor-pointer ${getButtonStyle(selectedCategory || '', category)}`}
+                className={`text-xs px-2 py-1 rounded-sm cursor-pointer ${getButtonStyle(selectedCategory || "", category)}`}
                 onClick={() => handleCategoryChange(category)}
               >
                 {category.toUpperCase()}

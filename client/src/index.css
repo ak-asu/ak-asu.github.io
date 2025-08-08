@@ -5,30 +5,30 @@
 :root {
   --background: 210 12% 93%; /* #b9c7d2 lighter variant */
   --foreground: 0 0% 18%; /* #474747 */
-  
+
   --card: 210 12% 97%;
   --card-foreground: 0 0% 18%; /* #474747 */
-  
+
   --popover: 210 12% 97%;
   --popover-foreground: 0 0% 18%; /* #474747 */
-  
+
   --primary: 192 82% 45%; /* #1791a3 */
   --primary-foreground: 0 0% 98%;
-  
+
   --secondary: 192 59% 68%; /* #73d3e7 */
   --secondary-foreground: 0 0% 18%; /* #474747 */
-  
-  --muted: 198 15% 49%; /* #6d868d */
-  --muted-foreground: 0 0% 96%;
-  
+
+  --muted: 198 15% 84%; /* Lighter muted background for light mode */
+  --muted-foreground: 0 0% 35%; /* Much darker text for light mode contrast */
+
   --accent: 210 12% 93%; /* #b9c7d2 */
   --accent-foreground: 0 0% 18%; /* #474747 */
-  
+
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-  
-  --border: 198 15% 49%; /* #6d868d variant */
-  --input: 198 15% 49%; /* #6d868d variant */
+
+  --border: 198 15% 75%; /* Lighter border for light mode */
+  --input: 198 15% 85%; /* Lighter input background for light mode */
   --ring: 192 82% 45%; /* #1791a3 */
 
   /* ... existing variables ... */
@@ -37,27 +37,27 @@
 .dark {
   --background: 0 0% 18%; /* #474747 */
   --foreground: 210 12% 93%; /* #b9c7d2 */
-  
+
   --card: 0 0% 22%;
   --card-foreground: 210 12% 93%; /* #b9c7d2 */
-  
+
   --popover: 0 0% 22%;
   --popover-foreground: 210 12% 93%; /* #b9c7d2 */
-  
+
   --primary: 192 59% 68%; /* #73d3e7 */
   --primary-foreground: 0 0% 18%; /* #474747 */
-  
+
   --secondary: 192 82% 45%; /* #1791a3 */
   --secondary-foreground: 0 0% 98%;
-  
-  --muted: 198 15% 49%; /* #6d868d */
-  --muted-foreground: 0 0% 96%;
-  
+
+  --muted: 198 15% 25%; /* Darker muted background for dark mode */
+  --muted-foreground: 0 0% 75%; /* Lighter text for dark mode contrast */
+
   --accent: 198 15% 38%; /* #6d868d darker variant */
   --accent-foreground: 210 12% 93%; /* #b9c7d2 */
-  
-  --border: 198 15% 49%; /* #6d868d */
-  --input: 198 15% 49%; /* #6d868d */
+
+  --border: 198 15% 35%; /* Darker border for dark mode */
+  --input: 198 15% 25%; /* Darker input background for dark mode */
   --ring: 192 59% 68%; /* #73d3e7 */
 
   /* ... existing dark mode variables ... */
@@ -86,11 +86,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-[#6d868d]/40 rounded-full;  /* Using muted color from palette */
+  @apply bg-[#6d868d]/40 rounded-full; /* Using muted color from palette */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-[#1791a3]/50;  /* Using primary color from palette */
+  @apply bg-[#1791a3]/50; /* Using primary color from palette */
 }
 
 /* Smooth scrolling */
@@ -103,12 +103,12 @@ section {
   scroll-snap-align: start;
 }
 
-/* For interactive elements, still hide default cursor */
+/* Custom cursor implementation - uncomment and customize as needed */
+/* 
 a, button, [role="button"], .interactive {
   cursor: none;
 }
 
-/* But show default cursor on touch devices */
 @media (hover: none) {
   body, a, button, [role="button"], .interactive {
     cursor: auto !important;
@@ -118,45 +118,47 @@ a, button, [role="button"], .interactive {
     display: none !important; 
   }
 }
+*/
 
 @keyframes bounce-subtle {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
-    color: #73d3e7;  /* Light teal from palette */
+    color: #73d3e7; /* Light teal from palette */
   }
   50% {
     transform: translateY(-4px);
-    color: #1791a3;  /* Deeper teal from palette */
+    color: #1791a3; /* Deeper teal from palette */
   }
 }
 
 @keyframes glitch {
   0% {
-      text-shadow: none;
+    text-shadow: none;
   }
   20% {
-      text-shadow: 0 0 3px currentColor;
+    text-shadow: 0 0 3px currentColor;
   }
   21% {
-      text-shadow: none;
+    text-shadow: none;
   }
   60% {
-      text-shadow: none;
+    text-shadow: none;
   }
   61% {
-      text-shadow: 0 0 3px currentColor;
+    text-shadow: 0 0 3px currentColor;
   }
   62% {
-      text-shadow: none;
+    text-shadow: none;
   }
   90% {
-      text-shadow: none;
+    text-shadow: none;
   }
   91% {
-      text-shadow: 0 0 3px currentColor;
+    text-shadow: 0 0 3px currentColor;
   }
   92% {
-      text-shadow: none;
+    text-shadow: none;
   }
 }
 
@@ -177,8 +179,8 @@ a, button, [role="button"], .interactive {
     to right,
     transparent,
     transparent 10px,
-    #6d868d 10px,  /* Slate color from palette */
-    #6d868d 20px
+    #6d868d 10px,
+    /* Slate color from palette */ #6d868d 20px
   );
 }
 
@@ -193,19 +195,24 @@ a, button, [role="button"], .interactive {
 
 @keyframes border-spin {
   0% {
-    border-color: rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5);
+    border-color: rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5)
+      rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5);
   }
   25% {
-    border-color: rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5);
+    border-color: rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 1)
+      rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5);
   }
   50% {
-    border-color: rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5);
+    border-color: rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5)
+      rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5);
   }
   75% {
-    border-color: rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 1);
+    border-color: rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5)
+      rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 1);
   }
   100% {
-    border-color: rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5);
+    border-color: rgba(20, 184, 166, 1) rgba(20, 184, 166, 0.5)
+      rgba(20, 184, 166, 0.5) rgba(20, 184, 166, 0.5);
   }
 }
 
@@ -230,9 +237,9 @@ a, button, [role="button"], .interactive {
   width: 200%;
   height: 200%;
   background: conic-gradient(
-    var(--primary), 
+    var(--primary),
     var(--secondary),
-    var(--primary), 
+    var(--primary),
     var(--secondary)
   );
   animation: rotate 1s linear infinite;

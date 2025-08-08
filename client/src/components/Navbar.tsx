@@ -1,63 +1,73 @@
-import { useDispatch, useSelector } from 'react-redux';
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Menu } from 'lucide-react';
-import type { RootState } from '@/store/store';
-import { toggleMode } from '@/store/features/modeSlice';
-import { NavItems } from '@/lib/constants';
-import { Button } from './ui/button';
-import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
-import { SettingsPanel } from './SettingsPanel';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
-import ContactDialog from './ContactDialog';
+import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Menu } from "lucide-react";
+import type { RootState } from "@/store/store";
+import { toggleMode } from "@/store/features/modeSlice";
+import { NavItems } from "@/lib/constants";
+import { Button } from "./ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { SettingsPanel } from "./SettingsPanel";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+import ContactDialog from "./ContactDialog";
 
 export const Navbar = () => {
   const dispatch = useDispatch();
-  const isTechnicalMode = useSelector((state: RootState) => state.mode.isTechnicalMode);
+  const isTechnicalMode = useSelector(
+    (state: RootState) => state.mode.isTechnicalMode,
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
 
   const NavContent = () => (
     <TooltipProvider>
       <>
-        {!isTechnicalMode && NavItems.map((item) => (
-          <motion.div key={item.label} className="relative">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-2 px-4 py-2"
-                  role="menuitem"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (item.href === "#contact") {
-                      // document.dispatchEvent(new CustomEvent("toggle-contact-dialog", { detail: { open: true } }));
-                      setIsContactDialogOpen(true);
-                    } else {
-                      const element = document.querySelector(item.href);
-                      if (element) {
-                        element.scrollIntoView({ behavior: "smooth" });
+        {!isTechnicalMode &&
+          NavItems.map((item) => (
+            <motion.div key={item.label} className="relative">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="flex items-center gap-2 px-4 py-2"
+                    role="menuitem"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (item.href === "#contact") {
+                        // document.dispatchEvent(new CustomEvent("toggle-contact-dialog", { detail: { open: true } }));
+                        setIsContactDialogOpen(true);
+                      } else {
+                        const element = document.querySelector(item.href);
+                        if (element) {
+                          element.scrollIntoView({ behavior: "smooth" });
+                        }
                       }
-                    }
-                  }}
-                >
-                  {item.icon && <item.icon className="w-4 h-4" aria-hidden="true" />}
-                </motion.div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <span>{item.label}</span>
-              </TooltipContent>
-            </Tooltip>
-          </motion.div>
-        ))}
+                    }}
+                  >
+                    {item.icon && (
+                      <item.icon className="w-4 h-4" aria-hidden="true" />
+                    )}
+                  </motion.div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <span>{item.label}</span>
+                </TooltipContent>
+              </Tooltip>
+            </motion.div>
+          ))}
         <Button
           onClick={() => dispatch(toggleMode())}
           variant="outline"
           className="ml-4"
           aria-pressed={isTechnicalMode}
-          aria-label={`Switch to ${isTechnicalMode ? 'Interactive' : 'Technical'} mode`}
+          aria-label={`Switch to ${isTechnicalMode ? "Interactive" : "Technical"} mode`}
         >
-          {isTechnicalMode ? 'Switch to Interactive' : 'Switch to Technical'}
+          {isTechnicalMode ? "Switch to Interactive" : "Switch to Technical"}
         </Button>
         <SettingsPanel />
       </>
@@ -78,7 +88,10 @@ export const Navbar = () => {
               animate={{ opacity: 1 }}
               className="text-xl font-bold"
             >
-              <a href="#" className="focus:outline-none focus:ring-2 focus:ring-primary rounded">
+              <a
+                href="#"
+                className="focus:outline-none focus:ring-2 focus:ring-primary rounded"
+              >
                 Portfolio {`(Experimental)`}
               </a>
             </motion.div>
@@ -115,7 +128,10 @@ export const Navbar = () => {
           </div>
         </div>
       </nav>
-      <ContactDialog isOpen={isContactDialogOpen} onClose={() => setIsContactDialogOpen(false)} />
+      <ContactDialog
+        isOpen={isContactDialogOpen}
+        onClose={() => setIsContactDialogOpen(false)}
+      />
     </>
   );
 };

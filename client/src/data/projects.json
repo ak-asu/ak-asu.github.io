@@ -81,7 +81,14 @@
     "name": "dAIgrammatic",
     "shortDescription": "Agentic AI powered application for creating diagrams",
     "description": "Developed an agentic AI application that allows users to create diagrams by simply describing them in natural language. The app uses advanced natural language processing to interpret user input and generate corresponding visual diagrams.",
-    "technologies": ["Python", "Flask", "React", "Typescript", "Tailwind CSS", "Gemini API"],
+    "technologies": [
+      "Python",
+      "Flask",
+      "React",
+      "Typescript",
+      "Tailwind CSS",
+      "Gemini API"
+    ],
     "duration": "1 month",
     "url": "https://devpost.com/software/daigrammatic?ref_content=my-projects-tab&ref_feature=my_projects",
     "media": "",
@@ -92,7 +99,13 @@
     "name": "BookTrack",
     "shortDescription": "AI-powered book recommendation web app",
     "description": "An AI-powered book recommendation web app that personalizes suggestions based on user-defined prompts. The app delivers a rich discovery experience with enhanced metadata and visual presentation.",
-    "technologies": ["Next.js", "React", "Typescript", "Tailwind CSS", "Perplexity API"],
+    "technologies": [
+      "Next.js",
+      "React",
+      "Typescript",
+      "Tailwind CSS",
+      "Perplexity API"
+    ],
     "duration": "2 months",
     "url": "https://www.linkedin.com/posts/jesus-aguilar-2657a8205_two-highlights-of-this-semester-a-few-weeks-activity-7326813641192751104-aIhQ",
     "media": "",

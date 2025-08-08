@@ -2,7 +2,7 @@
   {
     "position": "Backend Developer",
     "company": "Fractal",
-    "location": "Mumbai, Maharashtra, India",
+    "location": "Mumbai, India",
     "startDate": "2021-07-22",
     "endDate": "2022-03-31",
     "description": [
@@ -11,12 +11,23 @@
       "Worked with distributed file systems using Hadoop and Apache Spark; executed scalable data processing jobs on AWS EMR clusters.",
       "Developed and maintained RESTful APIs using Java, and modified database schemas using Spring Boot and JHipster to support new features."
     ],
+    "technologies": [
+      "Java",
+      "Python",
+      "Spring Boot",
+      "JHipster",
+      "Hadoop",
+      "Apache Spark",
+      "AWS EMR",
+      "RESTful APIs"
+    ],
+    "links": [],
     "type": "professional"
   },
   {
     "position": "Assistant",
     "company": "IIT Roorkee",
-    "location": "Roorkee, Uttarakhand, India",
+    "location": "Roorkee, India",
     "startDate": "2020-06-01",
     "endDate": "2020-06-30",
     "description": [
@@ -25,12 +36,21 @@
       "Focused on improving reconstruction accuracy and computational efficiency through algorithmic optimization.",
       "Conducted a lecture for Ph.D. scholars on algorithms used in numerical analysis."
     ],
+    "technologies": [
+      "Python",
+      "NumPy",
+      "OpenCV",
+      "MART Algorithm",
+      "3D Reconstruction",
+      "CT Scan Processing"
+    ],
+    "links": [],
     "type": "volunteer"
   },
   {
     "position": "Data Engineer",
     "company": "Fractal",
-    "location": "Mumbai, Maharashtra, India",
+    "location": "Mumbai, India",
     "startDate": "2022-04-01",
     "endDate": "2022-09-30",
     "description": [
@@ -38,12 +58,21 @@
       "Developed and configured data ingestion pipelines and established cloud connectivity to read/write data in Azure Blob Storage.",
       "Refactored and productionized Jupyter Notebook codebases by applying best practices, modularization and industry standards for maintainability and scalability."
     ],
+    "technologies": [
+      "Azure DevOps",
+      "Azure Blob Storage",
+      "CI/CD",
+      "Python",
+      "Jupyter Notebooks",
+      "Data Pipelines"
+    ],
+    "links": [],
     "type": "professional"
   },
   {
     "position": "Full-stack Developer",
     "company": "Fractal",
-    "location": "Gurgaon, Haryana, India",
+    "location": "Gurgaon, India",
     "startDate": "2023-03-01",
     "endDate": "2024-07-31",
     "description": [
@@ -54,12 +83,30 @@
       "Applied security patches and managed user access controls and privilege escalations.",
       "Developed and implemented automated scripts for data migration, data ingestion and system integration processes to streamline data workflows."
     ],
+    "technologies": [
+      "Python",
+      "Django",
+      "React",
+      "JavaScript",
+      "Redux",
+      "Node.js",
+      "Express.js",
+      "Celery",
+      "Redis",
+      "RabbitMQ",
+      "MongoDB",
+      "Docker",
+      "Kubernetes",
+      "GKE",
+      "GCR"
+    ],
+    "links": [],
     "type": "professional"
   },
   {
     "position": "Mentor",
     "company": "SoDA ASU",
-    "location": "Tempe, Arizona, USA",
+    "location": "Tempe, USA",
     "startDate": "2025-03-01",
     "endDate": "2025-04-29",
     "description": [
@@ -69,12 +116,35 @@
       "BookTrack - Mentored Jesus Aguilar in building an AI-powered book recommendation web app using Next.js and React. The app personalizes suggestions based on user-defined prompts and delivers a rich discovery experience with enhanced metadata and visual presentation.",
       "Local Image Finder (LIF) - Guided Quy Hoang Nguyen in developing a privacy-first, cross-platform desktop image search application using Python, Flask and Electron.js. The app performs on-device semantic search using natural language or image queries to organize and retrieve local images efficiently."
     ],
+    "technologies": [
+      "Next.js",
+      "React",
+      "Python",
+      "Flask",
+      "Electron.js",
+      "AI/ML",
+      "Semantic Search",
+      "Mentoring",
+      "Project Management"
+    ],
+    "links": [
+      {
+        "title": "BookTrack Project",
+        "url": "https://github.com/jesus-aguilar/booktrack",
+        "type": "github"
+      },
+      {
+        "title": "LIF Project",
+        "url": "https://github.com/quy-nguyen/local-image-finder",
+        "type": "github"
+      }
+    ],
     "type": "volunteer"
   },
   {
     "position": "Team Lead",
     "company": "IIT Roorkee",
-    "location": "Roorkee, Uttarakhand, India",
+    "location": "Roorkee, India",
     "startDate": "2019-01-01",
     "endDate": "2019-03-01",
     "description": [
@@ -82,6 +152,16 @@
       "Engineered a 3D holographic display using an inverted acrylic truncated square prism placed over an LED screen, simulating a floating hologram effect.",
       "Coordinated team efforts across game design, computer vision integration and physical setup to deliver a fully functional and immersive system."
     ],
+    "technologies": [
+      "Unity",
+      "Python",
+      "OpenCV",
+      "Computer Vision",
+      "Game Development",
+      "3D Holographic Display",
+      "Hardware Integration"
+    ],
+    "links": [],
     "type": "volunteer"
   }
 ]

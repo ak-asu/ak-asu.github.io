@@ -1,7 +1,7 @@
-import React from 'react';
-import { MessageSquare, X, Minimize2, ChevronDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { MessageSquare, X, Minimize2, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface ChatHeaderProps {
   isTyping: boolean;
@@ -20,17 +20,12 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     <div
       className={cn(
         "p-3 flex items-center justify-between cursor-pointer",
-        "bg-primary text-primary-foreground"
+        "bg-primary text-primary-foreground",
       )}
       onClick={minimizeChat}
     >
       <div className="flex items-center gap-2">
-        <MessageSquare
-          className={cn(
-            "h-5 w-5",
-            isTyping && "animate-pulse"
-          )}
-        />
+        <MessageSquare className={cn("h-5 w-5", isTyping && "animate-pulse")} />
         <h3 className="font-medium text-sm">
           {isTyping ? "Bot is typing..." : "Portfolio Assistant"}
         </h3>

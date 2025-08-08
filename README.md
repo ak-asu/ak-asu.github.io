@@ -43,6 +43,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser to view the 
 ## Accessibility
 
 The portfolio is designed with accessibility in mind, including:
+
 - Keyboard navigation support
 - Screen reader announcements
 - Proper ARIA attributes

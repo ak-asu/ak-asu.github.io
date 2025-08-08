@@ -1,14 +1,14 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { Message } from './utils';
-import ReactMarkdown from 'react-markdown';
+import React from "react";
+import { cn } from "@/lib/utils";
+import { Message } from "./utils";
+import ReactMarkdown from "react-markdown";
 
 interface ChatMessageProps {
   message: Message;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
-  const isUser = message.sender === 'user';
+  const isUser = message.sender === "user";
 
   // Custom renderer for links to make them open in new tab and have proper styling
   const customLinkRenderer = (props: any) => {
@@ -29,7 +29,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     <div
       className={cn(
         "flex flex-col max-w-[80%] mb-2",
-        isUser ? "ml-auto items-end" : "mr-auto items-start"
+        isUser ? "ml-auto items-end" : "mr-auto items-start",
       )}
     >
       <div
@@ -37,7 +37,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
           "rounded-lg px-3 py-2",
           isUser
             ? "bg-palette-teal text-white"
-            : "bg-palette-gray-light/20 text-foreground border border-palette-gray-light/30"
+            : "bg-palette-gray-light/20 text-foreground border border-palette-gray-light/30",
         )}
       >
         {isUser ? (
@@ -48,18 +48,40 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
               components={{
                 a: customLinkRenderer,
                 p: ({ node, children }) => <p className="mb-2">{children}</p>,
-                ul: ({ node, children }) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
-                ol: ({ node, children }) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
-                li: ({ node, children }) => <li className="mb-1">{children}</li>,
-                strong: ({ node, children }) => <strong className="font-semibold">{children}</strong>,
-                h1: ({ node, children }) => <h1 className="text-xl font-bold mb-2">{children}</h1>,
-                h2: ({ node, children }) => <h2 className="text-lg font-bold mb-2">{children}</h2>,
-                h3: ({ node, children }) => <h3 className="text-base font-bold mb-1">{children}</h3>,
-                pre: ({ node, children }) => <pre className="bg-palette-gray-light/10 p-2 rounded my-2 overflow-x-auto">{children}</pre>,
-                code: ({ node, className, inline, children, ...props }: any) => 
-                  inline 
-                    ? <code className="bg-palette-gray-light/10 px-1 py-0.5 rounded">{children}</code>
-                    : <code className="block">{children}</code>
+                ul: ({ node, children }) => (
+                  <ul className="list-disc pl-4 mb-2">{children}</ul>
+                ),
+                ol: ({ node, children }) => (
+                  <ol className="list-decimal pl-4 mb-2">{children}</ol>
+                ),
+                li: ({ node, children }) => (
+                  <li className="mb-1">{children}</li>
+                ),
+                strong: ({ node, children }) => (
+                  <strong className="font-semibold">{children}</strong>
+                ),
+                h1: ({ node, children }) => (
+                  <h1 className="text-xl font-bold mb-2">{children}</h1>
+                ),
+                h2: ({ node, children }) => (
+                  <h2 className="text-lg font-bold mb-2">{children}</h2>
+                ),
+                h3: ({ node, children }) => (
+                  <h3 className="text-base font-bold mb-1">{children}</h3>
+                ),
+                pre: ({ node, children }) => (
+                  <pre className="bg-palette-gray-light/10 p-2 rounded my-2 overflow-x-auto">
+                    {children}
+                  </pre>
+                ),
+                code: ({ node, className, inline, children, ...props }: any) =>
+                  inline ? (
+                    <code className="bg-palette-gray-light/10 px-1 py-0.5 rounded">
+                      {children}
+                    </code>
+                  ) : (
+                    <code className="block">{children}</code>
+                  ),
               }}
             >
               {message.content}
@@ -68,7 +90,10 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         )}
       </div>
       <span className="text-xs mt-1 opacity-50">
-        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        {message.timestamp.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
       </span>
     </div>
   );

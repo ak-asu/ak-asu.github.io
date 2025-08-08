@@ -1,13 +1,13 @@
-import React from 'react';
-import { Provider, useSelector } from 'react-redux';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { store } from './store/store';
-import { queryClient } from './lib/queryClient';
-import { Navbar } from './components/Navbar';
-import { Home } from './pages/Home';
-import { useEffect } from 'react';
-import type { RootState } from './store/store';
-import { CustomCursor } from './components/CustomCursor';
+import React from "react";
+import { Provider, useSelector } from "react-redux";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { store } from "./store/store";
+import { queryClient } from "./lib/queryClient";
+import { Navbar } from "./components/Navbar";
+import { Home } from "./pages/Home";
+import { useEffect } from "react";
+import type { RootState } from "./store/store";
+import { CustomCursor } from "./components/CustomCursor";
 
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
   const themeMode = useSelector((state: RootState) => state.mode.themeMode);
@@ -15,10 +15,13 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
+    root.classList.remove("light", "dark");
 
-    if (themeMode === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (themeMode === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light";
       root.classList.add(systemTheme);
     } else {
       root.classList.add(themeMode);
@@ -26,10 +29,10 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
   }, [themeMode]);
 
   return (
-  <>
-    {children}
-    {!isMobile && <CustomCursor />}
-  </>
+    <>
+      {children}
+      {!isMobile && <CustomCursor />}
+    </>
   );
 }
 

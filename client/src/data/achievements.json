@@ -1,58 +1,58 @@
 [
-    {
-        "title": "SoDA LLM Workshop Winner",
-        "description": "Winner of the SoDA LLM workshop for creating note summarizer AI web application at ASU.",
-        "date": "2025-02-15",
-        "image": "/images/achievements/soda_llm_workshop.png",
-        "points": 30,
-        "type": "recognition"
-    },
-    {
-        "title": "AI Model Development Credential",
-        "description": "Earned intermediate-level credential for AI Model Development by Voxel 51 at ASU.",
-        "date": "2025-02-01",
-        "image": "/images/achievements/voxel51_credential.png",
-        "points": 20,
-        "type": "certification"
-    },
-    {
-        "title": "Microcontroller Programming Basics",
-        "description": "Earned credential for Microcontroller Programming Basics by ASU Engineering SWAP Hub.",
-        "date": "2024-12-15",
-        "image": "/images/achievements/microcontroller_credential.png",
-        "points": 15,
-        "type": "certification"
-    },
-    {
-        "title": "Assistive Technology Microcontroller Applications",
-        "description": "Completed Assistive Technology Microcontroller Applications course by ASU Engineering SWAP Hub.",
-        "date": "2024-04-01",
-        "image": "/images/achievements/assistive_technology_microcontroller.png",
-        "points": 10,
-        "type": "course"
-    },
-    {
-        "title": "AI MakerSpace",
-        "description": "Successfully completed the AI MakerSpace program at ASU.",
-        "date": "2025-04-01",
-        "image": "/images/achievements/ai_makerspace.png",
-        "points": 25,
-        "type": "workshop"
-    },
-    {
-        "title": "SoDA Mentor Finalist",
-        "description": "Participated in the SoDA Mentor program at ASU, focusing on mentoring students in AI and technology.",
-        "date": "2025-04-01",
-        "image": "/images/achievements/soda_mentor_finalist.png",
-        "points": 15,
-        "type": "workshop"
-    },
-    {
-        "title": "JEE Advanced 2017",
-        "description": "Achieved a rank of 3006 in the JEE Advanced 2017 examination.",
-        "date": "2017-05-21",
-        "image": "/images/achievements/jee_advanced_2017.png",
-        "points": 30,
-        "type": "recognition"
-    }
+  {
+    "title": "SoDA LLM Workshop Winner",
+    "description": "Winner of the SoDA LLM workshop for creating note summarizer AI web application at ASU.",
+    "date": "2025-02-15",
+    "image": "/images/achievements/soda_llm_workshop.png",
+    "points": 30,
+    "type": "recognition"
+  },
+  {
+    "title": "AI Model Development Credential",
+    "description": "Earned intermediate-level credential for AI Model Development by Voxel 51 at ASU.",
+    "date": "2025-02-01",
+    "image": "/images/achievements/voxel51_credential.png",
+    "points": 20,
+    "type": "certification"
+  },
+  {
+    "title": "Microcontroller Programming Basics",
+    "description": "Earned credential for Microcontroller Programming Basics by ASU Engineering SWAP Hub.",
+    "date": "2024-12-15",
+    "image": "/images/achievements/microcontroller_credential.png",
+    "points": 15,
+    "type": "certification"
+  },
+  {
+    "title": "Assistive Technology Microcontroller Applications",
+    "description": "Completed Assistive Technology Microcontroller Applications course by ASU Engineering SWAP Hub.",
+    "date": "2024-04-01",
+    "image": "/images/achievements/assistive_technology_microcontroller.png",
+    "points": 10,
+    "type": "course"
+  },
+  {
+    "title": "AI MakerSpace",
+    "description": "Successfully completed the AI MakerSpace program at ASU.",
+    "date": "2025-04-01",
+    "image": "/images/achievements/ai_makerspace.png",
+    "points": 25,
+    "type": "workshop"
+  },
+  {
+    "title": "SoDA Mentor Finalist",
+    "description": "Participated in the SoDA Mentor program at ASU, focusing on mentoring students in AI and technology.",
+    "date": "2025-04-01",
+    "image": "/images/achievements/soda_mentor_finalist.png",
+    "points": 15,
+    "type": "workshop"
+  },
+  {
+    "title": "JEE Advanced 2017",
+    "description": "Achieved a rank of 3006 in the JEE Advanced 2017 examination.",
+    "date": "2017-05-21",
+    "image": "/images/achievements/jee_advanced_2017.png",
+    "points": 30,
+    "type": "recognition"
+  }
 ]

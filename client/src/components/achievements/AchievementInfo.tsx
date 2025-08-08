@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, memo, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import achievements from '@/data/achievements.json';
+import React, { useRef, useEffect, memo, useCallback } from "react";
+import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import achievements from "@/data/achievements.json";
 
 interface AchievementInfoProps {
   onUserInteract: (isInteracting: boolean) => void;
@@ -18,58 +18,63 @@ interface Achievement {
 }
 
 // Memoized achievement item component to prevent unnecessary re-renders
-const AchievementItem = memo(({
-  achievement,
-  index,
-  animationLevel
-}: {
-  achievement: Achievement;
-  index: number;
-  animationLevel: string;
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{
-      delay: 0.2 * index,
-      type: "spring",
-      stiffness: animationLevel === 'expert' ? 100 : 50
-    }}
-    className='p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center gap-6 bg-card text-card-foreground'
-  >
-    <div className="relative w-24 h-24 flex-shrink-0">
-      {/* Image placeholder */}
-    </div>
-    <div className="flex-grow text-center md:text-left">
-      <h4 className="text-xl font-bold mb-2">{achievement.title}</h4>
-      <p className="text-base opacity-90 mb-2">{achievement.description}</p>
-      <div className="flex justify-center md:justify-start items-center gap-2">
-        <span className="font-semibold">Points:</span>
-        <span className='text-lg font-bold text-palette-teal'>
-          {achievement.points}
-        </span>
+const AchievementItem = memo(
+  ({
+    achievement,
+    index,
+    animationLevel,
+  }: {
+    achievement: Achievement;
+    index: number;
+    animationLevel: string;
+  }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        delay: 0.2 * index,
+        type: "spring",
+        stiffness: animationLevel === "expert" ? 100 : 50,
+      }}
+      className="p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center gap-6 bg-card text-card-foreground"
+    >
+      <div className="relative w-24 h-24 flex-shrink-0">
+        {/* Image placeholder */}
       </div>
-    </div>
-  </motion.div>
-));
+      <div className="flex-grow text-center md:text-left">
+        <h4 className="text-xl font-bold mb-2">{achievement.title}</h4>
+        <p className="text-base opacity-90 mb-2">{achievement.description}</p>
+        <div className="flex justify-center md:justify-start items-center gap-2">
+          <span className="font-semibold">Points:</span>
+          <span className="text-lg font-bold text-palette-teal">
+            {achievement.points}
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  ),
+);
 
-AchievementItem.displayName = 'AchievementItem';
+AchievementItem.displayName = "AchievementItem";
 
 // Calculate and memoize grouped achievements
 const useGroupedAchievements = () => {
   return React.useMemo(() => {
-    return achievements.reduce((acc: Record<string, Achievement[]>, item: Achievement) => {
-      const type = item.type || 'other';
-      if (!acc[type]) acc[type] = [];
-      acc[type].push(item);
-      return acc;
-    }, {});
+    return achievements.reduce(
+      (acc: Record<string, Achievement[]>, item: Achievement) => {
+        const type = item.type || "other";
+        if (!acc[type]) acc[type] = [];
+        acc[type].push(item);
+        return acc;
+      },
+      {},
+    );
   }, []);
 };
 
 const AchievementInfo: React.FC<AchievementInfoProps> = ({
   onUserInteract,
-  userInteracting
+  userInteracting,
 }) => {
   const { animationLevel } = useSelector((state: RootState) => state.mode);
   const creditsRef = useRef<HTMLDivElement>(null);
@@ -122,7 +127,7 @@ const AchievementInfo: React.FC<AchievementInfoProps> = ({
 
   // Auto-scrolling effect - optimized with requestAnimationFrame
   useEffect(() => {
-    setAutoScrolling(!userInteracting)
+    setAutoScrolling(!userInteracting);
     let animationId: number;
     let lastTimestamp: number = 0;
     const scrollStep = 1; // pixels per frame
@@ -139,11 +144,16 @@ const AchievementInfo: React.FC<AchievementInfoProps> = ({
       const { scrollHeight, clientHeight, scrollTop } = creditsRef.current;
 
       // Throttle scrolling to improve performance
-      if (timestamp - lastTimestamp > 16) { // ~60fps
+      if (timestamp - lastTimestamp > 16) {
+        // ~60fps
         lastTimestamp = timestamp;
 
         // Check if we've reached the bottom and not already in the process of scrolling to top
-        if (scrollTop >= scrollHeight - clientHeight - 1 && !scrollingToTop && !isScrollingToTopRef.current) {
+        if (
+          scrollTop >= scrollHeight - clientHeight - 1 &&
+          !scrollingToTop &&
+          !isScrollingToTopRef.current
+        ) {
           isScrollingToTopRef.current = true;
 
           // Scroll back to top smoothly
@@ -198,7 +208,7 @@ const AchievementInfo: React.FC<AchievementInfoProps> = ({
   return (
     <div
       ref={creditsRef}
-      className='h-full overflow-y-auto px-6 py-8 scrollbar-thin scrollbar-thumb-palette-teal scrollbar-track-palette-gray-light dark:scrollbar-track-gray-800'
+      className="h-full overflow-y-auto px-6 py-8 scrollbar-thin scrollbar-thumb-palette-teal scrollbar-track-palette-gray-light dark:scrollbar-track-gray-800"
       onWheel={handleScroll}
       onTouchStart={handleInteractionStart}
       onTouchEnd={handleInteractionEnd}
@@ -212,7 +222,8 @@ const AchievementInfo: React.FC<AchievementInfoProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className='text-2xl font-bold mb-6 text-center capitalize text-palette-teal'>
+              className="text-2xl font-bold mb-6 text-center capitalize text-palette-teal"
+            >
               {category}
             </motion.h3>
 

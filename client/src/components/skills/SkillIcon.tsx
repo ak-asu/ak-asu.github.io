@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
-import { getVerticalOffset, levelToPercentage, Skill } from './utils';
+import React, { useEffect, useRef } from "react";
+import { motion, useAnimation } from "framer-motion";
+import { getVerticalOffset, levelToPercentage, Skill } from "./utils";
 
-const BASE_URL = process.env.PUBLIC_URL || '/Portfolio';
+const BASE_URL = import.meta.env.VITE_PUBLIC_URL || "/Portfolio";
 
 interface SkillIconProps {
   skill: Skill;
@@ -19,7 +19,7 @@ const SkillIcon: React.FC<SkillIconProps> = ({
   isDarkMode,
   hoveredIcon,
   setHoveredIcon,
-  isPaused = false
+  isPaused = false,
 }) => {
   const proficiency = levelToPercentage(skill.level);
   const yOffset = getVerticalOffset(index);
@@ -44,8 +44,8 @@ const SkillIcon: React.FC<SkillIconProps> = ({
         repeat: Infinity,
         repeatType: "loop",
         ease: "easeInOut",
-        delay: delay
-      }
+        delay: delay,
+      },
     });
     return () => {
       controls.stop();
@@ -71,18 +71,36 @@ const SkillIcon: React.FC<SkillIconProps> = ({
         whileHover={{
           scale: 1.3,
           filter: "brightness(1.3)",
-          transition: { duration: 0.2 }
+          transition: { duration: 0.2 },
         }}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
         className="cursor-pointer"
       >
-        <div className={`relative w-16 h-16 transition-all duration-300 ${isHovered ? `ring-2 ring-offset-2 ${isDarkMode ? 'ring-offset-gray-900' : 'ring-offset-white'} ring-palette-teal-DEFAULT` : ''
-          }`}>
-          <div className={`absolute inset-0 rounded-full overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'
-            }`}>
+        <div
+          className={`relative w-16 h-16 transition-all duration-300 ${
+            isHovered
+              ? `ring-2 ring-offset-2 ${isDarkMode ? "ring-offset-gray-900" : "ring-offset-white"} ring-palette-teal-DEFAULT`
+              : ""
+          }`}
+        >
+          <div
+            className={`absolute inset-0 rounded-full overflow-hidden ${
+              isDarkMode ? "bg-gray-800" : "bg-gray-200"
+            }`}
+          >
             {/* Colored progress circle */}
             <svg className="w-full h-full" viewBox="0 0 100 100">
+              {/* Background circle track */}
+              <circle
+                cx="50"
+                cy="50"
+                r="45"
+                fill="none"
+                stroke={isDarkMode ? "#374151" : "#d1d5db"}
+                strokeWidth="10"
+              />
+              {/* Progress circle */}
               <circle
                 cx="50"
                 cy="50"

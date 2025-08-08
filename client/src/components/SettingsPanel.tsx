@@ -1,29 +1,47 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Settings, Volume2, VolumeX, Sun, Moon, Laptop } from 'lucide-react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Toggle } from '@/components/ui/toggle';
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { setAnimationLevel, setThemeMode, toggleSound } from '@/store/features/modeSlice';
-import type { RootState } from '@/store/store';
-import { AnimationLevel, ThemeMode } from '@/lib/types';
-import { getEnumValues } from '@/lib/utils';
-
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Settings, Volume2, VolumeX, Sun, Moon, Laptop } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/ui/toggle";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+import {
+  setAnimationLevel,
+  setThemeMode,
+  toggleSound,
+} from "@/store/features/modeSlice";
+import type { RootState } from "@/store/store";
+import { AnimationLevel, ThemeMode } from "@/lib/types";
+import { getEnumValues } from "@/lib/utils";
 
 export const SettingsPanel = () => {
   const dispatch = useDispatch();
-  const {
-    animationLevel,
-    themeMode,
-    soundEnabled
-  } = useSelector((state: RootState) => state.mode);
+  const { animationLevel, themeMode, soundEnabled } = useSelector(
+    (state: RootState) => state.mode,
+  );
 
   const handleSRAnnouncement = (message: string) => {
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', 'polite');
-    announcement.setAttribute('class', 'sr-only');
+    const announcement = document.createElement("div");
+    announcement.setAttribute("aria-live", "polite");
+    announcement.setAttribute("class", "sr-only");
     announcement.textContent = message;
     document.body.appendChild(announcement);
     setTimeout(() => document.body.removeChild(announcement), 1000);
@@ -56,10 +74,7 @@ export const SettingsPanel = () => {
           aria-label="Portfolio settings"
         >
           <div className="space-y-2">
-            <label
-              className="text-sm font-medium"
-              id="animation-level-label"
-            >
+            <label className="text-sm font-medium" id="animation-level-label">
               Animation Level
             </label>
             <Select
@@ -83,10 +98,7 @@ export const SettingsPanel = () => {
             </Select>
           </div>
           <div className="space-y-2">
-            <label
-              className="text-sm font-medium"
-              id="theme-mode-label"
-            >
+            <label className="text-sm font-medium" id="theme-mode-label">
               Theme
             </label>
             <Select
@@ -104,9 +116,9 @@ export const SettingsPanel = () => {
                 {getEnumValues(ThemeMode).map((mode) => (
                   <SelectItem key={mode} value={mode}>
                     <div className="flex items-center gap-2">
-                      {mode === 'light' ? (
+                      {mode === "light" ? (
                         <Sun className="h-4 w-4" aria-hidden="true" />
-                      ) : mode === 'dark' ? (
+                      ) : mode === "dark" ? (
                         <Moon className="h-4 w-4" aria-hidden="true" />
                       ) : (
                         <Laptop className="h-4 w-4" aria-hidden="true" />
@@ -119,17 +131,16 @@ export const SettingsPanel = () => {
             </Select>
           </div>
           <div className="flex items-center justify-between">
-            <span
-              className="text-sm font-medium"
-              id="sound-toggle-label"
-            >
+            <span className="text-sm font-medium" id="sound-toggle-label">
               Sound
             </span>
             <Toggle
               pressed={soundEnabled}
               onPressedChange={() => {
                 dispatch(toggleSound());
-                handleSRAnnouncement(`Sound ${soundEnabled ? 'disabled' : 'enabled'}`);
+                handleSRAnnouncement(
+                  `Sound ${soundEnabled ? "disabled" : "enabled"}`,
+                );
               }}
               aria-labelledby="sound-toggle-label"
             >
@@ -139,7 +150,7 @@ export const SettingsPanel = () => {
                 <VolumeX className="h-4 w-4" aria-hidden="true" />
               )}
               <span className="sr-only">
-                {soundEnabled ? 'Disable sound' : 'Enable sound'}
+                {soundEnabled ? "Disable sound" : "Enable sound"}
               </span>
             </Toggle>
           </div>

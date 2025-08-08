@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AnimationLevel, ThemeMode } from '@/lib/types';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AnimationLevel, ThemeMode } from "@/lib/types";
 
 interface ModeState {
   isTechnicalMode: boolean;
@@ -16,7 +16,7 @@ const initialState: ModeState = {
 };
 
 const modeSlice = createSlice({
-  name: 'mode',
+  name: "mode",
   initialState,
   reducers: {
     toggleMode: (state) => {
@@ -34,11 +34,7 @@ const modeSlice = createSlice({
   },
 });
 
-export const {
-  toggleMode,
-  setAnimationLevel,
-  setThemeMode,
-  toggleSound
-} = modeSlice.actions;
+export const { toggleMode, setAnimationLevel, setThemeMode, toggleSound } =
+  modeSlice.actions;
 
 export default modeSlice.reducer;

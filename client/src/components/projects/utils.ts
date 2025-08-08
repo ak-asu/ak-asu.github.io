@@ -1,5 +1,5 @@
 export enum DisplayMode {
-  Video = 'video',
-  Description = 'description',
-  Skills = 'skills'
+  Video = "video",
+  Description = "description",
+  Skills = "skills",
 }

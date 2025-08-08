@@ -1,18 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useSelector, useDispatch } from 'react-redux';
-import { Command } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import type { RootState } from '@/store/store';
-import { setThemeMode } from '@/store/features/modeSlice';
-import { audioManager } from '@/lib/audio';
-import { AnimationLevel, ThemeMode } from '@/lib/types';
-import achievements from '@/data/achievements.json';
-import education from '@/data/education.json';
-import projects from '@/data/projects.json';
-import skills from '@/data/skills.json';
-import work from '@/data/work.json';
-import contact from '@/data/contact.json';
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useSelector, useDispatch } from "react-redux";
+import { Command } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { RootState } from "@/store/store";
+import { setThemeMode } from "@/store/features/modeSlice";
+import { audioManager } from "@/lib/audio";
+import { AnimationLevel, ThemeMode } from "@/lib/types";
+import achievements from "@/data/achievements.json";
+import education from "@/data/education.json";
+import projects from "@/data/projects.json";
+import skills from "@/data/skills.json";
+import work from "@/data/work.json";
+import contact from "@/data/contact.json";
 
 type Command = {
   input: string;
@@ -21,33 +26,35 @@ type Command = {
 };
 
 const AVAILABLE_COMMANDS = {
-  help: 'List all available commands',
-  clear: 'Clear the terminal',
-  about: 'Display information about me',
-  projects: 'List my projects',
-  contact: 'Show contact information',
-  skills: 'Display my technical skills',
-  education: 'Display my educational background',
-  work: 'Show my work experience',
-  achievements: 'List my achievements',
-  theme: 'Toggle terminal theme (light/dark)',
-  whoami: 'Display current user information',
-  ls: 'List directory contents',
-  cd: 'Change directory',
-  cat: 'Display file contents',
+  help: "List all available commands",
+  clear: "Clear the terminal",
+  about: "Display information about me",
+  projects: "List my projects",
+  contact: "Show contact information",
+  skills: "Display my technical skills",
+  education: "Display my educational background",
+  work: "Show my work experience",
+  achievements: "List my achievements",
+  theme: "Toggle terminal theme (light/dark)",
+  whoami: "Display current user information",
+  ls: "List directory contents",
+  cd: "Change directory",
+  cat: "Display file contents",
 };
 
 export const Terminal = () => {
   const dispatch = useDispatch();
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [history, setHistory] = useState<Command[]>([]);
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [currentPath, setCurrentPath] = useState('~/portfolio');
+  const [currentPath, setCurrentPath] = useState("~/portfolio");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { animationLevel, soundEnabled, themeMode } = useSelector((state: RootState) => state.mode);
+  const { animationLevel, soundEnabled, themeMode } = useSelector(
+    (state: RootState) => state.mode,
+  );
 
   const scrollToBottom = () => {
     if (terminalRef.current) {
@@ -63,9 +70,9 @@ export const Terminal = () => {
       output: [
         "Welcome to my Interactive Portfolio Terminal!",
         "Type 'help' to see available commands.",
-        "You can switch to the non-technical mode using the toggle in the top-right corner."
+        "You can switch to the non-technical mode using the toggle in the top-right corner.",
       ],
-      timestamp: getTimestamp()
+      timestamp: getTimestamp(),
     };
     setHistory([welcomeCommand]);
   }, []);
@@ -79,8 +86,8 @@ export const Terminal = () => {
       setSuggestions([]);
       return;
     }
-    const matches = Object.keys(AVAILABLE_COMMANDS).filter(cmd =>
-      cmd.startsWith(value.toLowerCase())
+    const matches = Object.keys(AVAILABLE_COMMANDS).filter((cmd) =>
+      cmd.startsWith(value.toLowerCase()),
     );
     setSuggestions(matches);
   };
@@ -92,123 +99,171 @@ export const Terminal = () => {
 
   const processCommand = (cmd: string): string[] => {
     const command = cmd.toLowerCase().trim();
-    const args = command.split(' ');
+    const args = command.split(" ");
     switch (args[0]) {
-      case 'help':
-        return Object.entries(AVAILABLE_COMMANDS).map(([cmd, desc]) => `${cmd}: ${desc}`);
-      case 'clear':
+      case "help":
+        return Object.entries(AVAILABLE_COMMANDS).map(
+          ([cmd, desc]) => `${cmd}: ${desc}`,
+        );
+      case "clear":
         return [];
-      case 'about':
+      case "about":
         return [
-          'Hi there! I\'m a passionate software developer specializing in full-stack development.',
-          'With expertise in modern web technologies, I create engaging and scalable applications.',
-          'My goal is to build software that makes a difference, focusing on user experience and performance.',
-          'Type "skills", "projects", or "contact" to learn more about me.'
+          "Hi there! I'm a passionate software developer specializing in full-stack development.",
+          "With expertise in modern web technologies, I create engaging and scalable applications.",
+          "My goal is to build software that makes a difference, focusing on user experience and performance.",
+          'Type "skills", "projects", or "contact" to learn more about me.',
         ];
-      case 'contact':
+      case "contact":
         return [
           `Email: ${contact.email}`,
           `GitHub: ${contact.github}`,
           `LinkedIn: ${contact.linkedin}`,
           `Website: ${contact.website}`,
-          `Devpost: ${contact.devpost}`
+          `Devpost: ${contact.devpost}`,
         ];
-      case 'achievements':
+      case "achievements":
         return [
-          'My Achievements:',
-          ...achievements.map(achievement => `${achievement.title} - ${achievement.date}`),
-          'For more details on a specific achievement, visit the achievements directory.'
+          "My Achievements:",
+          ...achievements.map(
+            (achievement) => `${achievement.title} - ${achievement.date}`,
+          ),
+          "For more details on a specific achievement, visit the achievements directory.",
         ];
-      case 'education':
+      case "education":
         return [
-          'My Education:',
-          ...education.map(edu => `${edu.degree} at ${edu.institution} (${edu.startDate} - ${edu.endDate || 'Present'})`),
-          'For more details on a specific education, visit the education directory'
+          "My Education:",
+          ...education.map(
+            (edu) =>
+              `${edu.degree} at ${edu.institution} (${edu.startDate} - ${edu.endDate || "Present"})`,
+          ),
+          "For more details on a specific education, visit the education directory",
         ];
-      case 'skills': {
-          const lines: string[] = [];
-          const skillsByCategory: Record<string, string[]> = {};
-          skills.forEach(skill => {
-            if (!skillsByCategory[skill.category]) {
-              skillsByCategory[skill.category] = [];
-            }
-            skillsByCategory[skill.category].push(skill.name);
-          });
+      case "skills": {
+        const lines: string[] = [];
+        const skillsByCategory: Record<string, string[]> = {};
+        skills.forEach((skill) => {
+          if (!skillsByCategory[skill.category]) {
+            skillsByCategory[skill.category] = [];
+          }
+          skillsByCategory[skill.category].push(skill.name);
+        });
 
-          Object.entries(skillsByCategory).forEach(([category, skillNames]) => {
-            lines.push(`${category}: ${skillNames.join(', ')}`);
-          });
-          return [
-            'My Skills:',
-            ...lines,
-            'For more details on a specific skill category, visit the skills directory.'
-          ];
-        }
-      case 'projects':
+        Object.entries(skillsByCategory).forEach(([category, skillNames]) => {
+          lines.push(`${category}: ${skillNames.join(", ")}`);
+        });
         return [
-          'My Projects:',
-          ...projects.map((project, index) => `${index + 1}. ${project.name} - ${project.shortDescription}`),
-          'For more details on a specific project, visit the projects directory.'
+          "My Skills:",
+          ...lines,
+          "For more details on a specific skill category, visit the skills directory.",
         ];
-      case 'work':
+      }
+      case "projects":
         return [
-          'My Work Experience:',
-          ...work.map(job => `${job.position} at ${job.company} (${job.startDate} - ${job.endDate || 'Present'})`),
-          'For more details on a specific job, visit the work directory.'
+          "My Projects:",
+          ...projects.map(
+            (project, index) =>
+              `${index + 1}. ${project.name} - ${project.shortDescription}`,
+          ),
+          "For more details on a specific project, visit the projects directory.",
         ];
-      case 'theme': {
-        const newTheme = themeMode === ThemeMode.Dark ? 'light' : 'dark';
-        dispatch(setThemeMode(themeMode === ThemeMode.Dark ? ThemeMode.Light : ThemeMode.Dark));
+      case "work":
+        return [
+          "My Work Experience:",
+          ...work.map(
+            (job) =>
+              `${job.position} at ${job.company} (${job.startDate} - ${job.endDate || "Present"})`,
+          ),
+          "For more details on a specific job, visit the work directory.",
+        ];
+      case "theme": {
+        const newTheme = themeMode === ThemeMode.Dark ? "light" : "dark";
+        dispatch(
+          setThemeMode(
+            themeMode === ThemeMode.Dark ? ThemeMode.Light : ThemeMode.Dark,
+          ),
+        );
         return [`Switched to ${newTheme} theme`];
       }
-      case 'whoami':
-        return ['You are a visitor exploring my portfolio in technical mode. Welcome!', 'Type "help" to see available commands.'];
-      case 'ls':
-        if (currentPath === '~/portfolio') {
-          return ['achievements/', 'education/', 'projects/', 'skills/', 'work/'];
-        } else if (currentPath === '~/portfolio/achievements') {
-          return achievements.map(a => `${a.title.toLowerCase().replace(/\s+/g, '-')}.json`);
-        } else if (currentPath === '~/portfolio/education') {
-          return education.map(edu => `${edu.institution.toLowerCase().replace(/\s+/g, '-')}.json`);
-        } else if (currentPath === '~/portfolio/projects') {
-          return projects.map((p, i) => `${i + 1}-${p.name.toLowerCase().replace(/\s+/g, '-')}.json`);
-        } else if (currentPath === '~/portfolio/skills') {
-          return Array.from(new Set(skills.map(s => `${s.category.toLowerCase().replace(/\s+/g, '-')}.json`)));
-        } else if (currentPath === '~/portfolio/work') {
-          return work.map((j, i) => `${i + 1}-${j.company.toLowerCase().replace(/\s+/g, '-')}.json`);
+      case "whoami":
+        return [
+          "You are a visitor exploring my portfolio in technical mode. Welcome!",
+          'Type "help" to see available commands.',
+        ];
+      case "ls":
+        if (currentPath === "~/portfolio") {
+          return [
+            "achievements/",
+            "education/",
+            "projects/",
+            "skills/",
+            "work/",
+          ];
+        } else if (currentPath === "~/portfolio/achievements") {
+          return achievements.map(
+            (a) => `${a.title.toLowerCase().replace(/\s+/g, "-")}.json`,
+          );
+        } else if (currentPath === "~/portfolio/education") {
+          return education.map(
+            (edu) =>
+              `${edu.institution.toLowerCase().replace(/\s+/g, "-")}.json`,
+          );
+        } else if (currentPath === "~/portfolio/projects") {
+          return projects.map(
+            (p, i) =>
+              `${i + 1}-${p.name.toLowerCase().replace(/\s+/g, "-")}.json`,
+          );
+        } else if (currentPath === "~/portfolio/skills") {
+          return Array.from(
+            new Set(
+              skills.map(
+                (s) => `${s.category.toLowerCase().replace(/\s+/g, "-")}.json`,
+              ),
+            ),
+          );
+        } else if (currentPath === "~/portfolio/work") {
+          return work.map(
+            (j, i) =>
+              `${i + 1}-${j.company.toLowerCase().replace(/\s+/g, "-")}.json`,
+          );
         }
-        return ['Directory not found'];
-      case 'cd':
-        if (!args[1] || args[1] === '~' || args[1] === '/') {
-          setCurrentPath('~/portfolio');
-          return ['Changed directory to ~/portfolio'];
-        } else if (args[1] === '..') {
-          if (currentPath !== '~/portfolio') {
-            setCurrentPath('~/portfolio');
-            return ['Changed directory to ~/portfolio'];
+        return ["Directory not found"];
+      case "cd":
+        if (!args[1] || args[1] === "~" || args[1] === "/") {
+          setCurrentPath("~/portfolio");
+          return ["Changed directory to ~/portfolio"];
+        } else if (args[1] === "..") {
+          if (currentPath !== "~/portfolio") {
+            setCurrentPath("~/portfolio");
+            return ["Changed directory to ~/portfolio"];
           }
-          return ['Already at root directory'];
-        } else if (args[1] === 'achievements' && currentPath === '~/portfolio') {
-          setCurrentPath('~/portfolio/achievements');
-          return ['Changed directory to ~/portfolio/achievements'];
-        } else if (args[1] === 'education' && currentPath === '~/portfolio') {
-          setCurrentPath('~/portfolio/education');
-          return ['Changed directory to ~/portfolio/education'];
-        } else if (args[1] === 'projects' && currentPath === '~/portfolio') {
-          setCurrentPath('~/portfolio/projects');
-          return ['Changed directory to ~/portfolio/projects'];
-        } else if (args[1] === 'skills' && currentPath === '~/portfolio') {
-          setCurrentPath('~/portfolio/skills');
-          return ['Changed directory to ~/portfolio/skills'];
-        } else if (args[1] === 'work' && currentPath === '~/portfolio') {
-          setCurrentPath('~/portfolio/work');
-          return ['Changed directory to ~/portfolio/work'];
+          return ["Already at root directory"];
+        } else if (
+          args[1] === "achievements" &&
+          currentPath === "~/portfolio"
+        ) {
+          setCurrentPath("~/portfolio/achievements");
+          return ["Changed directory to ~/portfolio/achievements"];
+        } else if (args[1] === "education" && currentPath === "~/portfolio") {
+          setCurrentPath("~/portfolio/education");
+          return ["Changed directory to ~/portfolio/education"];
+        } else if (args[1] === "projects" && currentPath === "~/portfolio") {
+          setCurrentPath("~/portfolio/projects");
+          return ["Changed directory to ~/portfolio/projects"];
+        } else if (args[1] === "skills" && currentPath === "~/portfolio") {
+          setCurrentPath("~/portfolio/skills");
+          return ["Changed directory to ~/portfolio/skills"];
+        } else if (args[1] === "work" && currentPath === "~/portfolio") {
+          setCurrentPath("~/portfolio/work");
+          return ["Changed directory to ~/portfolio/work"];
         }
         return [`Directory ${args[1]} not found`];
-      case 'cat':
-        if (!args[1]) return ['Usage: cat <filename>'];
-        if (currentPath === '~/portfolio/achievements') {
-          const achievementIndex = achievements.findIndex(a => a.title.toLowerCase().replace(/\s+/g, '-') === args[1]);
+      case "cat":
+        if (!args[1]) return ["Usage: cat <filename>"];
+        if (currentPath === "~/portfolio/achievements") {
+          const achievementIndex = achievements.findIndex(
+            (a) => a.title.toLowerCase().replace(/\s+/g, "-") === args[1],
+          );
           if (achievementIndex >= 0) {
             const achievement = achievements[achievementIndex];
             return [
@@ -216,60 +271,65 @@ export const Terminal = () => {
               `  "title": "${achievement.title}",`,
               `  "date": "${achievement.date}",`,
               `  "description": "${achievement.description}",`,
-              `}`
+              `}`,
             ];
           }
-        } else if (currentPath === '~/portfolio/education') {
-          const educationIndex = education.findIndex(edu => edu.institution.toLowerCase().replace(/\s+/g, '-') === args[1]);
+        } else if (currentPath === "~/portfolio/education") {
+          const educationIndex = education.findIndex(
+            (edu) =>
+              edu.institution.toLowerCase().replace(/\s+/g, "-") === args[1],
+          );
           if (educationIndex >= 0) {
             const edu = education[educationIndex];
             return [
               `{`,
               `  "institution": "${edu.institution}",`,
-              `  "date": "${edu.startDate} - ${edu.endDate || 'Present'}",`,
+              `  "date": "${edu.startDate} - ${edu.endDate || "Present"}",`,
               `  "degree": "${edu.degree}",`,
               `  "field": "${edu.field}",`,
               `  "gpa": "${edu.gpa}",`,
-              `  "courses": [${edu.subjects.map(s => `"${s}"`).join(', ')}],`,
-              `}`
+              `  "courses": [${edu.subjects.map((s) => `"${s}"`).join(", ")}],`,
+              `}`,
             ];
           }
-        } else if (currentPath === '~/portfolio/projects') {
-          const projectIndex = parseInt(args[1].split('-')[0]) - 1;
+        } else if (currentPath === "~/portfolio/projects") {
+          const projectIndex = parseInt(args[1].split("-")[0]) - 1;
           if (projectIndex >= 0 && projectIndex < projects.length) {
             const project = projects[projectIndex];
             return [
               `{`,
               `  "name": "${project.name}",`,
               `  "description": "${project.description}",`,
-              `  "technologies": [${project.technologies.map(t => `"${t}"`).join(', ')}],`,
+              `  "technologies": [${project.technologies.map((t) => `"${t}"`).join(", ")}],`,
               `  "duration": "${project.duration}",`,
-              `  "link": "${project.url || ''}",`,
-              `}`
+              `  "link": "${project.url || ""}",`,
+              `}`,
             ];
           }
-        } else if (currentPath === '~/portfolio/work') {
-          const jobIndex = parseInt(args[1].split('-')[0]) - 1;
+        } else if (currentPath === "~/portfolio/work") {
+          const jobIndex = parseInt(args[1].split("-")[0]) - 1;
           if (jobIndex >= 0 && jobIndex < work.length) {
             const job = work[jobIndex];
             return [
               `{`,
               `  "position": "${job.position}",`,
               `  "company": "${job.company}",`,
-              `  "date": "${job.startDate} - ${job.endDate || 'Present'}",`,
+              `  "date": "${job.startDate} - ${job.endDate || "Present"}",`,
               `  "description": "${job.description}",`,
-              `}`
+              `}`,
             ];
           }
-        } else if (currentPath === '~/portfolio/skills') {
-          const category = args[1].replace('.json', '');
-          const specificSkills = skills.filter(s => s.category.toLowerCase().replace(/\s+/g, '-') === category);
+        } else if (currentPath === "~/portfolio/skills") {
+          const category = args[1].replace(".json", "");
+          const specificSkills = skills.filter(
+            (s) => s.category.toLowerCase().replace(/\s+/g, "-") === category,
+          );
           if (specificSkills.length > 0) {
             return [
               `{`,
               `  "category": "${category}",`,
-              `  "skills": [${specificSkills.map(s => `"${s.name}"`).join(', ')}]`,
-              `}`
+              `  "skills": [${specificSkills.map((s) => `"${s.name}"`).join(", ")}]`,
+              `}`,
             ];
           } else {
             return [`File ${args[1]} not found or cannot be displayed`];
@@ -277,7 +337,9 @@ export const Terminal = () => {
         }
         return [`File ${args[1]} not found or cannot be displayed`];
       default:
-        return [`Command not found: ${command}. Type 'help' for available commands.`];
+        return [
+          `Command not found: ${command}. Type 'help' for available commands.`,
+        ];
     }
   };
 
@@ -285,14 +347,14 @@ export const Terminal = () => {
     e.preventDefault();
     if (!input.trim()) return;
     if (soundEnabled) {
-      audioManager.playSoundEffect('click');
+      audioManager.playSoundEffect("click");
     }
     // Handle clear command specially
-    if (input.trim().toLowerCase() === 'clear') {
+    if (input.trim().toLowerCase() === "clear") {
       setHistory([]);
       setCommandHistory([...commandHistory, input]);
       setHistoryIndex(-1);
-      setInput('');
+      setInput("");
       setSuggestions([]);
       return;
     }
@@ -304,31 +366,31 @@ export const Terminal = () => {
     setHistory([...history, newCommand]);
     setCommandHistory([...commandHistory, input]);
     setHistoryIndex(-1);
-    setInput('');
+    setInput("");
     setSuggestions([]);
     // Announce command execution for screen readers
-    const announceMessage = `Command executed: ${input}. ${newCommand.output.join('. ')}`;
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', 'polite');
-    announcement.setAttribute('class', 'sr-only');
+    const announceMessage = `Command executed: ${input}. ${newCommand.output.join(". ")}`;
+    const announcement = document.createElement("div");
+    announcement.setAttribute("aria-live", "polite");
+    announcement.setAttribute("class", "sr-only");
     announcement.textContent = announceMessage;
     document.body.appendChild(announcement);
     setTimeout(() => document.body.removeChild(announcement), 1000);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Tab' && suggestions.length > 0) {
+    if (e.key === "Tab" && suggestions.length > 0) {
       e.preventDefault();
       setInput(suggestions[0]);
       setSuggestions([]);
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (historyIndex < commandHistory.length - 1) {
         const newIndex = historyIndex + 1;
         setHistoryIndex(newIndex);
         setInput(commandHistory[commandHistory.length - 1 - newIndex]);
       }
-    } else if (e.key === 'ArrowDown') {
+    } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (historyIndex > 0) {
         const newIndex = historyIndex - 1;
@@ -336,7 +398,7 @@ export const Terminal = () => {
         setInput(commandHistory[commandHistory.length - 1 - newIndex]);
       } else if (historyIndex === 0) {
         setHistoryIndex(-1);
-        setInput('');
+        setInput("");
       }
     }
   };
@@ -345,24 +407,24 @@ export const Terminal = () => {
     // Don't focus if clicking on interactive elements
     const target = e.target as HTMLElement;
     const isInteractiveElement =
-      target.tagName === 'BUTTON' ||
-      target.tagName === 'A' ||
-      target.tagName === 'INPUT' ||
-      target.tagName === 'TEXTAREA' ||
-      target.getAttribute('contenteditable') === 'true' ||
-      target.getAttribute('role') === 'option' ||
-      target.classList.contains('interactive') ||
+      target.tagName === "BUTTON" ||
+      target.tagName === "A" ||
+      target.tagName === "INPUT" ||
+      target.tagName === "TEXTAREA" ||
+      target.getAttribute("contenteditable") === "true" ||
+      target.getAttribute("role") === "option" ||
+      target.classList.contains("interactive") ||
       target.closest('[role="option"]') ||
-      target.closest('button') ||
-      target.closest('a') ||
-      target.closest('input') ||
-      target.closest('textarea') ||
+      target.closest("button") ||
+      target.closest("a") ||
+      target.closest("input") ||
+      target.closest("textarea") ||
       target.closest('[contenteditable="true"]');
 
     // Only focus the input if not clicking on an interactive element
     if (!isInteractiveElement && inputRef.current) {
       e.preventDefault(); // Prevent any default behavior
-      // e.stopPropagation(); // Stop the event from bubbling up      
+      // e.stopPropagation(); // Stop the event from bubbling up
       // Focus with a slight delay to ensure the focus isn't lost
       // This helps prevent the focus from being immediately lost after clicking
       requestAnimationFrame(() => {
@@ -379,13 +441,13 @@ export const Terminal = () => {
         return {
           initial: { opacity: 0, y: 20, scale: 0.95 },
           animate: { opacity: 1, y: 0, scale: 1 },
-          transition: { type: 'spring', damping: 12 }
+          transition: { type: "spring", damping: 12 },
         };
       case AnimationLevel.Medium:
         return {
           initial: { opacity: 0, y: 10 },
           animate: { opacity: 1, y: 0 },
-          transition: { type: 'tween' }
+          transition: { type: "tween" },
         };
       default:
         return {
@@ -404,24 +466,32 @@ export const Terminal = () => {
       // Check if click is outside the terminal
       if (terminalRef.current && !terminalRef.current.contains(target)) {
         // Don't refocus if clicking on another interactive element
-        if (!target.closest('button') && !target.closest('a') && !target.closest('input') && !target.closest('textarea') && !target.closest('[contenteditable="true"]')) {
+        if (
+          !target.closest("button") &&
+          !target.closest("a") &&
+          !target.closest("input") &&
+          !target.closest("textarea") &&
+          !target.closest('[contenteditable="true"]')
+        ) {
           inputRef.current?.focus();
         }
       }
     };
-    window.addEventListener('click', handleWindowClick);
-    return () => { window.removeEventListener('click', handleWindowClick); };
+    window.addEventListener("click", handleWindowClick);
+    return () => {
+      window.removeEventListener("click", handleWindowClick);
+    };
   }, []);
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className='font-mono w-full h-[calc(100vh-4rem)] overflow-hidden relative bg-background text-foreground'
+      className="font-mono w-full h-[calc(100vh-4rem)] overflow-hidden relative bg-background text-foreground"
       role="region"
       aria-label="Interactive Terminal"
       // Remove the onClick handler from here
-      style={{ cursor: 'default' }} // Change cursor to default
+      style={{ cursor: "default" }} // Change cursor to default
       // Use -1 to make the container focusable but not in tab order
       tabIndex={-1}
       // When container gets focus, forward to input
@@ -443,7 +513,10 @@ export const Terminal = () => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Command className="absolute top-2 right-2 opacity-50 hover:opacity-100 transition-opacity h-4 w-4" aria-hidden="true" />
+            <Command
+              className="absolute top-2 right-2 opacity-50 hover:opacity-100 transition-opacity h-4 w-4"
+              aria-hidden="true"
+            />
           </TooltipTrigger>
           <TooltipContent>
             <div className="space-y-2">
@@ -462,7 +535,7 @@ export const Terminal = () => {
         role="log"
         aria-live="polite"
         aria-label="Terminal Output"
-      // Remove onClick handler from here too to prevent conflicts
+        // Remove onClick handler from here too to prevent conflicts
       >
         <AnimatePresence mode="popLayout">
           {history.map((cmd, i) => (
@@ -524,8 +597,10 @@ export const Terminal = () => {
               onBlur={(e) => {
                 // Only refocus if the focus is leaving the terminal component altogether
                 // Check if the new focus target is within our terminal component
-                if (!e.currentTarget.contains(e.relatedTarget as Node) &&
-                  !terminalRef.current?.contains(e.relatedTarget as Node)) {
+                if (
+                  !e.currentTarget.contains(e.relatedTarget as Node) &&
+                  !terminalRef.current?.contains(e.relatedTarget as Node)
+                ) {
                   // If focus is leaving terminal entirely, don't refocus
                   // This prevents focus trapping but allows normal tab navigation
                 } else {
@@ -559,7 +634,7 @@ export const Terminal = () => {
                     aria-selected={input === suggestion}
                     tabIndex={0}
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
+                      if (e.key === "Enter" || e.key === " ") {
                         setInput(suggestion);
                         setSuggestions([]);
                         inputRef.current?.focus();

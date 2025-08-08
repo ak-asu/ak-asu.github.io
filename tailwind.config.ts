@@ -64,14 +64,15 @@ export default {
         },
         palette: {
           teal: {
-            light: "#73d3e7",  // Light teal
-            DEFAULT: "#1791a3", // Teal
+            light: "#5fb3c7", // Slightly darker for better light mode contrast
+            DEFAULT: "#1791a3", // Main teal
+            dark: "#73d3e7", // Lighter variant for dark mode
           },
-          slate: "#6d868d",    // Slate 
+          slate: "#6d868d", // Slate
           gray: {
-            light: "#b9c7d2",  // Light gray
-            dark: "#474747",   // Dark gray  
-          }
+            light: "#b9c7d2", // Light gray
+            dark: "#474747", // Dark gray
+          },
         },
       },
       keyframes: {
@@ -101,34 +102,34 @@ export default {
         },
         "tv-scanline": {
           "0%": { transform: "translateY(-100%)" },
-          "100%": { transform: "translateY(100%)" }
+          "100%": { transform: "translateY(100%)" },
         },
-        "dash": {
-          "to": { 
-            "background-position": "100% 0"
-          }
+        dash: {
+          to: {
+            "background-position": "100% 0",
+          },
         },
         "bounce-subtle": {
           "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-4px)" }
-        }
+          "50%": { transform: "translateY(-4px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "tv-flicker": "tv-flicker 5s linear infinite",
         "tv-scanline": "tv-scanline 6s linear infinite",
-        "dash": "dash 15s linear infinite",
-        "bounce-subtle": "bounce-subtle 0.5s ease-in-out infinite"
+        dash: "dash 15s linear infinite",
+        "bounce-subtle": "bounce-subtle 0.5s ease-in-out infinite",
       },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
     require("@tailwindcss/typography"),
-    require('tailwind-scrollbar')
+    require("tailwind-scrollbar"),
   ],
   variants: {
-    scrollbar: ['dark']
-  }
+    scrollbar: ["dark"],
+  },
 } satisfies Config;

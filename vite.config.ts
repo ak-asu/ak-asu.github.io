@@ -4,7 +4,7 @@ import themePlugin from "@replit/vite-plugin-shadcn-theme-json";
 import path, { dirname } from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { fileURLToPath } from "url";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();
@@ -13,14 +13,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
-  base: '/Portfolio',
-  plugins: [
-    react(),
-    runtimeErrorOverlay(),
-    themePlugin(),
-  ],
+  base: "/Portfolio",
+  plugins: [react(), runtimeErrorOverlay(), themePlugin()],
+  define: {
+    "import.meta.env.VITE_PUBLIC_URL": JSON.stringify(
+      process.env.BASE_URL || "/Portfolio",
+    ),
+  },
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    exclude: ["lucide-react"],
   },
   publicDir: path.resolve(__dirname, "client/public"),
   resolve: {
@@ -35,12 +36,12 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    port: parseInt(process.env.PORT || '5000'),
+    port: parseInt(process.env.PORT || "5000"),
     proxy: {
-      '/api': {
+      "/api": {
         target: `http://localhost:${process.env.PORT || 5000}`,
         changeOrigin: true,
       },
-    }
+    },
   },
 });

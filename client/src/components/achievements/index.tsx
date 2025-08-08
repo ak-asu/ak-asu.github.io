@@ -1,14 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { motion, useAnimation, AnimatePresence } from 'framer-motion';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import Confetti from 'react-confetti';
-import useWindowSize from '../../hooks/use-window-size';
-import Curtain from './Curtain';
-import AchievementInfo from './AchievementInfo';
-import { getAnimationLevel } from '@/lib/types';
-import { Medal } from 'lucide-react';
-
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { motion, useAnimation, AnimatePresence } from "framer-motion";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import Confetti from "react-confetti";
+import useWindowSize from "../../hooks/use-window-size";
+import Curtain from "./Curtain";
+import AchievementInfo from "./AchievementInfo";
+import { getAnimationLevel } from "@/lib/types";
+import { Medal } from "lucide-react";
 
 const WallOfFame: React.FC = () => {
   const { animationLevel } = useSelector((state: RootState) => state.mode);
@@ -32,9 +31,9 @@ const WallOfFame: React.FC = () => {
         setUserInteracting(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -45,7 +44,7 @@ const WallOfFame: React.FC = () => {
       setIsHovered(false);
       await Promise.all([
         leftCurtainControls.start("open"),
-        rightCurtainControls.start("open")
+        rightCurtainControls.start("open"),
       ]);
       const confettiTimeout = setTimeout(() => {
         setShowConfetti(false);
@@ -54,7 +53,7 @@ const WallOfFame: React.FC = () => {
     } else {
       await Promise.all([
         leftCurtainControls.start("closed"),
-        rightCurtainControls.start("closed")
+        rightCurtainControls.start("closed"),
       ]);
       setIsOpen(false);
       setUserInteracting(false);
@@ -74,20 +73,23 @@ const WallOfFame: React.FC = () => {
             width={width}
             height={height * 0.8}
             recycle={false}
-            numberOfPieces={getAnimationLevel(animationLevel, { min: 100, max: 500 })}
+            numberOfPieces={getAnimationLevel(animationLevel, {
+              min: 100,
+              max: 500,
+            })}
             confettiSource={{
               x: width / 2,
               y: height / 3,
               w: 0,
-              h: 0
+              h: 0,
             }}
           />
         </div>
       )}
       <div
         ref={curtainContainerRef}
-        className='relative w-full h-[72vh] flex items-center justify-center overflow-hidden
-                rounded-2xl shadow-xl border bg-card border-palette-teal/20 dark:border-palette-teal/10'
+        className="relative w-full h-[72vh] flex items-center justify-center overflow-hidden
+                rounded-2xl shadow-xl border bg-card border-palette-teal/20 dark:border-palette-teal/10"
       >
         {!isOpen && (
           <motion.div
@@ -98,8 +100,10 @@ const WallOfFame: React.FC = () => {
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
           >
-            <h2 className={`flex items-center justify-center text-4xl md:text-6xl font-extrabold rounded-full w-20 h-20 md:w-28 md:h-28
-                bg-card text-palette-teal shadow-2xl relative ${isHovered ? 'animated-border' : 'border-2 border-palette-teal'}`}>
+            <h2
+              className={`flex items-center justify-center text-4xl md:text-6xl font-extrabold rounded-full w-20 h-20 md:w-28 md:h-28
+                bg-card text-palette-teal shadow-2xl relative ${isHovered ? "animated-border" : "border-2 border-palette-teal"}`}
+            >
               <Medal size={40} />
               {isHovered && (
                 <span className="absolute inset-0 rounded-full border-2 animate-border-spin" />
@@ -109,7 +113,7 @@ const WallOfFame: React.FC = () => {
         )}
         <Curtain side="left" controls={leftCurtainControls} />
         <Curtain side="right" controls={rightCurtainControls} />
-        <div className='absolute inset-0 z-10 p-4 md:p-8 rounded-2xl bg-background'>
+        <div className="absolute inset-0 z-10 p-4 md:p-8 rounded-2xl bg-background">
           <AnimatePresence>
             {isOpen && (
               <motion.div
@@ -120,20 +124,31 @@ const WallOfFame: React.FC = () => {
               >
                 <div className="w-full h-full overflow-hidden">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className='text-2xl md:text-3xl font-bold text-palette-teal'>
+                    <h2 className="text-2xl md:text-3xl font-bold text-palette-teal">
                       Achievement Credits
                     </h2>
                     <button
                       onClick={toggleCurtain}
                       aria-label="Close achievements"
-                      className='p-2 rounded-full bg-palette-teal text-white hover:bg-palette-teal-light'
+                      className="p-2 rounded-full bg-palette-teal text-white hover:bg-palette-teal-light"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     </button>
                   </div>
-                  <div className='h-[calc(100%-3rem)] rounded-lg shadow-lg overflow-hidden bg-card'>
+                  <div className="h-[calc(100%-3rem)] rounded-lg shadow-lg overflow-hidden bg-card">
                     <AchievementInfo
                       onUserInteract={handleUserInteraction}
                       userInteracting={userInteracting}

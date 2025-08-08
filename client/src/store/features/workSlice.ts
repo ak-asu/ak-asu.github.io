@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ActiveProject {
   company: string;
@@ -16,11 +16,11 @@ interface WorkState {
 }
 
 const initialState: WorkState = {
-  activeProject: null
+  activeProject: null,
 };
 
 export const workSlice = createSlice({
-  name: 'work',
+  name: "work",
   initialState,
   reducers: {
     setActiveProject: (state, action: PayloadAction<ActiveProject | null>) => {
@@ -28,8 +28,8 @@ export const workSlice = createSlice({
     },
     clearActiveProject: (state) => {
       state.activeProject = null;
-    }
-  }
+    },
+  },
 });
 
 export const { setActiveProject, clearActiveProject } = workSlice.actions;

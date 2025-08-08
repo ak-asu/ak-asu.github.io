@@ -17,12 +17,15 @@ export interface WorkData {
 }
 
 export enum AnimationLevel {
-  Low = 'low',
-  Medium = 'medium',
-  High = 'high'
-};
+  Low = "low",
+  Medium = "medium",
+  High = "high",
+}
 
-export const getAnimationLevel = (level: AnimationLevel, range?: {min: number, max: number}): number => {
+export const getAnimationLevel = (
+  level: AnimationLevel,
+  range?: { min: number; max: number },
+): number => {
   const tempmin = range?.min || 1;
   const tempmax = range?.max || 3;
   switch (level) {
@@ -38,8 +41,7 @@ export const getAnimationLevel = (level: AnimationLevel, range?: {min: number, m
 };
 
 export enum ThemeMode {
-  Light = 'light',
-  Dark = 'dark',
-  System = 'system'
+  Light = "light",
+  Dark = "dark",
+  System = "system",
 }
-

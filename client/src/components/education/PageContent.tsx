@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion, AnimationControls } from 'framer-motion';
-import { Pencil } from 'lucide-react';
+import React from "react";
+import { motion, AnimationControls } from "framer-motion";
+import { Pencil } from "lucide-react";
 
-const BASE_URL = process.env.PUBLIC_URL || '/Portfolio';
+const BASE_URL = import.meta.env.VITE_PUBLIC_URL || "/Portfolio";
 
 interface PageContentProps {
   pageIndex: number;
@@ -19,10 +19,10 @@ const PageContent: React.FC<PageContentProps> = ({
   textWritten,
   pencilAnimation,
   education,
-  isBackSide = false
+  isBackSide = false,
 }) => {
   const getPageContent = () => {
-    if (pageIndex < 0 || pageIndex >= 2*totalPages) return null;
+    if (pageIndex < 0 || pageIndex >= 2 * totalPages) return null;
     // Front cover
     if (pageIndex === 0 && !isBackSide) {
       return (
@@ -36,8 +36,8 @@ const PageContent: React.FC<PageContentProps> = ({
           </motion.h1>
         </div>
       );
-    // Back cover
-    } else if (pageIndex === 2*totalPages - 1 && isBackSide) {
+      // Back cover
+    } else if (pageIndex === 2 * totalPages - 1 && isBackSide) {
       return (
         <div className="flex flex-col items-center justify-center h-full bg-card dark:bg-card/90 p-8 text-center border-2 border-palette-teal/30 dark:border-palette-teal-light/20 rounded-lg">
           <motion.h2
@@ -78,10 +78,14 @@ const PageContent: React.FC<PageContentProps> = ({
               />
             ) : (
               <div className="w-24 h-24 bg-palette-teal-light/20 rounded-full flex items-center justify-center mb-4">
-                <span className="text-2xl font-bold text-palette-teal">{entry.institution.charAt(0)}</span>
+                <span className="text-2xl font-bold text-palette-teal">
+                  {entry.institution.charAt(0)}
+                </span>
               </div>
             )}
-            <h3 className="text-xl font-semibold text-center text-palette-teal dark:text-palette-teal-light">{entry.institution}</h3>
+            <h3 className="text-xl font-semibold text-center text-palette-teal dark:text-palette-teal-light">
+              {entry.institution}
+            </h3>
           </motion.div>
         </div>
       );
@@ -93,10 +97,7 @@ const PageContent: React.FC<PageContentProps> = ({
       return (
         <div className="w-full h-full bg-card/50 dark:bg-card/30 p-6 relative border border-palette-teal/20 dark:border-palette-teal-light/15 rounded-lg">
           {!textWritten && (
-            <motion.div
-              className="absolute"
-              animate={pencilAnimation}
-            >
+            <motion.div className="absolute" animate={pencilAnimation}>
               <Pencil className="text-palette-teal dark:text-palette-teal-light" />
             </motion.div>
           )}
@@ -106,17 +107,34 @@ const PageContent: React.FC<PageContentProps> = ({
             animate={{ opacity: textWritten ? 1 : 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h3 className="text-xl font-semibold text-palette-teal dark:text-palette-teal-light border-b border-palette-teal/20 dark:border-palette-teal-light/15 pb-2">{entry.degree} in {entry.field}</h3>
-            <p className="text-foreground dark:text-foreground/90">{entry.institution}</p>
-            <p className="text-muted-foreground">{entry.startDate} - {entry.endDate}</p>
-            <p className="text-palette-teal dark:text-palette-teal-light border border-palette-teal/20 dark:border-palette-teal-light/15 rounded py-1 px-2 inline-block text-sm">GPA: {entry.gpa}</p>
+            <h3 className="text-xl font-semibold text-palette-teal dark:text-palette-teal-light border-b border-palette-teal/20 dark:border-palette-teal-light/15 pb-2">
+              {entry.degree} in {entry.field}
+            </h3>
+            <p className="text-foreground dark:text-foreground/90">
+              {entry.institution}
+            </p>
+            <p className="text-muted-foreground">
+              {entry.startDate} - {entry.endDate}
+            </p>
+            <p className="text-palette-teal dark:text-palette-teal-light border border-palette-teal/20 dark:border-palette-teal-light/15 rounded py-1 px-2 inline-block text-sm">
+              GPA: {entry.gpa}
+            </p>
             <div className="mt-6 border border-palette-teal/15 dark:border-palette-teal-light/10 rounded-md p-3">
-              <h4 className="font-medium text-palette-teal dark:text-palette-teal-light mb-2 border-b border-palette-teal/15 dark:border-palette-teal-light/10 pb-1">Key Subjects:</h4>
+              <h4 className="font-medium text-palette-teal dark:text-palette-teal-light mb-2 border-b border-palette-teal/15 dark:border-palette-teal-light/10 pb-1">
+                Key Subjects:
+              </h4>
               <ul className="text-sm space-y-1">
                 {entry.subjects?.map((subject: any, idx: number) => (
-                  <li key={idx} className="flex justify-between border-b border-palette-teal/10 dark:border-palette-teal-light/5 last:border-0 py-1">
-                    <span className="text-foreground dark:text-foreground/90">{subject.name}</span>
-                    <span className="font-medium text-palette-teal dark:text-palette-teal-light px-1">{subject.grade}</span>
+                  <li
+                    key={idx}
+                    className="flex justify-between border-b border-palette-teal/10 dark:border-palette-teal-light/5 last:border-0 py-1"
+                  >
+                    <span className="text-foreground dark:text-foreground/90">
+                      {subject.name}
+                    </span>
+                    <span className="font-medium text-palette-teal dark:text-palette-teal-light px-1">
+                      {subject.grade}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -128,7 +146,9 @@ const PageContent: React.FC<PageContentProps> = ({
     // Fallback for any other cases
     return (
       <div className="flex items-center justify-center h-full">
-        <p className="text-palette-teal dark:text-palette-teal-light">Page {pageIndex + 1}</p>
+        <p className="text-palette-teal dark:text-palette-teal-light">
+          Page {pageIndex + 1}
+        </p>
       </div>
     );
   };
@@ -137,7 +157,7 @@ const PageContent: React.FC<PageContentProps> = ({
     <div
       className="w-full h-full bg-white dark:bg-gray-800 overflow-hidden rounded-lg shadow-md border border-palette-teal/10 dark:border-palette-teal-light/5"
       style={{
-        transform: isBackSide ? 'none' : 'none',
+        transform: isBackSide ? "none" : "none",
       }}
     >
       {getPageContent()}

@@ -1,6 +1,6 @@
-import React from 'react';
-import RotatableSphere from './Sphere';
-import Board from './Board';
+import React from "react";
+import RotatableSphere from "./Sphere";
+import Board from "./Board";
 
 const SphereWithBoard: React.FC = () => {
   return (
