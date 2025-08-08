@@ -5,7 +5,7 @@ import { RootState } from "@/store/store";
 import { getAnimationLevel } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import workData from "@/data/work.json";
-import TimelineCircle from "./TimelineCircle";
+import TimelineItem from "./TimelineCircle";
 import WorkDetails from "./WorkDetails";
 
 interface WorkEntry {
@@ -48,13 +48,16 @@ const WorkScene: React.FC = () => {
       if (!timelineRef.current) return;
 
       const container = timelineRef.current;
-      const itemSize = isMobile ? 120 : 140; // Width for mobile, height for desktop
+      const itemSize = isMobile ? 172 : 140; // Width for mobile, height for desktop
       const containerSize = isMobile
         ? container.clientWidth
         : container.clientHeight;
       const targetScrollPosition = Math.max(
         0,
-        index * itemSize - containerSize / 2 + itemSize / 2,
+        index * itemSize -
+          containerSize / 2 +
+          itemSize / 2 +
+          (isMobile ? 20 : 0),
       );
 
       if (isMobile) {
@@ -203,7 +206,7 @@ const WorkScene: React.FC = () => {
     >
       {/* Timeline Section - Top/Left Side */}
       <div
-        className={`${isMobile ? "w-full h-1/3" : "w-1/2"} relative bg-gradient-to-b from-palette-teal/10 to-palette-teal/5 ${isMobile ? "border-b" : "border-r"} border-palette-teal/20`}
+        className={`${isMobile ? "w-full h-1/3" : "w-1/3"} relative bg-gradient-to-b from-palette-teal/10 to-palette-teal/5 ${isMobile ? "border-b" : "border-r"} border-palette-teal/20`}
       >
         <div className="absolute inset-0 p-4">
           <h2
@@ -223,30 +226,30 @@ const WorkScene: React.FC = () => {
             {" "}
             {/* Timeline Line */}
             <div
-              className={`absolute ${isMobile ? "top-1/2 h-0.5 -translate-y-1/2" : "left-3/4 w-0.5"} bg-palette-teal/30 z-0`}
+              className={`absolute ${isMobile ? "top-1/3 h-0.5" : "right-10 w-0.5"} bg-palette-teal/30 z-0`}
               style={
                 isMobile
                   ? {
-                      left: "40px",
-                      width: `${sortedWorkData.length * 120 - 40}px`,
+                      left: "60px",
+                      width: `${sortedWorkData.length * 120}px`,
                     }
                   : {
-                      top: "40px",
-                      height: `${sortedWorkData.length * 140 - 40}px`,
+                      top: "70px",
+                      height: `${sortedWorkData.length * 140}px`,
                     }
               }
             />
             {/* Timeline Items */}
             <div
-              className={`z-10 ${isMobile ? "flex items-center h-full py-4" : "pt-8 pb-8"}`}
+              className={`relative z-10 ${isMobile ? "h-full" : "h-full"}`}
               style={
                 isMobile
-                  ? { width: `${sortedWorkData.length * 120}px` }
-                  : { height: `${sortedWorkData.length * 140}px` }
+                  ? { width: `${sortedWorkData.length * 120 + 120}px` }
+                  : { height: `${sortedWorkData.length * 140 + 140}px` }
               }
             >
               {sortedWorkData.map((work, index) => (
-                <TimelineCircle
+                <TimelineItem
                   key={`${work.company}-${work.position}-${index}`}
                   work={work}
                   index={index}
@@ -262,7 +265,7 @@ const WorkScene: React.FC = () => {
       </div>
       {/* Work Details Section - Bottom/Right Side */}
       <div
-        className={`${isMobile ? "w-full h-2/3" : "w-1/2"} relative bg-gradient-to-b from-background to-card/50`}
+        className={`${isMobile ? "w-full h-2/3" : "w-2/3"} relative bg-gradient-to-b from-background to-card/50`}
       >
         <AnimatePresence mode="wait">
           {selectedWork ? (
