@@ -92,7 +92,7 @@ export const Navbar = () => {
                 href="#"
                 className="focus:outline-none focus:ring-2 focus:ring-primary rounded"
               >
-                Portfolio {`(Experimental)`}
+                Portfolio
               </a>
             </motion.div>
             <div
