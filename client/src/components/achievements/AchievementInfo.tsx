@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import achievements from "@/data/achievements.json";
+import { AnimationLevel } from "@/lib/types";
 
 interface AchievementInfoProps {
   onUserInteract: (isInteracting: boolean) => void;
@@ -127,6 +128,12 @@ const AchievementInfo: React.FC<AchievementInfoProps> = ({
 
   // Auto-scrolling effect - optimized with requestAnimationFrame
   useEffect(() => {
+    // Disable auto-scrolling when animation level is Low
+    if (animationLevel === AnimationLevel.Low) {
+      setAutoScrolling(false);
+      return;
+    }
+
     setAutoScrolling(!userInteracting);
     let animationId: number;
     let lastTimestamp: number = 0;
@@ -178,7 +185,13 @@ const AchievementInfo: React.FC<AchievementInfoProps> = ({
     return () => {
       if (animationId) cancelAnimationFrame(animationId);
     };
-  }, [autoScrolling, userInteracting, scrollingToTop, scrollToTopCallback]);
+  }, [
+    autoScrolling,
+    userInteracting,
+    scrollingToTop,
+    scrollToTopCallback,
+    animationLevel,
+  ]);
 
   // Clean up any animations on unmount
   useEffect(() => {

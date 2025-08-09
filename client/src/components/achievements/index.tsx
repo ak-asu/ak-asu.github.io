@@ -6,7 +6,7 @@ import Confetti from "react-confetti";
 import useWindowSize from "../../hooks/use-window-size";
 import Curtain from "./Curtain";
 import AchievementInfo from "./AchievementInfo";
-import { getAnimationLevel } from "@/lib/types";
+import { getAnimationLevel, AnimationLevel } from "@/lib/types";
 import { Medal } from "lucide-react";
 
 const WallOfFame: React.FC = () => {
@@ -40,16 +40,21 @@ const WallOfFame: React.FC = () => {
   const toggleCurtain = useCallback(async () => {
     if (!isOpen) {
       setIsOpen(true);
-      setShowConfetti(true);
+      // Only show confetti if animation level is not Low
+      if (animationLevel !== AnimationLevel.Low) {
+        setShowConfetti(true);
+      }
       setIsHovered(false);
       await Promise.all([
         leftCurtainControls.start("open"),
         rightCurtainControls.start("open"),
       ]);
-      const confettiTimeout = setTimeout(() => {
-        setShowConfetti(false);
-      }, 3000);
-      return () => clearTimeout(confettiTimeout);
+      if (animationLevel !== AnimationLevel.Low) {
+        const confettiTimeout = setTimeout(() => {
+          setShowConfetti(false);
+        }, 3000);
+        return () => clearTimeout(confettiTimeout);
+      }
     } else {
       await Promise.all([
         leftCurtainControls.start("closed"),
@@ -58,7 +63,7 @@ const WallOfFame: React.FC = () => {
       setIsOpen(false);
       setUserInteracting(false);
     }
-  }, [isOpen, leftCurtainControls, rightCurtainControls]);
+  }, [isOpen, leftCurtainControls, rightCurtainControls, animationLevel]);
 
   const handleUserInteraction = useCallback((isInteracting: boolean) => {
     setUserInteracting(isInteracting);

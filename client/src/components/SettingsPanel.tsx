@@ -132,7 +132,7 @@ export const SettingsPanel = () => {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium" id="sound-toggle-label">
-              Sound
+              Sound {`(In Development)`}
             </span>
             <Toggle
               pressed={soundEnabled}

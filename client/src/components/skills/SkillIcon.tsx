@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { getVerticalOffset, levelToPercentage, Skill } from "./utils";
+import { AnimationLevel } from "@/lib/types";
 
 const BASE_URL = import.meta.env.VITE_PUBLIC_URL || "/Portfolio";
 
@@ -11,6 +12,7 @@ interface SkillIconProps {
   hoveredIcon: string | null;
   setHoveredIcon: (value: string | null) => void;
   isPaused?: boolean;
+  animationLevel: AnimationLevel;
 }
 
 const SkillIcon: React.FC<SkillIconProps> = ({
@@ -20,6 +22,7 @@ const SkillIcon: React.FC<SkillIconProps> = ({
   hoveredIcon,
   setHoveredIcon,
   isPaused = false,
+  animationLevel,
 }) => {
   const proficiency = levelToPercentage(skill.level);
   const yOffset = getVerticalOffset(index);
@@ -29,7 +32,7 @@ const SkillIcon: React.FC<SkillIconProps> = ({
   const iconRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isPaused) {
+    if (isPaused || animationLevel !== AnimationLevel.High) {
       controls.stop();
       return;
     }
@@ -50,7 +53,7 @@ const SkillIcon: React.FC<SkillIconProps> = ({
     return () => {
       controls.stop();
     };
-  }, [controls, index, isPaused, yOffset]);
+  }, [controls, index, isPaused, yOffset, animationLevel]);
 
   // Handle hover state separately from animation state
   const handlePointerEnter = () => {

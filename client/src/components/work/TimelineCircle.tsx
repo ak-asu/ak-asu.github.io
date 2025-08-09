@@ -144,7 +144,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
           }}
         >
           {/* Pulse Animation for Active Dot */}
-          {isActive && (
+          {isActive && animationLevel !== AnimationLevel.Low && (
             <motion.div
               className="absolute inset-0 rounded-full bg-palette-teal opacity-60"
               animate={{

@@ -8,7 +8,7 @@ import { Pause, Play } from "lucide-react";
 import MatrixRain from "./MatrixRain";
 import SkillIcon from "./SkillIcon";
 import { Skill } from "./utils";
-import { getAnimationLevel, ThemeMode } from "@/lib/types";
+import { getAnimationLevel, ThemeMode, AnimationLevel } from "@/lib/types";
 
 const Skills: React.FC = () => {
   const animationLevel = useSelector(
@@ -64,9 +64,9 @@ const Skills: React.FC = () => {
 
   // Create a wrapper ref to measure the actual content width
   const contentRef = useRef<HTMLDivElement>(null);
-  const animationProgressRef = useRef(0);
+  // const animationProgressRef = useRef(0);
   const currentPositionRef = useRef(0);
-  const lastScrollPosition = useRef(0);
+  // const lastScrollPosition = useRef(0);
   const lastAnimationTimeRef = useRef(0);
 
   // Fix measurement logic and improve scrolling detection
@@ -214,6 +214,7 @@ const Skills: React.FC = () => {
     };
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
   const handleDragStart = (event: any, info: any) => {
     dragStartX.current = x.get();
     setIsPaused(true);
@@ -221,6 +222,7 @@ const Skills: React.FC = () => {
     currentPositionRef.current = x.get();
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
   const handleDragEnd = (event: any, info: any) => {
     currentPositionRef.current = x.get();
     dragging.current = false;
@@ -310,7 +312,9 @@ const Skills: React.FC = () => {
       <div className="absolute top-0 right-0 w-8 h-8 border-t-3 border-r-3 border-current opacity-60 rounded-tr-lg"></div>
       <div className="absolute bottom-0 left-0 w-8 h-8 border-b-3 border-l-3 border-current opacity-60 rounded-bl-lg"></div>
       <div className="absolute bottom-0 right-0 w-8 h-8 border-b-3 border-r-3 border-current opacity-60 rounded-br-lg"></div>
-      <MatrixRain isDarkMode={themeMode !== ThemeMode.Light} />
+      {animationLevel !== AnimationLevel.Low && (
+        <MatrixRain isDarkMode={themeMode !== ThemeMode.Light} />
+      )}
 
       {/* Add hover handlers to this div specifically */}
       <div
@@ -342,6 +346,7 @@ const Skills: React.FC = () => {
                     hoveredIcon={hoveredIcon}
                     setHoveredIcon={setHoveredIcon}
                     isPaused={dragging.current || isPaused || isHovered}
+                    animationLevel={animationLevel}
                   />
                 ))}
               </div>
@@ -356,6 +361,7 @@ const Skills: React.FC = () => {
                       hoveredIcon={hoveredIcon}
                       setHoveredIcon={setHoveredIcon}
                       isPaused={dragging.current || isPaused || isHovered}
+                      animationLevel={animationLevel}
                     />
                   ))}
                 </div>

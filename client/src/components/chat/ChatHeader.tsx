@@ -53,7 +53,14 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               aria-label={aiEnabled ? "AI enabled" : "Enable AI"}
               title={aiEnabled ? "AI powered by Gemini" : "Click to enable AI"}
             >
-              <Brain className={cn("h-4 w-4", aiEnabled ? "text-palette-teal-light dark:text-palette-teal-dark" : "text-muted-foreground")} />
+              <Brain
+                className={cn(
+                  "h-4 w-4",
+                  aiEnabled
+                    ? "text-palette-teal-light dark:text-palette-teal-dark"
+                    : "text-muted-foreground",
+                )}
+              />
             </Button>
             <Button
               variant="ghost"

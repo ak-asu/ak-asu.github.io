@@ -19,7 +19,9 @@ import { DisplayMode } from "./utils";
 export const ProjectShow = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { soundEnabled } = useSelector((state: RootState) => state.mode);
-  const [displayMode, setDisplayMode] = useState<DisplayMode>(DisplayMode.Video);
+  const [displayMode, setDisplayMode] = useState<DisplayMode>(
+    DisplayMode.Video,
+  );
 
   const handleProjectClick = (project: Project) => {
     if (soundEnabled) {

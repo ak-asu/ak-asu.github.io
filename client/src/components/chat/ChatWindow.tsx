@@ -5,11 +5,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { audioManager } from "@/lib/audio";
 import { getSimulatedResponse, Message } from "./utils";
-import { 
-  isApiKeySet, 
-  setGeminiApiKey, 
-  sendMessageToGemini,
-} from "@/lib/genai";
+import { isApiKeySet, setGeminiApiKey, sendMessageToGemini } from "@/lib/genai";
 import ChatHeader from "./ChatHeader";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
@@ -94,11 +90,12 @@ export const ChatWindow: React.FC = () => {
     setGeminiApiKey(apiKey);
     setAiEnabled(true);
     setShowApiKeyDialog(false);
-    
+
     // Add confirmation message
     const confirmationMessage: Message = {
       id: generateUniqueId(),
-      content: "✅ API key set! I'm now powered by Gemini AI and can provide more intelligent responses about Aakash's portfolio. Ask me anything!",
+      content:
+        "✅ API key set! I'm now powered by Gemini AI and can provide more intelligent responses about Aakash's portfolio. Ask me anything!",
       sender: "bot",
       timestamp: new Date(),
     };
@@ -107,18 +104,18 @@ export const ChatWindow: React.FC = () => {
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
-    
+
     if (soundEnabled) {
       audioManager.playSoundEffect("message");
     }
-    
+
     const newUserMessage: Message = {
       id: generateUniqueId(),
       content: inputValue.trim(),
       sender: "user",
       timestamp: new Date(),
     };
-    
+
     setMessages((prev) => [...prev, newUserMessage]);
     const userMessageText = inputValue.trim();
     setInputValue("");
@@ -126,26 +123,29 @@ export const ChatWindow: React.FC = () => {
 
     try {
       let botResponse: Message;
-      
+
       if (aiEnabled) {
         // Use Gemini AI
         const response = await sendMessageToGemini(userMessageText);
         botResponse = {
           id: generateUniqueId(),
-          content: response.success 
-            ? response.content 
+          content: response.success
+            ? response.content
             : `⚠️ ${response.content}`,
           sender: "bot",
           timestamp: new Date(),
         };
       } else {
         // Ask for API key for more intelligent responses
-        if (Math.random() < 0.3) { // 30% chance to prompt for AI
+        if (Math.random() < 0.3) {
+          // 30% chance to prompt for AI
           setShowApiKeyDialog(true);
         }
-        
+
         // Use simulated response as fallback
-        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 + Math.random() * 1000),
+        );
         botResponse = {
           id: generateUniqueId(),
           content: getSimulatedResponse(userMessageText),
@@ -153,7 +153,7 @@ export const ChatWindow: React.FC = () => {
           timestamp: new Date(),
         };
       }
-      
+
       setMessages((prev) => [...prev, botResponse]);
     } catch {
       const errorMessage: Message = {

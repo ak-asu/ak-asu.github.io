@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { getAnimationLevel } from "@/lib/types";
+import { getAnimationLevel, AnimationLevel } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import workData from "@/data/work.json";
 import TimelineItem from "./TimelineCircle";
@@ -77,8 +77,8 @@ const WorkScene: React.FC = () => {
 
   // Setup auto-scrolling
   useEffect(() => {
-    // Don't auto-scroll if user is interacting or it's paused
-    if (isPaused || userInteracting) {
+    // Don't auto-scroll if animation level is Low, user is interacting or it's paused
+    if (animationLevel === AnimationLevel.Low || isPaused || userInteracting) {
       if (autoScrollIntervalRef.current) {
         clearInterval(autoScrollIntervalRef.current);
         autoScrollIntervalRef.current = null;

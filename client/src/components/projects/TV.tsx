@@ -66,7 +66,10 @@ export const TV = ({
       audioManager.playSoundEffect("click");
     }
     // If video button is clicked but no media, show description instead
-    if (mode === DisplayMode.Video && (!selectedProject?.media || selectedProject.media.trim() === "")) {
+    if (
+      mode === DisplayMode.Video &&
+      (!selectedProject?.media || selectedProject.media.trim() === "")
+    ) {
       setDisplayMode(DisplayMode.Description);
     } else {
       setDisplayMode(mode);
@@ -102,107 +105,115 @@ export const TV = ({
       >
         <div className="flex flex-col h-full w-full">
           {/* TV Screen (square, as large as possible, never overflows) */}
-          <div className="flex justify-center items-start flex-shrink-0" style={{height: 'calc(100% - 40px)'}}>
+          <div
+            className="flex justify-center items-start flex-shrink-0"
+            style={{ height: "calc(100% - 40px)" }}
+          >
             <div className="w-full h-full max-h-full max-w-full aspect-square relative flex items-center justify-center">
               <div className="absolute inset-[5%] bg-black rounded-lg overflow-hidden opacity-100 transition-opacity duration-300 border-2 border-palette-teal flex flex-col">
                 {selectedProject ? (
                   <div className="w-full h-full flex flex-col">
-                {displayMode === "video" && (
-                  <iframe
-                    src={getEmbedUrl(selectedProject.media)}
-                    title={`${selectedProject.name} demo video`}
-                    className="w-full h-full"
-                    allowFullScreen
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  />
-                )}
-                {displayMode === "description" && (
-                  <div
-                    className={`p-6 h-full overflow-auto ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark/90 text-white" : "bg-palette-gray-light/90 text-palette-gray-dark"}`}
-                  >
-                    <h2 className="text-2xl font-bold mb-4 text-palette-teal">
-                      {selectedProject.name}
-                    </h2>
-                    <p className="mb-4">{selectedProject.description}</p>
-                    <p>
-                      <span className="font-semibold text-palette-teal">
-                        Duration:
-                      </span>{" "}
-                      {selectedProject.duration}
-                    </p>
-                  </div>
-                )}
-                {displayMode === "skills" && (
-                  <div
-                    className={`p-6 h-full overflow-auto ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark/90 text-white" : "bg-palette-gray-light/90 text-palette-gray-dark"}`}
-                  >
-                    <h3 className="text-xl font-bold mb-4 text-palette-teal">
-                      Technologies Used
-                    </h3>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {selectedProject.technologies.map((tech) => (
-                        <Badge
-                          key={tech}
-                          className="bg-palette-teal px-3 py-1 text-white"
-                        >
-                          {tech}
-                        </Badge>
-                      ))}
-                    </div>
-                    {(selectedProject.url || selectedProject.media) && (
-                      <div className="mt-2">
-                        <h4 className="text-lg font-semibold mb-2 text-palette-teal">Links</h4>
-                        <ul className="list-disc list-inside space-y-1">
-                          {selectedProject.url && (
-                            <li>
-                              <a
-                                href={selectedProject.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="underline text-palette-teal hover:text-palette-teal/80"
-                              >
-                                Project Link
-                              </a>
-                            </li>
-                          )}
-                          {selectedProject.media && selectedProject.media.trim() !== "" && (
-                            <li>
-                              <a
-                                href={selectedProject.media}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="underline text-palette-teal hover:text-palette-teal/80"
-                              >
-                                Demo/Media Link
-                              </a>
-                            </li>
-                          )}
-                        </ul>
+                    {displayMode === "video" && (
+                      <iframe
+                        src={getEmbedUrl(selectedProject.media)}
+                        title={`${selectedProject.name} demo video`}
+                        className="w-full h-full"
+                        allowFullScreen
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      />
+                    )}
+                    {displayMode === "description" && (
+                      <div
+                        className={`p-6 h-full overflow-auto ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark/90 text-white" : "bg-palette-gray-light/90 text-palette-gray-dark"}`}
+                      >
+                        <h2 className="text-2xl font-bold mb-4 text-palette-teal">
+                          {selectedProject.name}
+                        </h2>
+                        <p className="mb-4">{selectedProject.description}</p>
+                        <p>
+                          <span className="font-semibold text-palette-teal">
+                            Duration:
+                          </span>{" "}
+                          {selectedProject.duration}
+                        </p>
+                      </div>
+                    )}
+                    {displayMode === "skills" && (
+                      <div
+                        className={`p-6 h-full overflow-auto ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark/90 text-white" : "bg-palette-gray-light/90 text-palette-gray-dark"}`}
+                      >
+                        <h3 className="text-xl font-bold mb-4 text-palette-teal">
+                          Technologies Used
+                        </h3>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {selectedProject.technologies.map((tech) => (
+                            <Badge
+                              key={tech}
+                              className="bg-palette-teal px-3 py-1 text-white"
+                            >
+                              {tech}
+                            </Badge>
+                          ))}
+                        </div>
+                        {(selectedProject.url || selectedProject.media) && (
+                          <div className="mt-2">
+                            <h4 className="text-lg font-semibold mb-2 text-palette-teal">
+                              Links
+                            </h4>
+                            <ul className="list-disc list-inside space-y-1">
+                              {selectedProject.url && (
+                                <li>
+                                  <a
+                                    href={selectedProject.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline text-palette-teal hover:text-palette-teal/80"
+                                  >
+                                    Project Link
+                                  </a>
+                                </li>
+                              )}
+                              {selectedProject.media &&
+                                selectedProject.media.trim() !== "" && (
+                                  <li>
+                                    <a
+                                      href={selectedProject.media}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="underline text-palette-teal hover:text-palette-teal/80"
+                                    >
+                                      Demo/Media Link
+                                    </a>
+                                  </li>
+                                )}
+                            </ul>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
+                ) : (
+                  <div
+                    className={`flex items-center justify-center h-full ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark/90 text-white" : "bg-palette-gray-light/90 text-palette-gray-dark"}`}
+                  >
+                    <div className="text-center p-6">
+                      <Monitor
+                        size={60}
+                        className="mx-auto mb-4 text-palette-teal"
+                      />
+                      <h3 className="text-2xl font-bold mb-2">Welcome!</h3>
+                      <p>Select a project from the list to get started</p>
+                    </div>
+                  </div>
                 )}
               </div>
-            ) : (
-              <div
-                className={`flex items-center justify-center h-full ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark/90 text-white" : "bg-palette-gray-light/90 text-palette-gray-dark"}`}
-              >
-                <div className="text-center p-6">
-                  <Monitor
-                    size={60}
-                    className="mx-auto mb-4 text-palette-teal"
-                  />
-                  <h3 className="text-2xl font-bold mb-2">Welcome!</h3>
-                  <p>Select a project from the list to get started</p>
-                </div>
-              </div>
-            )}
-          </div>
             </div>
           </div>
           {/* TV Stand & Buttons (always visible, never overflows) */}
           <div className="w-full flex justify-center items-end">
-            <div className={`w-24 h-10 relative ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"} rounded-b-lg flex items-center justify-center`}>
+            <div
+              className={`w-24 h-10 relative ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"} rounded-b-lg flex items-center justify-center`}
+            >
               <div className="flex gap-2 z-10">
                 <Button
                   variant="outline"

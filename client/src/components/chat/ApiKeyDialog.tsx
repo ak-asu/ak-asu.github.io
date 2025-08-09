@@ -64,7 +64,9 @@ export const ApiKeyDialog: React.FC<ApiKeyDialogProps> = ({
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-palette-teal-DEFAULT dark:text-palette-teal-dark mt-0.5 flex-shrink-0" />
             <div className="text-sm text-muted-foreground">
-              <p className="font-medium mb-1 text-foreground">Privacy Notice:</p>
+              <p className="font-medium mb-1 text-foreground">
+                Privacy Notice:
+              </p>
               <p>
                 Your API key is stored only in memory and will be lost when you
                 refresh the page. All AI processing happens in your browser -
@@ -76,10 +78,7 @@ export const ApiKeyDialog: React.FC<ApiKeyDialogProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="apiKey"
-              className="block text-sm font-medium mb-2"
-            >
+            <label htmlFor="apiKey" className="block text-sm font-medium mb-2">
               Enter your Gemini API Key:
             </label>
             <input
@@ -92,7 +91,9 @@ export const ApiKeyDialog: React.FC<ApiKeyDialogProps> = ({
               autoFocus
             />
             {error && (
-              <p className="text-sm text-red-500 dark:text-red-400 mt-1">{error}</p>
+              <p className="text-sm text-red-500 dark:text-red-400 mt-1">
+                {error}
+              </p>
             )}
           </div>
 
