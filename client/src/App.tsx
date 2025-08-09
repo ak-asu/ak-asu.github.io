@@ -8,9 +8,13 @@ import { Home } from "./pages/Home";
 import { useEffect } from "react";
 import type { RootState } from "./store/store";
 import { CustomCursor } from "./components/CustomCursor";
+import { audioManager } from "./lib/audio";
 
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
   const themeMode = useSelector((state: RootState) => state.mode.themeMode);
+  const soundEnabled = useSelector(
+    (state: RootState) => state.mode.soundEnabled,
+  );
   const isMobile = false;
 
   useEffect(() => {
@@ -27,6 +31,19 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
       root.classList.add(themeMode);
     }
   }, [themeMode]);
+
+  // Global audio management
+  useEffect(() => {
+    if (soundEnabled) {
+      audioManager.playBackgroundMusic();
+    } else {
+      audioManager.stopBackgroundMusic();
+    }
+
+    return () => {
+      audioManager.stopBackgroundMusic();
+    };
+  }, [soundEnabled]);
 
   return (
     <>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { audioManager } from "@/lib/audio";
 import { useSelector } from "react-redux";
 // import { setScrollSection } from '@/store/features/navigationSlice';
 import type { RootState } from "@/store/store";
@@ -37,14 +36,9 @@ export const NonTechnical = () => {
   const [isLoading, setIsLoading] = useState(true);
   //const [activeSection, setActiveSection] = useState('intro');
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
-  const { soundEnabled, animationLevel } = useSelector(
-    (state: RootState) => state.mode,
-  );
+  const { animationLevel } = useSelector((state: RootState) => state.mode);
   // const currentScrollSection = useSelector((state: RootState) => state.navigation.scrollSection);
   useEffect(() => {
-    if (soundEnabled) {
-      audioManager.playBackgroundMusic();
-    }
     const delay =
       animationLevel === AnimationLevel.Low
         ? 1000
@@ -54,9 +48,8 @@ export const NonTechnical = () => {
     const timer = setTimeout(() => setIsLoading(false), delay);
     return () => {
       clearTimeout(timer);
-      audioManager.stopBackgroundMusic();
     };
-  }, [soundEnabled, animationLevel]);
+  }, [animationLevel]);
 
   // useEffect(() => {
   //   const handleScroll = () => {
