@@ -129,7 +129,10 @@ export const GameCarousel = () => {
         <button
           onClick={() => goToGame(activeIndex - 1)}
           disabled={activeIndex === 0}
-          className="absolute left-[-20px] top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-gray-100/90 dark:bg-gray-800/90 shadow-md flex items-center justify-center disabled:opacity-30 z-20 hover:bg-blue-100 dark:hover:bg-blue-900 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+          className="absolute left-[-20px] top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-background/90 dark:bg-card/90 shadow-md flex items-center justify-center disabled:opacity-30 z-20 border border-palette-teal/20 text-foreground dark:text-foreground transition-all
+            hover:bg-palette-teal/20 hover:text-white hover:border-palette-teal
+            focus:bg-palette-teal/30 focus:text-white focus:border-palette-teal
+            "
           aria-label="Previous game"
         >
           <svg
@@ -151,7 +154,10 @@ export const GameCarousel = () => {
         <button
           onClick={() => goToGame(activeIndex + 1)}
           disabled={activeIndex === games.length - 1}
-          className="absolute right-[-20px] top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-gray-100/90 dark:bg-gray-800/90 shadow-md flex items-center justify-center disabled:opacity-30 z-20 hover:bg-blue-100 dark:hover:bg-blue-900 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+          className="absolute right-[-20px] top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-background/90 dark:bg-card/90 shadow-md flex items-center justify-center disabled:opacity-30 z-20 border border-palette-teal/20 text-foreground dark:text-foreground transition-all
+            hover:bg-palette-teal/20 hover:text-white hover:border-palette-teal
+            focus:bg-palette-teal/30 focus:text-white focus:border-palette-teal
+            "
           aria-label="Next game"
         >
           <svg
@@ -175,7 +181,11 @@ export const GameCarousel = () => {
             <button
               key={index}
               onClick={() => goToGame(index)}
-              className={`w-2 h-2 rounded-full transition-colors ${index === activeIndex ? "bg-blue-500" : "bg-gray-300"}`}
+              className={`w-2 h-2 rounded-full border border-palette-teal/30 transition-all duration-200 focus:outline-none
+                ${index === activeIndex ? "bg-palette-teal scale-125 ring-2 ring-palette-teal/40" : "bg-muted-foreground/30"}
+                hover:bg-palette-teal/70 hover:scale-110 hover:ring-2 hover:ring-palette-teal/40
+                focus:bg-palette-teal focus:scale-125 focus:ring-2 focus:ring-palette-teal/60
+              `}
               aria-label={`Go to game ${index + 1}`}
             />
           ))}

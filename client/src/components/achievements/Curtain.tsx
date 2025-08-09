@@ -40,8 +40,8 @@ const Curtain: React.FC<CurtainProps> = ({ side, controls }) => {
         absolute ${side === "left" ? "left-0" : "right-0"} top-0 w-1/2 h-full z-20 overflow-hidden
         ${
           side === "left"
-            ? "bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800"
-            : "bg-gradient-to-l from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800"
+            ? "bg-gradient-to-r from-palette-teal/40 to-palette-teal-light/30 dark:from-palette-teal-dark/50 dark:to-palette-teal/40"
+            : "bg-gradient-to-l from-palette-teal/40 to-palette-teal-light/30 dark:from-palette-teal-dark/50 dark:to-palette-teal/40"
         }
       `}
     >

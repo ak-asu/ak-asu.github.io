@@ -65,7 +65,12 @@ export const TV = ({
     if (soundEnabled) {
       audioManager.playSoundEffect("click");
     }
-    setDisplayMode(mode);
+    // If video button is clicked but no media, show description instead
+    if (mode === DisplayMode.Video && (!selectedProject?.media || selectedProject.media.trim() === "")) {
+      setDisplayMode(DisplayMode.Description);
+    } else {
+      setDisplayMode(mode);
+    }
   };
 
   const getAnimationProps = () => {
@@ -93,16 +98,15 @@ export const TV = ({
   return (
     <motion.div className="flex flex-col h-full" {...getAnimationProps()}>
       <Card
-        className={`relative border-palette-slate w-full max-w-3xl mx-auto overflow-hidden rounded-lg ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"}`}
+        className={`relative border-palette-slate w-full h-full max-w-3xl mx-auto overflow-hidden rounded-lg flex flex-col ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"}`}
       >
-        {/* TV Frame */}
-        <div
-          className={`relative pb-[75%] w-full ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"}`}
-        >
-          {/* TV Screen */}
-          <div className="absolute inset-[20px] bg-black rounded-lg overflow-hidden opacity-100 transition-opacity duration-300 border-2 border-palette-teal">
-            {selectedProject ? (
-              <div className="w-full h-full">
+        <div className="flex flex-col h-full w-full">
+          {/* TV Screen (square, as large as possible, never overflows) */}
+          <div className="flex justify-center items-start flex-shrink-0" style={{height: 'calc(100% - 40px)'}}>
+            <div className="w-full h-full max-h-full max-w-full aspect-square relative flex items-center justify-center">
+              <div className="absolute inset-[5%] bg-black rounded-lg overflow-hidden opacity-100 transition-opacity duration-300 border-2 border-palette-teal flex flex-col">
+                {selectedProject ? (
+                  <div className="w-full h-full flex flex-col">
                 {displayMode === "video" && (
                   <iframe
                     src={getEmbedUrl(selectedProject.media)}
@@ -135,7 +139,7 @@ export const TV = ({
                     <h3 className="text-xl font-bold mb-4 text-palette-teal">
                       Technologies Used
                     </h3>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 mb-4">
                       {selectedProject.technologies.map((tech) => (
                         <Badge
                           key={tech}
@@ -145,6 +149,37 @@ export const TV = ({
                         </Badge>
                       ))}
                     </div>
+                    {(selectedProject.url || selectedProject.media) && (
+                      <div className="mt-2">
+                        <h4 className="text-lg font-semibold mb-2 text-palette-teal">Links</h4>
+                        <ul className="list-disc list-inside space-y-1">
+                          {selectedProject.url && (
+                            <li>
+                              <a
+                                href={selectedProject.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline text-palette-teal hover:text-palette-teal/80"
+                              >
+                                Project Link
+                              </a>
+                            </li>
+                          )}
+                          {selectedProject.media && selectedProject.media.trim() !== "" && (
+                            <li>
+                              <a
+                                href={selectedProject.media}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline text-palette-teal hover:text-palette-teal/80"
+                              >
+                                Demo/Media Link
+                              </a>
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -163,47 +198,47 @@ export const TV = ({
               </div>
             )}
           </div>
-        </div>
-        {/* TV Stand */}
-        <div
-          className={`w-24 h-10 mx-auto relative ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"}`}
-        >
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleButtonClick(DisplayMode.Video)}
-                className={`border-palette-teal hover:bg-palette-slate/20 
-                  ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"} 
-                  ${displayMode === DisplayMode.Video ? "ring-2 ring-palette-teal" : ""}`}
-                disabled={!selectedProject?.media}
-              >
-                <PlayCircle size={16} />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleButtonClick(DisplayMode.Description)}
-                className={`border-palette-teal hover:bg-palette-slate/20
-                  ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"}
-                  ${displayMode === DisplayMode.Description ? "ring-2 ring-palette-teal" : ""}`}
-                disabled={!selectedProject?.description}
-              >
-                <BadgeInfo size={16} />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleButtonClick(DisplayMode.Skills)}
-                className={`border-palette-teal hover:bg-palette-slate/20
-                  ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"}
-                  ${displayMode === DisplayMode.Skills ? "ring-2 ring-palette-teal" : ""}`}
-                disabled={!selectedProject?.technologies.length}
-              >
-                <Code2 size={16} />
-              </Button>
-            </>
+            </div>
+          </div>
+          {/* TV Stand & Buttons (always visible, never overflows) */}
+          <div className="w-full flex justify-center items-end">
+            <div className={`w-24 h-10 relative ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"} rounded-b-lg flex items-center justify-center`}>
+              <div className="flex gap-2 z-10">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleButtonClick(DisplayMode.Video)}
+                  className={`border-palette-teal hover:bg-palette-slate/20 
+                    ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"} 
+                    ${displayMode === DisplayMode.Video ? "ring-2 ring-palette-teal" : ""}`}
+                  disabled={!selectedProject?.media}
+                >
+                  <PlayCircle size={16} />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleButtonClick(DisplayMode.Description)}
+                  className={`border-palette-teal hover:bg-palette-slate/20
+                    ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"}
+                    ${displayMode === DisplayMode.Description ? "ring-2 ring-palette-teal" : ""}`}
+                  disabled={!selectedProject?.description}
+                >
+                  <BadgeInfo size={16} />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleButtonClick(DisplayMode.Skills)}
+                  className={`border-palette-teal hover:bg-palette-slate/20
+                    ${themeMode !== ThemeMode.Light ? "bg-palette-gray-dark" : "bg-palette-gray-light"}
+                    ${displayMode === DisplayMode.Skills ? "ring-2 ring-palette-teal" : ""}`}
+                  disabled={!selectedProject?.technologies.length}
+                >
+                  <Code2 size={16} />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </Card>

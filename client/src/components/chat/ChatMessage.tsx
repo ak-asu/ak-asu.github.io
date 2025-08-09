@@ -18,7 +18,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-palette-teal underline hover:text-palette-teal/80 transition-colors"
+        className="text-palette-teal-DEFAULT dark:text-palette-teal-dark underline hover:text-palette-teal-DEFAULT/80 dark:hover:text-palette-teal-dark/80 transition-colors"
       >
         {children}
       </a>
@@ -36,8 +36,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         className={cn(
           "rounded-lg px-3 py-2",
           isUser
-            ? "bg-palette-teal text-white"
-            : "bg-palette-gray-light/20 text-foreground border border-palette-gray-light/30",
+            ? "bg-palette-teal-DEFAULT dark:bg-palette-teal-dark text-white dark:text-foreground"
+            : "bg-muted/30 text-foreground border border-border",
         )}
       >
         {isUser ? (

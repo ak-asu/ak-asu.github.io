@@ -43,14 +43,6 @@ const DEFAULT_SOCIALS: SocialLink[] = [
     darkColor: "#ea4335",
   },
   {
-    id: "website",
-    name: "Website",
-    url: contact.website,
-    icon: <Globe size={18} />,
-    color: "#9C27B0",
-    darkColor: "#b388ff",
-  },
-  {
     id: "devpost",
     name: "Devpost",
     url: contact.devpost,

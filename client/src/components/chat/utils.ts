@@ -57,7 +57,7 @@ export const getSimulatedResponse = (userMessage: string): string => {
     lowerCaseMessage.includes("email") ||
     lowerCaseMessage.includes("reach")
   ) {
-    return `You can reach me through:\n\n• Email: ${contact.email}\n\n• GitHub: ${contact.github}\n\n• LinkedIn: ${contact.linkedin}\n\n• Devpost: ${contact.devpost}\n\n• Website: ${contact.website}\n\nI look forward to connecting with you!`;
+    return `You can reach me through:\n\n• Email: ${contact.email}\n\n• GitHub: ${contact.github}\n\n• LinkedIn: ${contact.linkedin}\n\n• Devpost: ${contact.devpost}\n\nI look forward to connecting with you!`;
   } else if (
     lowerCaseMessage.includes("experience") ||
     lowerCaseMessage.includes("work") ||

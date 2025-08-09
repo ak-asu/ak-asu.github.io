@@ -19,15 +19,17 @@ import { DisplayMode } from "./utils";
 export const ProjectShow = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { soundEnabled } = useSelector((state: RootState) => state.mode);
-  const [displayMode, setDisplayMode] = useState<DisplayMode>(
-    DisplayMode.Video,
-  );
+  const [displayMode, setDisplayMode] = useState<DisplayMode>(DisplayMode.Video);
 
   const handleProjectClick = (project: Project) => {
     if (soundEnabled) {
       audioManager.playSoundEffect("click");
     }
     setSelectedProject(project);
+    // Auto-switch to Description if no media
+    if (!project.media || project.media.trim() === "") {
+      setDisplayMode(DisplayMode.Description);
+    }
   };
 
   const handleProjectHover = () => {
@@ -39,7 +41,7 @@ export const ProjectShow = () => {
   return (
     <div className="w-full grid grid-cols-1 lg:grid-cols-5 gap-6">
       {/* TV Component (Left/Top) */}
-      <div className="max-h-[500px] lg:col-span-3">
+      <div className="max-h-[240px] lg:max-h-[480px] lg:col-span-3">
         <TV
           selectedProject={selectedProject}
           displayMode={displayMode}
@@ -47,8 +49,8 @@ export const ProjectShow = () => {
         />
       </div>
       {/* Project List (Right/Bottom) */}
-      <div className="max-h-[500px] lg:col-span-2">
-        <Card className="border-palette-slate">
+      <div className="max-h-[240px] lg:max-h-[480px] lg:col-span-2 h-full flex flex-col">
+        <Card className="border-palette-slate h-full flex flex-col">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-palette-teal">
               Projects
@@ -57,8 +59,8 @@ export const ProjectShow = () => {
               Select a project to view on the TV
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <ScrollArea className="pr-4 h-[350px]">
+          <CardContent className="flex-1 flex flex-col min-h-0">
+            <ScrollArea className="pr-4 flex-1 min-h-0">
               <div className="space-y-4">
                 {projects.map((project: Project) => (
                   <motion.div

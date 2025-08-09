@@ -234,7 +234,7 @@ const WorkScene: React.FC = () => {
                       width: `${sortedWorkData.length * 120}px`,
                     }
                   : {
-                      top: "70px",
+                      top: "68px",
                       height: `${sortedWorkData.length * 140}px`,
                     }
               }

@@ -5,17 +5,23 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { audioManager } from "@/lib/audio";
 import { getSimulatedResponse, Message } from "./utils";
+import { 
+  isApiKeySet, 
+  setGeminiApiKey, 
+  sendMessageToGemini,
+} from "@/lib/genai";
 import ChatHeader from "./ChatHeader";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import ChatToggleButton from "./ChatToggleButton";
 import TypingIndicator from "./TypingIndicator";
+import ApiKeyDialog from "./ApiKeyDialog";
 
 const initialMessages: Message[] = [
   {
     id: "1",
     content:
-      "Hello! I'm Aakash's portfolio assistant. Ask me about his skills, projects, or experience! Currently I am in experimental mode with no AI integration.",
+      "Hello! I'm Aakash's portfolio assistant. I can answer questions about his skills, projects, education, and experience. To enable AI-powered responses, please provide your Gemini API key when prompted. Without it, I'll use basic pre-defined responses.",
     sender: "bot",
     timestamp: new Date(),
   },
@@ -27,10 +33,17 @@ export const ChatWindow: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isTyping, setIsTyping] = useState(false);
+  const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
+  const [aiEnabled, setAiEnabled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { soundEnabled } = useSelector((state: RootState) => state.mode);
+
+  // Check if API key is set on component mount
+  useEffect(() => {
+    setAiEnabled(isApiKeySet());
+  }, []);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -70,38 +83,82 @@ export const ChatWindow: React.FC = () => {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   };
 
-  const handleSendMessageViaAPI = async () => {
+  const handleToggleAI = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!aiEnabled) {
+      setShowApiKeyDialog(true);
+    }
+  };
+
+  const handleApiKeySubmit = (apiKey: string) => {
+    setGeminiApiKey(apiKey);
+    setAiEnabled(true);
+    setShowApiKeyDialog(false);
+    
+    // Add confirmation message
+    const confirmationMessage: Message = {
+      id: generateUniqueId(),
+      content: "✅ API key set! I'm now powered by Gemini AI and can provide more intelligent responses about Aakash's portfolio. Ask me anything!",
+      sender: "bot",
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, confirmationMessage]);
+  };
+
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
+    
     if (soundEnabled) {
       audioManager.playSoundEffect("message");
     }
+    
     const newUserMessage: Message = {
       id: generateUniqueId(),
       content: inputValue.trim(),
       sender: "user",
       timestamp: new Date(),
     };
+    
     setMessages((prev) => [...prev, newUserMessage]);
+    const userMessageText = inputValue.trim();
     setInputValue("");
     setIsTyping(true);
+
     try {
-      const response = await fetch("your-api-endpoint", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: inputValue.trim() }),
-      });
-      const data = await response.json();
-      const botResponse: Message = {
-        id: generateUniqueId(),
-        content: data.response,
-        sender: "bot",
-        timestamp: new Date(),
-      };
+      let botResponse: Message;
+      
+      if (aiEnabled) {
+        // Use Gemini AI
+        const response = await sendMessageToGemini(userMessageText);
+        botResponse = {
+          id: generateUniqueId(),
+          content: response.success 
+            ? response.content 
+            : `⚠️ ${response.content}`,
+          sender: "bot",
+          timestamp: new Date(),
+        };
+      } else {
+        // Ask for API key for more intelligent responses
+        if (Math.random() < 0.3) { // 30% chance to prompt for AI
+          setShowApiKeyDialog(true);
+        }
+        
+        // Use simulated response as fallback
+        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+        botResponse = {
+          id: generateUniqueId(),
+          content: getSimulatedResponse(userMessageText),
+          sender: "bot",
+          timestamp: new Date(),
+        };
+      }
+      
       setMessages((prev) => [...prev, botResponse]);
-    } catch (error) {
+    } catch {
       const errorMessage: Message = {
         id: generateUniqueId(),
-        content: "Sorry, I couldn't process your request right now.",
+        content: "Sorry, I encountered an error. Please try again.",
         sender: "bot",
         timestamp: new Date(),
       };
@@ -111,38 +168,13 @@ export const ChatWindow: React.FC = () => {
     }
   };
 
-  const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
-    if (soundEnabled) {
-      audioManager.playSoundEffect("message");
-    }
-    const newUserMessage: Message = {
-      id: generateUniqueId(),
-      content: inputValue.trim(),
-      sender: "user",
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, newUserMessage]);
-    setInputValue("");
-    setIsTyping(true);
-    // Simulate bot typing
-    setTimeout(
-      () => {
-        const botResponse: Message = {
-          id: generateUniqueId(),
-          content: getSimulatedResponse(inputValue),
-          sender: "bot",
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, botResponse]);
-        setIsTyping(false);
-      },
-      1000 + Math.random() * 1000,
-    );
-  };
-
   return (
     <div className="fixed bottom-4 right-4 z-50">
+      <ApiKeyDialog
+        isOpen={showApiKeyDialog}
+        onSubmit={handleApiKeySubmit}
+        onClose={() => setShowApiKeyDialog(false)}
+      />
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -152,18 +184,17 @@ export const ChatWindow: React.FC = () => {
             transition={{ duration: 0.2 }}
             className={cn(
               "bg-background border rounded-lg shadow-lg overflow-hidden flex flex-col",
+              "shadow-[0_4px_20px_rgba(0,0,0,0.15),_0_0_15px_hsl(var(--primary)/0.15)]",
               isMinimized ? "w-72 h-12" : "w-80 sm:w-96 h-96",
             )}
-            style={{
-              boxShadow:
-                "0 4px 20px rgba(0, 0, 0, 0.15), 0 0 15px rgba(115, 211, 231, 0.15)",
-            }}
           >
             <ChatHeader
               isTyping={isTyping}
               isMinimized={isMinimized}
+              aiEnabled={aiEnabled}
               minimizeChat={minimizeChat}
               closeChat={toggleChat}
+              onToggleAI={handleToggleAI}
             />
             {!isMinimized && (
               <>
@@ -184,7 +215,7 @@ export const ChatWindow: React.FC = () => {
                   inputValue={inputValue}
                   setInputValue={setInputValue}
                   handleSendMessage={handleSendMessage}
-                  inputRef={inputRef}
+                  inputRef={inputRef as React.RefObject<HTMLTextAreaElement>}
                 />
               </>
             )}
