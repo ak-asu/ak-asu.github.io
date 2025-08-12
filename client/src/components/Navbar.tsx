@@ -67,7 +67,7 @@ export const Navbar = () => {
           aria-pressed={isTechnicalMode}
           aria-label={`Switch to ${isTechnicalMode ? "Interactive" : "Technical"} mode`}
         >
-          {isTechnicalMode ? "Switch to Interactive" : "Switch to Technical"}
+          {isTechnicalMode ? "Interactive" : "Technical"}
         </Button>
         <SettingsPanel />
       </>

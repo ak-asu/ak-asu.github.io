@@ -43,7 +43,7 @@ export const ProjectShow = () => {
   return (
     <div className="w-full grid grid-cols-1 lg:grid-cols-5 gap-6">
       {/* TV Component (Left/Top) */}
-      <div className="max-h-[240px] lg:max-h-[480px] lg:col-span-3">
+      <div className="max-h-[280px] lg:max-h-[480px] lg:col-span-3">
         <TV
           selectedProject={selectedProject}
           displayMode={displayMode}
@@ -51,7 +51,7 @@ export const ProjectShow = () => {
         />
       </div>
       {/* Project List (Right/Bottom) */}
-      <div className="max-h-[240px] lg:max-h-[480px] lg:col-span-2 h-full flex flex-col">
+      <div className="max-h-[280px] lg:max-h-[480px] lg:col-span-2 h-full flex flex-col">
         <Card className="border-palette-slate h-full flex flex-col">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-palette-teal">
