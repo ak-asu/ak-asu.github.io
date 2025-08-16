@@ -48,7 +48,9 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
       case "professional":
         return "bg-palette-teal";
       case "volunteer":
-        return "bg-amber-500 dark:bg-amber-600";
+        return "bg-green-500 dark:bg-green-600";
+      case "internship":
+        return "bg-blue-500 dark:bg-blue-600";
       default:
         return "bg-muted";
     }
@@ -127,7 +129,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
       {/* Connector Line */}
       {!isMobile && (
         <div
-          className={`${getTypeColor(work.type)} h-0.5`}
+          className={`${isSelected ? "bg-palette-teal" : getTypeColor(work.type)} h-0.5`}
           style={{
             width: `${connectorLength}px`,
           }}
@@ -137,7 +139,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
       {/* Dot */}
       {!isMobile && (
         <div
-          className={`relative ${getTypeColor(work.type)} rounded-full`}
+          className={`relative ${isSelected ? "bg-palette-teal" : getTypeColor(work.type)} rounded-full`}
           style={{
             width: `${dotSize}px`,
             height: `${dotSize}px`,

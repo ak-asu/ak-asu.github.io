@@ -141,7 +141,11 @@ const WorkDetails: React.FC<WorkDetailsProps> = ({
             ${
               selectedWork.type === "professional"
                 ? "bg-palette-teal/10 text-palette-teal border border-palette-teal/20"
-                : "bg-amber-500/10 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-500/20 dark:border-amber-800"
+                : selectedWork.type === "volunteer"
+                  ? "bg-green-500/10 text-green-700 dark:bg-green-600/20 dark:text-green-300 border border-green-500/20 dark:border-green-600"
+                  : selectedWork.type === "internship"
+                    ? "bg-blue-500/10 text-blue-700 dark:bg-blue-600/20 dark:text-blue-300 border border-blue-500/20 dark:border-blue-600"
+                    : "bg-muted text-muted-foreground border border-muted/20"
             }`}
           >
             {selectedWork.type.charAt(0).toUpperCase() +

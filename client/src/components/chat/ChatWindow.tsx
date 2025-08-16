@@ -6,7 +6,13 @@ import type { RootState } from "@/store/store";
 import { audioManager } from "@/lib/audio";
 import { getSimulatedResponse, Message } from "./utils";
 import { clearLocalLLMCache } from "@/lib/webllm"; // only for unload cleanup
-import { enableGemini, getProvider, sendChat, AIProvider, getHistory } from "@/lib/ai";
+import {
+  enableGemini,
+  getProvider,
+  sendChat,
+  AIProvider,
+  getHistory,
+} from "@/lib/ai";
 import ChatHeader from "./ChatHeader";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
@@ -160,7 +166,7 @@ export const ChatWindow: React.FC = () => {
     try {
       let botResponse: Message;
 
-  if (aiEnabled && (provider === "gemini" || provider === "local")) {
+      if (aiEnabled && (provider === "gemini" || provider === "local")) {
         const response = await sendChat(userMessageText);
         botResponse = {
           id: generateUniqueId(),

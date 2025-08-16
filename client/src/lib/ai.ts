@@ -41,7 +41,15 @@ let history: AIMessage[] = [];
 let localEnabled = false; // user explicitly enabled local model
 
 // Shared data memory for context injection
-const DATA_MEMORY = { about, achievements, contact, education, projects, skills, work } as const;
+const DATA_MEMORY = {
+  about,
+  achievements,
+  contact,
+  education,
+  projects,
+  skills,
+  work,
+} as const;
 
 // Safety patterns
 const HARMFUL_PATTERNS = [
@@ -59,7 +67,8 @@ const REGEX_RULES: { pattern: RegExp; reply: string }[] = [
   },
   {
     pattern: /skills?|tech|stack/i,
-    reply: "I can list skills if you ask more specifically (e.g., 'frontend skills').",
+    reply:
+      "I can list skills if you ask more specifically (e.g., 'frontend skills').",
   },
 ];
 
@@ -86,32 +95,60 @@ export function clearHistory() {
   history = [];
 }
 
+export function isLocalEnabled(): boolean {
+  return localEnabled;
+}
+
 export async function enableGemini(apiKey: string): Promise<AIResponse> {
   setGeminiApiKey(apiKey);
   activeProvider = "gemini"; // precedence logic still enforced at send
-  return { success: true, content: "Gemini enabled.", provider: activeProvider };
+  return {
+    success: true,
+    content: "Gemini enabled.",
+    provider: activeProvider,
+  };
 }
 
 export async function toggleLocal(): Promise<AIResponse> {
   if (localEnabled) {
     localEnabled = false;
     activeProvider = deriveProvider();
-    return { success: true, content: "Local model disabled.", provider: activeProvider };
+    return {
+      success: true,
+      content: "Local model disabled.",
+      provider: activeProvider,
+    };
   }
   if (!isWebGPUSupported()) {
-    return { success: false, content: "WebGPU not supported.", provider: activeProvider };
+    return {
+      success: false,
+      content: "WebGPU not supported.",
+      provider: activeProvider,
+    };
   }
   const adapter = await probeWebGPU();
   if (!adapter) {
-    return { success: false, content: "WebGPU adapter unavailable.", provider: activeProvider };
+    return {
+      success: false,
+      content: "WebGPU adapter unavailable.",
+      provider: activeProvider,
+    };
   }
   const ok = await ensureLocalLLMReady();
   if (!ok) {
-    return { success: false, content: "Failed to load local model.", provider: activeProvider };
+    return {
+      success: false,
+      content: "Failed to load local model.",
+      provider: activeProvider,
+    };
   }
   localEnabled = true;
   activeProvider = deriveProvider();
-  return { success: true, content: "Local model ready (WebLLM).", provider: activeProvider };
+  return {
+    success: true,
+    content: "Local model ready (WebLLM).",
+    provider: activeProvider,
+  };
 }
 
 export function disableAI() {
@@ -130,7 +167,8 @@ function buildSystemPrompt(userMessage: string): string {
       .map(([k, v]) => `${k}: ${JSON.stringify(v).slice(0, 400)}...`)
       .join("\n") +
     "\nDo not fabricate data outside this scope.";
-  const recent = history.slice(-6)
+  const recent = history
+    .slice(-6)
     .map((m) => `${m.role === "user" ? "User" : "Bot"}: ${m.content}`)
     .join("\n");
   return `${memorySummary}\n\nRecent Chat:\n${recent}\n\nUser: ${userMessage}\nBot:`;
@@ -146,13 +184,21 @@ function deriveProvider(): AIProvider {
 export async function sendChat(userMessage: string): Promise<AIResponse> {
   const trimmed = userMessage.trim();
   if (!trimmed) {
-    return { success: false, content: "Empty message.", provider: activeProvider };
+    return {
+      success: false,
+      content: "Empty message.",
+      provider: activeProvider,
+    };
   }
   // push user message
   history.push({ role: "user", content: trimmed, ts: Date.now() });
   activeProvider = deriveProvider();
   if (isHarmfulPrompt(trimmed)) {
-    const blocked: AIResponse = { success: false, content: "Blocked by safety filter.", provider: activeProvider };
+    const blocked: AIResponse = {
+      success: false,
+      content: "Blocked by safety filter.",
+      provider: activeProvider,
+    };
     history.push({ role: "bot", content: blocked.content, ts: Date.now() });
     return blocked;
   }
@@ -161,24 +207,41 @@ export async function sendChat(userMessage: string): Promise<AIResponse> {
     if (activeProvider === "gemini") {
       const prompt = buildSystemPrompt(trimmed);
       const r = await generateGemini(prompt);
-      result = { success: r.success, content: r.content, provider: "gemini", error: r.success ? undefined : r.content };
+      result = {
+        success: r.success,
+        content: r.content,
+        provider: "gemini",
+        error: r.success ? undefined : r.content,
+      };
     } else if (activeProvider === "local") {
       const systemPrompt = buildSystemPrompt(trimmed);
       const r = await generateLocal([
         { role: "system", content: systemPrompt },
         { role: "user", content: trimmed },
       ]);
-      result = { success: r.success, content: r.content, provider: "local", error: r.success ? undefined : r.content };
+      result = {
+        success: r.success,
+        content: r.content,
+        provider: "local",
+        error: r.success ? undefined : r.content,
+      };
     } else {
       const rule = REGEX_RULES.find((r) => r.pattern.test(trimmed));
-      const text = rule ? rule.reply : "Basic reply. Provide API key or enable local model for richer answers.";
+      const text = rule
+        ? rule.reply
+        : "Basic reply. Provide API key or enable local model for richer answers.";
       result = { success: true, content: text, provider: "regex" };
     }
     history.push({ role: "bot", content: result.content, ts: Date.now() });
     return result;
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unknown error";
-    const failure: AIResponse = { success: false, content: `Error: ${msg}`, provider: activeProvider, error: msg };
+    const failure: AIResponse = {
+      success: false,
+      content: `Error: ${msg}`,
+      provider: activeProvider,
+      error: msg,
+    };
     history.push({ role: "bot", content: failure.content, ts: Date.now() });
     return failure;
   }

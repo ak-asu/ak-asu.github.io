@@ -20,7 +20,9 @@ export function getGeminiApiKey() {
 }
 
 // Low-level single-shot generation using a fully-prepared prompt string.
-export async function generateGemini(prompt: string): Promise<{ success: boolean; content: string }> {
+export async function generateGemini(
+  prompt: string,
+): Promise<{ success: boolean; content: string }> {
   if (!geminiApiKey) return { success: false, content: "API key not set." };
   try {
     const ai = new GoogleGenAI({ apiKey: geminiApiKey });

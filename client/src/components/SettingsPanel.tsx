@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Settings, Volume2, VolumeX, Sun, Moon, Laptop } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Sheet,
   SheetContent,
@@ -34,6 +35,7 @@ import { getEnumValues } from "@/lib/utils";
 
 export const SettingsPanel = () => {
   const dispatch = useDispatch();
+  const isMobile = useIsMobile();
   const { animationLevel, themeMode, soundEnabled } = useSelector(
     (state: RootState) => state.mode,
   );
@@ -53,8 +55,13 @@ export const SettingsPanel = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
+              <Button
+                variant="ghost"
+                size={isMobile ? "default" : "icon"}
+                className="relative"
+              >
                 <Settings className="h-5 w-5" aria-hidden="true" />
+                {isMobile && <span className="ml-2">Settings</span>}
                 <span className="sr-only">Open settings</span>
               </Button>
             </SheetTrigger>

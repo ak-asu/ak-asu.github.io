@@ -161,7 +161,9 @@ const Skills: React.FC = () => {
           },
         },
       })
-      .catch((err) => console.error("Animation error:", err));
+      .catch((err) => {
+        // console.error("Animation error:", err);
+      });
 
     return () => {
       currentPositionRef.current = x.get();

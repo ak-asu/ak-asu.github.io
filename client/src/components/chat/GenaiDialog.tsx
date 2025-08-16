@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { X, Key, AlertTriangle, Cpu, Zap } from "lucide-react";
 import { isWebGPUSupported } from "@/lib/webllm";
-import { toggleLocal, getProvider } from "@/lib/ai";
+import { toggleLocal, getProvider, isLocalEnabled } from "@/lib/ai";
 
 interface GenaiDialogProps {
   isOpen: boolean;
@@ -29,15 +29,20 @@ export const GenaiDialog: React.FC<GenaiDialogProps> = ({
 
   useEffect(() => {
     if (!isOpen) return;
-    // quick capability check on open
-    if (isWebGPUSupported()) {
-      setLocalStatus("idle");
-      setLocalMessage("Your browser supports WebGPU.");
-    } else {
+    const enabled = isLocalEnabled() && getProvider() === "local";
+    if (!isWebGPUSupported()) {
       setLocalStatus("unsupported");
       setLocalMessage(
         "WebGPU is not available. Please enable hardware acceleration in your browser settings and use a compatible browser (Chrome, Edge, or Firefox Nightly).",
       );
+      return;
+    }
+    if (enabled) {
+      setLocalStatus("ready");
+      setLocalMessage("Local AI is ready. Click to disable.");
+    } else {
+      setLocalStatus("idle");
+      setLocalMessage("Your browser supports WebGPU.");
     }
   }, [isOpen]);
 
@@ -62,7 +67,9 @@ export const GenaiDialog: React.FC<GenaiDialogProps> = ({
         return;
       }
       setLocalStatus("checking");
-      setLocalMessage("Loading local AI model (may take many minutes first time)...");
+      setLocalMessage(
+        "Loading local AI model (may take many minutes first time)...",
+      );
       setProgress(null);
       const resp = await toggleLocal();
       if (resp.success && getProvider() === "local") {
@@ -112,12 +119,12 @@ export const GenaiDialog: React.FC<GenaiDialogProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 m-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-background border rounded-lg shadow-xl max-w-md w-full p-6 h-3/4 overflow-auto"
+        className="bg-background border rounded-lg shadow-xl max-w-md w-full p-6 h-3/4 overflow-auto scrollbar-thin scrollbar-thumb-palette-gray-light/40 scrollbar-track-transparent pr-8"
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">

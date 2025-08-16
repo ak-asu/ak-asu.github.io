@@ -24,7 +24,6 @@ export async function loadModel(
   if (engine) return true;
   selectedModel = modelId || selectedModel;
   try {
-    console.log("Loading model:", selectedModel);
     engine = await CreateMLCEngine(selectedModel, {
       initProgressCallback: progressCallback
         ? (report: { progress?: number }) => {
@@ -34,10 +33,8 @@ export async function loadModel(
           }
         : undefined,
     });
-    console.log("Model loaded successfully:", selectedModel);
     return true;
   } catch (error) {
-    console.error("Failed to load model:", error);
     engine = null;
     return false;
   }
@@ -95,7 +92,9 @@ export async function clearLocalLLMCache(): Promise<void> {
     if (engine) {
       try {
         // Optional unload if supported by current engine implementation
-        const maybeUnload = (engine as unknown as { unload?: () => Promise<void> }).unload;
+        const maybeUnload = (
+          engine as unknown as { unload?: () => Promise<void> }
+        ).unload;
         if (maybeUnload) await maybeUnload();
       } catch {
         // ignore
@@ -107,7 +106,10 @@ export async function clearLocalLLMCache(): Promise<void> {
       databases?: () => Promise<Array<{ name?: string }>>;
     }
     const idb = indexedDB as unknown as IDBDatabasesFunc;
-    if (typeof indexedDB !== "undefined" && typeof idb.databases === "function") {
+    if (
+      typeof indexedDB !== "undefined" &&
+      typeof idb.databases === "function"
+    ) {
       try {
         const dbs: { name?: string }[] = await idb.databases();
         for (const db of dbs) {

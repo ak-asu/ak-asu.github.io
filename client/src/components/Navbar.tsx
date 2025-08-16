@@ -24,7 +24,7 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
 
-  const NavContent = () => (
+  const NavContent = ({ showLabels = false }: { showLabels?: boolean }) => (
     <TooltipProvider>
       <>
         {!isTechnicalMode &&
@@ -34,7 +34,9 @@ export const Navbar = () => {
                 <TooltipTrigger asChild>
                   <motion.div
                     whileHover={{ scale: 1.05 }}
-                    className="flex items-center gap-2 px-4 py-2"
+                    className={`flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground rounded-md transition-colors ${
+                      showLabels ? "justify-start" : "justify-center"
+                    }`}
                     role="menuitem"
                     onClick={(e) => {
                       e.preventDefault();
@@ -49,8 +51,14 @@ export const Navbar = () => {
                       }
                     }}
                   >
-                    {item.icon && (
-                      <item.icon className="w-4 h-4" aria-hidden="true" />
+                    {showLabels ? (
+                      <span className="text-sm font-medium truncate max-w-44">
+                        {item.label}
+                      </span>
+                    ) : (
+                      item.icon && (
+                        <item.icon className="w-4 h-4" aria-hidden="true" />
+                      )
                     )}
                   </motion.div>
                 </TooltipTrigger>
@@ -67,7 +75,7 @@ export const Navbar = () => {
           aria-pressed={isTechnicalMode}
           aria-label={`Switch to ${isTechnicalMode ? "Interactive" : "Technical"} mode`}
         >
-          {isTechnicalMode ? "Interactive" : "Technical"}
+          Switch to {isTechnicalMode ? "Interactive" : "Technical"}
         </Button>
         <SettingsPanel />
       </>
@@ -99,7 +107,7 @@ export const Navbar = () => {
               className="hidden md:flex items-center space-x-4"
               role="menubar"
             >
-              <NavContent />
+              <NavContent showLabels={false} />
             </div>
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild className="md:hidden">
@@ -117,11 +125,11 @@ export const Navbar = () => {
                   <h2 className="text-lg font-semibold">Navigation</h2>
                 </div>
                 <div
-                  className="flex flex-col space-y-4 mt-4"
+                  className="flex flex-col space-y-2 mt-4"
                   role="menu"
                   aria-label="Mobile navigation"
                 >
-                  <NavContent />
+                  <NavContent showLabels={true} />
                 </div>
               </SheetContent>
             </Sheet>
