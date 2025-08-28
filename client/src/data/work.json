@@ -48,6 +48,24 @@
     "type": "volunteer"
   },
   {
+    "position": "Graduate Student Assistant",
+    "company": "ASU",
+    "location": "Tempe, USA",
+    "startDate": "2025-08-18",
+    "endDate": "2025-12-10",
+    "description": [
+      "Lead Grader for a 340-student graduate course in Knowledge Representation and Reasoning (CSE 579), overseeing graders, preparing exams and assignments, and ensuring accurate, timely grading and communication."
+    ],
+    "technologies": [
+      "KRR",
+      "Clingo",
+      "Canvas",
+      "Knowledge Representation and Reasoning"
+    ],
+    "links": [],
+    "type": "volunteer"
+  },
+  {
     "position": "Data Engineer",
     "company": "Fractal",
     "location": "Mumbai, India",
