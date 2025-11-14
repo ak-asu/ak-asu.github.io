@@ -1,5 +1,22 @@
 [
   {
+    "id": "project26",
+    "name": "ColorTap Reflex Game",
+    "shortDescription": "Fast-paced reflex testing game with progressive difficulty",
+    "description": "A minimalist reflex game built with React and Framer Motion where players tap green tiles, avoid red tiles, and ignore blue tiles. Features progressive difficulty scaling, smooth animations, high score tracking with localStorage persistence, and responsive touch/click controls. The game gradually increases speed every 5 points, challenging players' reaction time and decision-making under pressure.",
+    "technologies": [
+      "React",
+      "TypeScript",
+      "Framer Motion",
+      "Tailwind CSS",
+      "Shadcn/ui"
+    ],
+    "duration": "1 day",
+    "url": "",
+    "media": "",
+    "type": "personal"
+  },
+  {
     "id": "project22",
     "name": "LocalScholar",
     "shortDescription": "Privacy-First AI Assistant Chrome Extension",
@@ -15,7 +32,7 @@
     ],
     "duration": "1 month",
     "url": "https://github.com/ak-asu/LocalScholar",
-    "media": "",
+    "media": "https://youtu.be/EpBHHyjSFgM",
     "type": "personal"
   },
   {
@@ -36,7 +53,7 @@
     ],
     "duration": "1 month",
     "url": "https://github.com/ak-asu/VisionForge",
-    "media": "",
+    "media": "https://youtu.be/cqYE320Kt7E",
     "type": "collaborative"
   },
   {
@@ -56,7 +73,7 @@
     ],
     "duration": "1 month",
     "url": "https://github.com/2025-Arizona-Opportunity-Hack/Coderz-NMTSA-NMTSA-Education-and-Therapy-Management-System",
-    "media": "",
+    "media": "https://youtu.be/HVi6uw4Y33Y",
     "type": "collaborative"
   },
   {
@@ -76,7 +93,7 @@
     ],
     "duration": "1 month",
     "url": "https://github.com/ak-asu/AIM",
-    "media": "",
+    "media": "https://youtu.be/e8fK9o0sNi4",
     "type": "personal"
   },
   {
