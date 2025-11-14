@@ -1,5 +1,22 @@
 [
   {
+    "id": "project26",
+    "name": "ColorTap Reflex Game",
+    "shortDescription": "Fast-paced reflex testing game with progressive difficulty",
+    "description": "A minimalist reflex game built with React and Framer Motion where players tap green tiles, avoid red tiles, and ignore blue tiles. Features progressive difficulty scaling, smooth animations, high score tracking with localStorage persistence, and responsive touch/click controls. The game gradually increases speed every 5 points, challenging players' reaction time and decision-making under pressure.",
+    "technologies": [
+      "React",
+      "TypeScript",
+      "Framer Motion",
+      "Tailwind CSS",
+      "Shadcn/ui"
+    ],
+    "duration": "1 day",
+    "url": "",
+    "media": "",
+    "type": "personal"
+  },
+  {
     "id": "project22",
     "name": "LocalScholar",
     "shortDescription": "Privacy-First AI Assistant Chrome Extension",

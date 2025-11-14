@@ -3,6 +3,7 @@ import { motion, useAnimation } from "framer-motion";
 import { TicTacToe } from "./TicTacToe";
 import { Shuffle } from "./Shuffle";
 import { DinoRun } from "./DinoRun";
+import { ColorTap } from "./ColorTap";
 
 type Game = {
   id: string;
@@ -18,6 +19,7 @@ export const GameCarousel = () => {
     { id: "tictactoe", component: <TicTacToe />, title: "Tic Tac Toe" },
     { id: "shuffle", component: <Shuffle />, title: "Shuffle Memory" },
     { id: "dinorun", component: <DinoRun />, title: "Dino Run" },
+    { id: "colortap", component: <ColorTap />, title: "ColorTap Reflex" },
   ];
 
   const [activeIndex, setActiveIndex] = useState(0);
