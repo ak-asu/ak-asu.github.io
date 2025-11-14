@@ -1,5 +1,85 @@
 [
   {
+    "id": "project22",
+    "name": "LocalScholar",
+    "shortDescription": "Privacy-First AI Assistant Chrome Extension",
+    "description": "Integrated 5 Chrome Built-in AI APIs for local-only summarization, flashcard generation, and report synthesis with zero data transmission. Architected Manifest V3 extension with 4,700+ lines vanilla JavaScript featuring multi-chunk processing, intelligent caching, and concurrent task management. Delivered study workflows generating adaptive flashcards, multi-source reports with citations, and 10+ language support powered by offline Gemini Nano. Achieved WCAG 2.1 AA accessibility compliance and CSP-compliant security architecture.",
+    "technologies": [
+      "TypeScript",
+      "React",
+      "Tailwind CSS",
+      "Chrome Built-in AI",
+      "Gemini Nano",
+      "Chrome Extension API",
+      "JavaScript"
+    ],
+    "duration": "1 month",
+    "url": "https://github.com/ak-asu/LocalScholar",
+    "media": "",
+    "type": "personal"
+  },
+  {
+    "id": "project23",
+    "name": "VisionForge",
+    "shortDescription": "Full-stack deep learning IDE with drag-and-drop neural network design",
+    "description": "Achieved 1st place in Claude Developer Tools track at HackASU 2025. Engineered full-stack deep learning IDE enabling drag-and-drop neural network design with automatic shape inference and real-time validation for rapid prototyping. Built production code generator supporting PyTorch and TensorFlow frameworks, transforming visual architectures into deployable models with single-click export functionality. Integrated AI assistant using Google Gemini API for natural language model modifications. Developed comprehensive layer library (CNNs, LSTMs, ResNets) with React 19 frontend and Django backend.",
+    "technologies": [
+      "Django",
+      "React",
+      "Tailwind CSS",
+      "Anthropic Claude",
+      "TypeScript",
+      "Python",
+      "PyTorch",
+      "TensorFlow",
+      "Gemini API"
+    ],
+    "duration": "1 month",
+    "url": "https://github.com/ak-asu/VisionForge",
+    "media": "",
+    "type": "collaborative"
+  },
+  {
+    "id": "project24",
+    "name": "NMTSA - Education LMS",
+    "shortDescription": "Accessibility-first LMS for autism-friendly learning",
+    "description": "Achieved 2nd place and Best Polish Product award at Opportunity Hack 2025, ASU Fall Hackathon 2025. Built an accessibility-first LMS enabling structured, autism-friendly learning with seamless course enrollment, CE certificates, and community features. Engineered dual-authentication and robust RBAC workflows for teacher verification, admin review, and high course quality. Integrated AI-powered semantic search, multilingual support (EN/ES), and PayPal payments to expand impact for families and clinicians.",
+    "technologies": [
+      "Django",
+      "JavaScript",
+      "SQLite",
+      "Python",
+      "AI",
+      "PayPal API",
+      "HTML",
+      "CSS"
+    ],
+    "duration": "1 month",
+    "url": "https://github.com/2025-Arizona-Opportunity-Hack/Coderz-NMTSA-NMTSA-Education-and-Therapy-Management-System",
+    "media": "",
+    "type": "collaborative"
+  },
+  {
+    "id": "project25",
+    "name": "AIM - Academic Integrity Mentor",
+    "shortDescription": "Browser extension for academic integrity education",
+    "description": "A browser extension that educates and keeps you informed about academic policies to avoid unintentional mistakes. Features include learning modules, quizzes, and crash courses on academic integrity, pre-submission checklists and reflection journals, user journey monitoring, one-stop access to all policies and resources, AI-powered chatbot with RAG-enabled knowledge base, helpful tools including planner and feedback provider, CANVAS API integration and direct webpage scraping, WebLLM and Gemini support, with all data stored locally and securely.",
+    "technologies": [
+      "JavaScript",
+      "React",
+      "Chrome Extension API",
+      "WebLLM",
+      "Gemini API",
+      "RAG",
+      "CANVAS API",
+      "TypeScript"
+    ],
+    "duration": "1 month",
+    "url": "https://github.com/ak-asu/AIM",
+    "media": "",
+    "type": "personal"
+  },
+  {
     "id": "project21",
     "name": "ResumeBotX",
     "shortDescription": "An AI-powered resume assistant",
