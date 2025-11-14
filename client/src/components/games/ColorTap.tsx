@@ -1,49 +1,44 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 
-type TileColor = "tap" | "avoid" | "neutral";
-
-interface Tile {
-  id: number;
-  color: TileColor;
-  position: number; // Y position from top
-}
+type GameColor = "blue" | "green" | "red";
 
 export const ColorTap = () => {
   const [isGameRunning, setIsGameRunning] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [highScore, setHighScore] = useState<number>(0);
-  const [tiles, setTiles] = useState<Tile[]>([]);
-  const [speed, setSpeed] = useState<number>(2000); // Milliseconds between tiles
-  const [missedTaps, setMissedTaps] = useState<number>(0);
+  const [currentColor, setCurrentColor] = useState<GameColor>("blue");
+  const [level, setLevel] = useState<number>(1);
+  const [reactionTime, setReactionTime] = useState<number | null>(null);
+  const [bestReactionTime, setBestReactionTime] = useState<number | null>(null);
 
-  const nextTileIdRef = useRef<number>(0);
-  const lastTileTimeRef = useRef<number>(0);
-  const animationFrameRef = useRef<number | null>(null);
-  const gameAreaRef = useRef<HTMLDivElement>(null);
-  const missedTapTilesRef = useRef<Set<number>>(new Set());
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const colorChangeTimeRef = useRef<number>(0);
+  const waitingForTapRef = useRef<boolean>(false);
 
-  // Color configuration
-  const colors = {
-    tap: "bg-green-500 hover:bg-green-600",
-    avoid: "bg-red-500 hover:bg-red-600",
-    neutral: "bg-blue-400 hover:bg-blue-500",
+  // Game parameters that change with difficulty
+  const getDelayRange = (level: number): [number, number] => {
+    // Initial range: 1000-2000ms, increases by 200ms per level
+    const minDelay = 1000 + (level - 1) * 200;
+    const maxDelay = 2000 + (level - 1) * 200;
+    return [minDelay, Math.min(maxDelay, 5000)]; // Cap at 5 seconds
   };
 
-  const colorLabels = {
-    tap: "TAP!",
-    avoid: "AVOID!",
-    neutral: "—",
+  const getDisplayTime = (level: number): number => {
+    // Starts at 1500ms, decreases by 70ms per level, min 800ms
+    return Math.max(800, 1500 - (level - 1) * 70);
   };
 
-  // Generate random tile color with weighted probability
-  const generateTileColor = (): TileColor => {
-    const rand = Math.random();
-    if (rand < 0.45) return "tap"; // 45% chance to tap
-    if (rand < 0.75) return "avoid"; // 30% chance to avoid
-    return "neutral"; // 25% chance neutral
+  // Get random delay within range
+  const getRandomDelay = (min: number, max: number): number => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  // Generate random color (50% green, 50% red)
+  const getRandomColor = (): "green" | "red" => {
+    return Math.random() < 0.5 ? "green" : "red";
   };
 
   // Start or restart game
@@ -51,118 +46,152 @@ export const ColorTap = () => {
     setIsGameRunning(true);
     setGameOver(false);
     setScore(0);
-    setTiles([]);
-    setSpeed(2000);
-    setMissedTaps(0);
-    missedTapTilesRef.current.clear();
-    nextTileIdRef.current = 0;
-    lastTileTimeRef.current = Date.now();
+    setLevel(1);
+    setCurrentColor("blue");
+    setReactionTime(null);
+    waitingForTapRef.current = false;
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Start first round after a short delay
+    timeoutRef.current = setTimeout(() => {
+      startRound(1);
+    }, 1000);
   }, []);
 
-  // Handle tile tap
-  const handleTileTap = useCallback(
-    (tile: Tile) => {
-      if (!isGameRunning || gameOver) return;
+  // Start a new round
+  const startRound = useCallback((currentLevel: number) => {
+    const [minDelay, maxDelay] = getDelayRange(currentLevel);
+    const delay = getRandomDelay(minDelay, maxDelay);
 
-      if (tile.color === "tap") {
-        // Correct tap
-        setScore((prev) => prev + 1);
-        setTiles((prev) => prev.filter((t) => t.id !== tile.id));
-        missedTapTilesRef.current.delete(tile.id);
-      } else if (tile.color === "avoid") {
-        // Wrong tap - game over
-        setGameOver(true);
-        setIsGameRunning(false);
-        if (score > highScore) {
-          setHighScore(score);
+    // Wait random time, then show green or red
+    timeoutRef.current = setTimeout(() => {
+      const color = getRandomColor();
+      setCurrentColor(color);
+      colorChangeTimeRef.current = Date.now();
+      waitingForTapRef.current = true;
+
+      // Set timeout for color to return to blue
+      const displayTime = getDisplayTime(currentLevel);
+      timeoutRef.current = setTimeout(() => {
+        if (waitingForTapRef.current) {
+          // Time's up
+          if (color === "green") {
+            // Missed tapping green - game over
+            endGame();
+          } else {
+            // Correctly avoided red - continue
+            waitingForTapRef.current = false;
+            setCurrentColor("blue");
+            setReactionTime(null);
+            // Next round with same level
+            startRound(currentLevel);
+          }
         }
-      } else {
-        // Neutral tap - no penalty, just remove
-        setTiles((prev) => prev.filter((t) => t.id !== tile.id));
-      }
-    },
-    [isGameRunning, gameOver, score, highScore],
-  );
+      }, displayTime);
+    }, delay);
+  }, []);
 
-  // Game loop - spawn tiles
-  useEffect(() => {
-    if (!isGameRunning || gameOver) return;
+  // End game
+  const endGame = useCallback(() => {
+    setGameOver(true);
+    setIsGameRunning(false);
+    waitingForTapRef.current = false;
+    setCurrentColor("blue");
 
-    const spawnTile = () => {
-      const now = Date.now();
-      if (now - lastTileTimeRef.current >= speed) {
-        const newTile: Tile = {
-          id: nextTileIdRef.current++,
-          color: generateTileColor(),
-          position: 0,
-        };
-        setTiles((prev) => [...prev, newTile]);
-        lastTileTimeRef.current = now;
-
-        // Track tap tiles that need to be tapped
-        if (newTile.color === "tap") {
-          missedTapTilesRef.current.add(newTile.id);
-        }
-      }
-
-      animationFrameRef.current = requestAnimationFrame(spawnTile);
-    };
-
-    animationFrameRef.current = requestAnimationFrame(spawnTile);
-
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [isGameRunning, gameOver, speed]);
-
-  // Remove tiles that went off screen and check for missed taps
-  const handleTileComplete = useCallback(
-    (tileId: number, color: TileColor) => {
-      setTiles((prev) => prev.filter((t) => t.id !== tileId));
-
-      // Check if this was a tap tile that was missed
-      if (
-        color === "tap" &&
-        missedTapTilesRef.current.has(tileId) &&
-        !gameOver
-      ) {
-        // Missed a tap tile - game over
-        setGameOver(true);
-        setIsGameRunning(false);
-        if (score > highScore) {
-          setHighScore(score);
-        }
-        missedTapTilesRef.current.delete(tileId);
-      } else {
-        missedTapTilesRef.current.delete(tileId);
-      }
-    },
-    [gameOver, score, highScore],
-  );
-
-  // Increase speed based on score
-  useEffect(() => {
-    if (score > 0 && score % 5 === 0) {
-      setSpeed((prev) => Math.max(800, prev - 100)); // Min speed 800ms
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
-  }, [score]);
 
-  // Load high score from localStorage
+    if (score > highScore) {
+      setHighScore(score);
+      localStorage.setItem("colorTapHighScore", score.toString());
+    }
+  }, [score, highScore]);
+
+  // Handle screen tap
+  const handleTap = useCallback(() => {
+    if (!isGameRunning || gameOver || !waitingForTapRef.current) return;
+
+    const color = currentColor;
+
+    if (color === "green") {
+      // Correct tap on green
+      const reaction = Date.now() - colorChangeTimeRef.current;
+      setReactionTime(reaction);
+
+      // Update best reaction time
+      if (bestReactionTime === null || reaction < bestReactionTime) {
+        setBestReactionTime(reaction);
+      }
+
+      waitingForTapRef.current = false;
+
+      // Clear the display timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      // Increase score
+      const newScore = score + 1;
+      setScore(newScore);
+
+      // Increase level every 5 successful taps
+      const newLevel = Math.floor(newScore / 5) + 1;
+      setLevel(newLevel);
+
+      // Go back to blue and start next round
+      setCurrentColor("blue");
+
+      timeoutRef.current = setTimeout(() => {
+        setReactionTime(null);
+        startRound(newLevel);
+      }, 500);
+
+    } else if (color === "red") {
+      // Wrong tap on red - game over
+      waitingForTapRef.current = false;
+      endGame();
+    }
+  }, [isGameRunning, gameOver, currentColor, score, bestReactionTime, startRound, endGame]);
+
+  // Load high score and best reaction time from localStorage
   useEffect(() => {
     const savedHighScore = localStorage.getItem("colorTapHighScore");
     if (savedHighScore) {
       setHighScore(parseInt(savedHighScore, 10));
     }
+
+    const savedBestReaction = localStorage.getItem("colorTapBestReaction");
+    if (savedBestReaction) {
+      setBestReactionTime(parseInt(savedBestReaction, 10));
+    }
   }, []);
 
-  // Save high score to localStorage
+  // Save best reaction time to localStorage
   useEffect(() => {
-    if (score > highScore) {
-      localStorage.setItem("colorTapHighScore", score.toString());
+    if (bestReactionTime !== null) {
+      localStorage.setItem("colorTapBestReaction", bestReactionTime.toString());
     }
-  }, [score, highScore]);
+  }, [bestReactionTime]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Color classes for the game area
+  const colorClasses = {
+    blue: "bg-blue-500",
+    green: "bg-green-500",
+    red: "bg-red-500",
+  };
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-2">
@@ -174,15 +203,36 @@ export const ColorTap = () => {
             High: {highScore}
           </span>
         </div>
-        <div className="text-right text-xs text-muted-foreground">
-          <div>Speed: {((2000 - speed) / 1200) * 100 + 100}%</div>
+        <div className="text-center flex-1">
+          <span className="text-xs text-muted-foreground">
+            Level: {level}
+          </span>
+        </div>
+        <div className="text-right text-xs text-muted-foreground flex flex-col items-end">
+          {reactionTime && (
+            <div className="text-palette-teal font-semibold">
+              {reactionTime}ms
+            </div>
+          )}
+          {bestReactionTime && (
+            <div>Best: {bestReactionTime}ms</div>
+          )}
         </div>
       </div>
 
       {/* Game Area */}
-      <div
-        ref={gameAreaRef}
-        className="relative w-full h-[340px] bg-muted/30 rounded-lg border-2 border-border overflow-hidden"
+      <motion.div
+        onClick={handleTap}
+        animate={{
+          backgroundColor:
+            currentColor === "blue" ? "rgb(59, 130, 246)" :
+            currentColor === "green" ? "rgb(34, 197, 94)" :
+            "rgb(239, 68, 68)"
+        }}
+        transition={{ duration: 0.1 }}
+        className={`relative w-full h-[340px] rounded-lg border-2 border-border overflow-hidden cursor-pointer
+          flex items-center justify-center select-none
+        `}
       >
         {/* Instructions / Game Over Overlay */}
         {!isGameRunning && (
@@ -194,31 +244,44 @@ export const ColorTap = () => {
                     Game Over!
                   </h2>
                   <p className="text-lg">Final Score: {score}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Level Reached: {level}
+                  </p>
                   {score === highScore && score > 0 && (
                     <p className="text-sm text-palette-teal font-semibold">
-                      🎉 New High Score!
+                      New High Score!
+                    </p>
+                  )}
+                  {reactionTime && (
+                    <p className="text-xs text-muted-foreground">
+                      Last reaction: {reactionTime}ms
                     </p>
                   )}
                 </>
               ) : (
                 <>
-                  <h2 className="text-xl font-bold">ColorTap</h2>
+                  <h2 className="text-xl font-bold">ColorTap Reflex</h2>
                   <div className="space-y-2 text-sm">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-8 h-8 bg-green-500 rounded"></div>
-                      <span>TAP these tiles!</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-8 h-8 bg-red-500 rounded"></div>
-                      <span>DON'T TAP these tiles!</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-8 h-8 bg-blue-400 rounded"></div>
-                      <span>Optional (no penalty)</span>
+                    <p className="text-muted-foreground">
+                      Test your reflexes!
+                    </p>
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-8 h-8 bg-green-500 rounded"></div>
+                        <span>TAP when GREEN</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-8 h-8 bg-red-500 rounded"></div>
+                        <span>DON'T TAP when RED</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-8 h-8 bg-blue-500 rounded"></div>
+                        <span>Wait for the color change</span>
+                      </div>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
-                    Speed increases every 5 points
+                    Difficulty increases every 5 points
                   </p>
                 </>
               )}
@@ -229,61 +292,23 @@ export const ColorTap = () => {
           </div>
         )}
 
-        {/* Tiles */}
-        <AnimatePresence>
-          {tiles.map((tile) => (
-            <motion.div
-              key={tile.id}
-              initial={{ y: -60, opacity: 0 }}
-              animate={{ y: 380, opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{
-                y: {
-                  duration: 3,
-                  ease: "linear",
-                },
-                opacity: {
-                  duration: 0.2,
-                },
-              }}
-              onAnimationComplete={() => handleTileComplete(tile.id, tile.color)}
-              onClick={() => handleTileTap(tile)}
-              className={`absolute left-1/2 -translate-x-1/2 w-16 h-16 rounded-lg shadow-lg cursor-pointer
-                ${colors[tile.color]}
-                flex items-center justify-center text-white font-bold text-sm
-                transition-transform hover:scale-110 active:scale-95
-                border-2 border-white/20
-              `}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {colorLabels[tile.color]}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-
-        {/* Running indicator */}
+        {/* Game running - show current state */}
         {isGameRunning && !gameOver && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-muted-foreground">
-            Tap green, avoid red!
+          <div className="text-white text-4xl font-bold drop-shadow-lg">
+            {currentColor === "blue" && "Ready..."}
+            {currentColor === "green" && "TAP!"}
+            {currentColor === "red" && "DON'T TAP!"}
           </div>
         )}
-      </div>
+      </motion.div>
 
-      {/* Color Legend */}
-      <div className="w-full mt-2 flex justify-center gap-3 text-xs">
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-green-500 rounded"></div>
-          <span>Tap</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-red-500 rounded"></div>
-          <span>Avoid</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-blue-400 rounded"></div>
-          <span>Optional</span>
-        </div>
+      {/* Instructions */}
+      <div className="w-full mt-2 text-center text-xs text-muted-foreground">
+        {isGameRunning ? (
+          <span>Tap the screen when it turns green!</span>
+        ) : (
+          <span>A simple reflex game - tap green, avoid red</span>
+        )}
       </div>
     </div>
   );
