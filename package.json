@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "tsx server/index.ts",
     "lint": "npx eslint . --ext .js,.ts,.tsx",

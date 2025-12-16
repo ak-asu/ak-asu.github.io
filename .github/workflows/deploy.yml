@@ -7,7 +7,7 @@ on:
 
 # Define deployment environment variables
 env:
-  NODE_VERSION: 18
+  NODE_VERSION: 20
   BUILD_DIR: ./dist/public # Adjusted to match your actual build output directory
 
 permissions:
