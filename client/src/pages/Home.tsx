@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import { Terminal } from "@/components/Terminal";
 import { NonTechnical } from "@/components/NonTechnical";

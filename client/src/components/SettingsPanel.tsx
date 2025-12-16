@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Settings, Volume2, VolumeX, Sun, Moon, Laptop } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";

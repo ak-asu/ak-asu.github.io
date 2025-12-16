@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import contact from "@/data/contact.json";
 import {
   Github,

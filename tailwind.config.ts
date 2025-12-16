@@ -1,5 +1,7 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
+import tailwindcssTypography from "@tailwindcss/typography";
+import tailwindScrollbar from "tailwind-scrollbar";
 
 export default {
   darkMode: "class",
@@ -124,12 +126,5 @@ export default {
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    require("@tailwindcss/typography"),
-    require("tailwind-scrollbar"),
-  ],
-  variants: {
-    scrollbar: ["dark"],
-  },
+  plugins: [tailwindcssAnimate, tailwindcssTypography, tailwindScrollbar],
 } satisfies Config;

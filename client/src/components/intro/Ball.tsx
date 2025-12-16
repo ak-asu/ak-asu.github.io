@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { Sphere } from "@react-three/drei";
@@ -50,7 +50,7 @@ const Ball: React.FC<BallProps> = ({
   });
 
   // Handle click to open URL
-  const handleClick = (e: THREE.Event) => {
+  const handleClick = (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
     if (url) {
       window.open(url, "_blank", "noopener,noreferrer");

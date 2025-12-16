@@ -1,13 +1,13 @@
-import React from "react";
-import { motion, AnimationControls } from "framer-motion";
+import { motion, animationControls } from "framer-motion";
 import CurtainSprite from "./CurtainSprite";
+import React from "react";
 
 interface CurtainProps {
   side: "left" | "right";
-  controls: AnimationControls;
+  controls: ReturnType<typeof animationControls>;
 }
 
-const Curtain: React.FC<CurtainProps> = ({ side, controls }) => {
+const Curtain = ({ side, controls }: CurtainProps) => {
   const curtainVariants = {
     closed: {
       x: 0,

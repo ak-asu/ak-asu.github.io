@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSelector } from "react-redux";
 // import { setScrollSection } from '@/store/features/navigationSlice';
@@ -190,7 +190,7 @@ export const NonTechnical = () => {
           >
             <div className="max-w-6xl mx-auto">
               <AnimatePresence>
-                {React.createElement(section.component)}
+                {<section.component />}
               </AnimatePresence>
             </div>
           </Section>

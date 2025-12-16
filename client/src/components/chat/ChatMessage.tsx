@@ -1,4 +1,3 @@
-import React from "react";
 import { cn } from "@/lib/utils";
 import { Message } from "./utils";
 import ReactMarkdown from "react-markdown";
@@ -7,7 +6,7 @@ interface ChatMessageProps {
   message: Message;
 }
 
-export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
+export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isUser = message.sender === "user";
 
   // Custom renderer for links to make them open in new tab and have proper styling

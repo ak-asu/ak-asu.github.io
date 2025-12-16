@@ -1,7 +1,6 @@
-import React from "react";
 import { cn } from "@/lib/utils";
 
-export const TypingIndicator: React.FC = () => {
+export const TypingIndicator = () => {
   return (
     <div className="flex max-w-[80%]">
       <div

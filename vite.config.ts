@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import themePlugin from "@replit/vite-plugin-shadcn-theme-json";
 import path, { dirname } from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
@@ -21,7 +22,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     base,
-    plugins: [react(), runtimeErrorOverlay(), themePlugin()],
+    plugins: [tailwindcss(), react(), runtimeErrorOverlay(), themePlugin()],
     define: {
       // Make the base URL available as VITE_PUBLIC_URL for backward compatibility
       "import.meta.env.VITE_PUBLIC_URL": JSON.stringify(base),

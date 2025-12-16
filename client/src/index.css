@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --background: 210 12% 95%; /* Lighter background for better contrast */
@@ -68,11 +66,26 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* v4 compatibility: restore button cursor from v3 */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* v4 compatibility: restore dialog margin centering from v3 */
+  dialog {
+    margin: auto;
   }
 }
 
@@ -98,15 +111,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-background;
+  background-color: hsl(var(--background));
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-[#6d868d]/40 rounded-full; /* Using muted color from palette */
+  background-color: rgba(109, 134, 141, 0.4); /* Using muted color from palette */
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-[#1791a3]/50; /* Using primary color from palette */
+  background-color: rgba(23, 145, 163, 0.5); /* Using primary color from palette */
 }
 
 /* Smooth scrolling */

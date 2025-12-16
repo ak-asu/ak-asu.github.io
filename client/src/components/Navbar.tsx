@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import type { RootState } from "@/store/store";
