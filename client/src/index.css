@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+@theme {
+  /* Border radius */
+  --radius: 0.75rem;
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* Custom colors - palette */
+  --color-palette-teal-light: #5fb3c7;
+  --color-palette-teal: #1791a3;
+  --color-palette-teal-dark: #73d3e7;
+  --color-palette-slate: #6d868d;
+  --color-palette-gray-light: #b9c7d2;
+  --color-palette-gray-dark: #474747;
+}
+
 :root {
   --background: 210 12% 95%; /* Lighter background for better contrast */
   --foreground: 0 0% 13%; /* Darker text for WCAG AA compliance (8.5:1 ratio) */
