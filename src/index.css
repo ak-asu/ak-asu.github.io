@@ -1,0 +1,550 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap");
+
+@import "tailwindcss";
+@plugin './hero.ts';
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
+
+/* Tailwind 4 Theme Configuration */
+@theme {
+  /* Font Families */
+  --font-orbitron: "Orbitron", sans-serif;
+  --font-rajdhani: "Rajdhani", sans-serif;
+  --font-jetbrains: "JetBrains Mono", monospace;
+
+  /* Container */
+  --container-center: true;
+  --container-padding: 2rem;
+  --container-screen-2xl: 1400px;
+
+  /* Colors */
+  --color-border: hsl(44 40% 25%);
+  --color-input: hsl(220 25% 15%);
+  --color-ring: hsl(195 100% 50%);
+  --color-background: hsl(220 30% 6%);
+  --color-foreground: hsl(44 20% 90%);
+
+  --color-iron-red: hsl(0 100% 24%);
+  --color-iron-red-light: hsl(0 85% 35%);
+  --color-iron-red-dark: hsl(0 100% 15%);
+
+  --color-iron-gold: hsl(44 98% 39%);
+  --color-iron-gold-light: hsl(44 90% 55%);
+  --color-iron-gold-dark: hsl(44 100% 25%);
+
+  --color-arc-blue: hsl(195 100% 50%);
+  --color-arc-blue-light: hsl(195 100% 65%);
+  --color-arc-blue-dark: hsl(195 100% 35%);
+  --color-arc-blue-glow: hsl(195 100% 70%);
+
+  --color-primary: hsl(44 98% 39%);
+  --color-primary-foreground: hsl(220 30% 6%);
+
+  --color-secondary: hsl(0 100% 24%);
+  --color-secondary-foreground: hsl(44 20% 90%);
+
+  --color-muted: hsl(220 20% 18%);
+  --color-muted-foreground: hsl(220 10% 60%);
+
+  --color-accent: hsl(195 100% 50%);
+  --color-accent-foreground: hsl(220 30% 6%);
+
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(210 40% 98%);
+
+  --color-card: hsl(220 25% 12%);
+  --color-card-foreground: hsl(44 20% 90%);
+
+  --color-popover: hsl(220 25% 10%);
+  --color-popover-foreground: hsl(44 20% 90%);
+
+  /* Border Radius */
+  --radius: 0.5rem;
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+
+  /* Animations */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-arc-pulse: arc-pulse 2s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-fade-in: fade-in 0.5s ease-out;
+  --animate-scale-in: scale-in 0.3s ease-out;
+  --animate-hex-rotate: hex-rotate 20s linear infinite;
+}
+
+@layer base {
+  :root {
+    /* Iron Man Mark 42 Color Palette */
+    --iron-red: 0 100% 24%;
+    --iron-red-light: 0 85% 35%;
+    --iron-red-dark: 0 100% 15%;
+
+    --iron-gold: 44 98% 39%;
+    --iron-gold-light: 44 90% 55%;
+    --iron-gold-dark: 44 100% 25%;
+
+    --arc-blue: 195 100% 50%;
+    --arc-blue-light: 195 100% 65%;
+    --arc-blue-dark: 195 100% 35%;
+    --arc-blue-glow: 195 100% 70%;
+
+    /* Core Theme */
+    --background: 220 30% 6%;
+    --background-elevated: 220 25% 10%;
+    --foreground: 44 20% 90%;
+
+    --card: 220 25% 12%;
+    --card-foreground: 44 20% 90%;
+
+    --popover: 220 25% 10%;
+    --popover-foreground: 44 20% 90%;
+
+    --primary: 44 98% 39%;
+    --primary-foreground: 220 30% 6%;
+
+    --secondary: 0 100% 24%;
+    --secondary-foreground: 44 20% 90%;
+
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 10% 60%;
+
+    --accent: 195 100% 50%;
+    --accent-foreground: 220 30% 6%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 44 40% 25%;
+    --input: 220 25% 15%;
+    --ring: 195 100% 50%;
+
+    --radius: 0.5rem;
+
+    /* Gradients */
+    --gradient-iron: linear-gradient(
+      135deg,
+      hsl(var(--iron-red)) 0%,
+      hsl(var(--iron-red-dark)) 50%,
+      hsl(var(--iron-gold-dark)) 100%
+    );
+    --gradient-gold: linear-gradient(
+      135deg,
+      hsl(var(--iron-gold-dark)) 0%,
+      hsl(var(--iron-gold)) 50%,
+      hsl(var(--iron-gold-light)) 100%
+    );
+    --gradient-arc: linear-gradient(
+      135deg,
+      hsl(var(--arc-blue-dark)) 0%,
+      hsl(var(--arc-blue)) 50%,
+      hsl(var(--arc-blue-light)) 100%
+    );
+    --gradient-metallic: linear-gradient(
+      180deg,
+      hsl(var(--iron-gold-light)) 0%,
+      hsl(var(--iron-gold)) 30%,
+      hsl(var(--iron-gold-dark)) 100%
+    );
+    --gradient-panel: linear-gradient(
+      180deg,
+      hsl(var(--iron-red)) 0%,
+      hsl(var(--iron-red-dark)) 100%
+    );
+
+    /* Shadows & Glows */
+    --shadow-arc:
+      0 0 20px hsl(var(--arc-blue) / 0.5), 0 0 40px hsl(var(--arc-blue) / 0.3);
+    --shadow-gold: 0 0 15px hsl(var(--iron-gold) / 0.4);
+    --shadow-red: 0 0 20px hsl(var(--iron-red) / 0.4);
+    --glow-arc:
+      0 0 10px hsl(var(--arc-blue)), 0 0 20px hsl(var(--arc-blue) / 0.8),
+      0 0 30px hsl(var(--arc-blue) / 0.6);
+
+    /* Sidebar (keeping for compatibility) */
+    --sidebar-background: 220 30% 8%;
+    --sidebar-foreground: 44 20% 90%;
+    --sidebar-primary: 44 98% 39%;
+    --sidebar-primary-foreground: 220 30% 6%;
+    --sidebar-accent: 195 100% 50%;
+    --sidebar-accent-foreground: 220 30% 6%;
+    --sidebar-border: 44 40% 25%;
+    --sidebar-ring: 195 100% 50%;
+  }
+
+  .dark {
+    /* Same as root - this is a dark theme by default */
+    --background: 220 30% 6%;
+    --foreground: 44 20% 90%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(44 40% 25%);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: hsl(220 30% 6%);
+    color: hsl(44 20% 90%);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: "Rajdhani", sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Orbitron", sans-serif;
+    letter-spacing: 0.05em;
+  }
+
+  code,
+  pre,
+  .font-mono {
+    font-family: "JetBrains Mono", monospace;
+  }
+}
+
+@layer components {
+  /* Iron Man Panel Styling */
+  .iron-panel {
+    background: var(--gradient-panel);
+    border: 2px solid hsl(var(--iron-gold));
+    border-radius: 0.75rem;
+    box-shadow:
+      inset 0 1px 0 hsl(var(--iron-gold-light) / 0.3),
+      var(--shadow-gold);
+  }
+
+  .iron-frame {
+    position: relative;
+    background: linear-gradient(
+      180deg,
+      hsl(var(--iron-red-light)) 0%,
+      hsl(var(--iron-red)) 20%,
+      hsl(var(--iron-red-dark)) 100%
+    );
+    border: 3px solid transparent;
+    border-image: var(--gradient-metallic) 1;
+    border-radius: 1rem;
+  }
+
+  .iron-frame::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    background: var(--gradient-metallic);
+    border-radius: 1rem;
+    z-index: -1;
+  }
+
+  /* Arc Reactor Glow */
+  .arc-glow {
+    box-shadow: var(--glow-arc);
+    animation: arc-pulse 2s ease-in-out infinite;
+  }
+
+  .arc-text {
+    color: hsl(var(--arc-blue));
+    text-shadow:
+      0 0 10px hsl(var(--arc-blue)),
+      0 0 20px hsl(var(--arc-blue) / 0.8);
+  }
+
+  /* Gold Metallic Text */
+  .gold-text {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Hexagon Badge */
+  .hex-badge {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: var(--gradient-panel);
+    border: 2px solid hsl(var(--iron-gold));
+  }
+
+  /* HUD Scanlines */
+  .scanlines::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      hsl(var(--arc-blue) / 0.03) 2px,
+      hsl(var(--arc-blue) / 0.03) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Glass Panel */
+  .glass-panel {
+    background: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--iron-gold) / 0.3);
+  }
+
+  /* Terminal Screen */
+  .terminal-screen {
+    background: hsl(220 35% 5%);
+    border: 3px solid hsl(var(--iron-gold));
+    border-radius: 0.5rem;
+    box-shadow:
+      inset 0 0 50px hsl(var(--arc-blue) / 0.1),
+      var(--shadow-gold);
+  }
+
+  /* Navigation Item */
+  .nav-item {
+    position: relative;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-family: "Orbitron", sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    color: hsl(var(--iron-gold));
+  }
+
+  .nav-item:hover,
+  .nav-item.active {
+    color: hsl(var(--arc-blue));
+    text-shadow: 0 0 10px hsl(var(--arc-blue));
+  }
+
+  .nav-item.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background: hsl(var(--arc-blue));
+    box-shadow: 0 0 10px hsl(var(--arc-blue));
+  }
+
+  /* Button Variants */
+  .btn-iron {
+    position: relative;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-family: "Orbitron", sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    background: var(--gradient-panel);
+    border: 2px solid hsl(var(--iron-gold));
+    color: hsl(var(--iron-gold));
+    clip-path: polygon(
+      10px 0,
+      100% 0,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      0 100%,
+      0 10px
+    );
+  }
+
+  .btn-iron:hover {
+    border-color: hsl(var(--arc-blue));
+    color: hsl(var(--arc-blue));
+    box-shadow: var(--shadow-arc);
+  }
+
+  .btn-arc {
+    position: relative;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-family: "Orbitron", sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    background: hsl(var(--arc-blue) / 0.2);
+    border: 2px solid hsl(var(--arc-blue));
+    color: hsl(var(--arc-blue));
+    box-shadow: var(--shadow-arc);
+  }
+
+  .btn-arc:hover {
+    background: hsl(var(--arc-blue) / 0.3);
+    box-shadow: var(--glow-arc);
+  }
+}
+
+@layer utilities {
+  .font-orbitron {
+    font-family: "Orbitron", sans-serif;
+  }
+
+  .font-rajdhani {
+    font-family: "Rajdhani", sans-serif;
+  }
+
+  .font-jetbrains {
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  /* Animation utilities */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-scan {
+    animation: scan 3s linear infinite;
+  }
+
+  .animate-flicker {
+    animation: flicker 0.15s infinite;
+  }
+}
+
+/* Keyframes */
+@keyframes arc-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px hsl(var(--arc-blue)),
+      0 0 20px hsl(var(--arc-blue) / 0.8),
+      0 0 30px hsl(var(--arc-blue) / 0.6);
+  }
+  50% {
+    box-shadow:
+      0 0 15px hsl(var(--arc-blue)),
+      0 0 30px hsl(var(--arc-blue) / 0.8),
+      0 0 45px hsl(var(--arc-blue) / 0.6);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: hsl(var(--arc-blue));
+  }
+}
+
+/* Matrix Rain Effect */
+@keyframes matrix-fall {
+  0% {
+    transform: translateY(-100%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--iron-gold) / 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--iron-gold));
+}
+
+/* Selection */
+::selection {
+  background: hsl(var(--arc-blue) / 0.3);
+  color: hsl(var(--arc-blue-light));
+}

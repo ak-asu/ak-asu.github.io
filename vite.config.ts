@@ -1,45 +1,33 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
-import themePlugin from "@replit/vite-plugin-shadcn-theme-json";
-import path, { dirname } from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import path from "path";
 import { fileURLToPath } from "url";
-import dotenv from "dotenv";
 
-// Load environment variables
-dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// ESM equivalent of __dirname
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
-  // Simple base URL configuration for GitHub Pages
-  const base =
-    mode === "production" && process.env.NODE_ENV === "production"
-      ? "/Portfolio/"
-      : "/";
+  // GitHub Pages base URL - matches your repository name
+  const base = mode === "production" ? "/Portfolio/" : "/";
 
   return {
     base,
-    plugins: [tailwindcss(), react(), runtimeErrorOverlay(), themePlugin()],
+    plugins: [tailwindcss(), react()],
     define: {
-      // Make the base URL available as VITE_PUBLIC_URL for backward compatibility
       "import.meta.env.VITE_PUBLIC_URL": JSON.stringify(base),
     },
     optimizeDeps: {
       exclude: ["lucide-react"],
     },
-    publicDir: path.resolve(__dirname, "client/public"),
+    publicDir: "public",
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "client", "src"),
-        "@shared": path.resolve(__dirname, "shared"),
+        "@": path.resolve(__dirname, "src"),
       },
     },
-    root: path.resolve(__dirname, "client"),
     build: {
-      outDir: path.resolve(__dirname, "dist/public"),
+      outDir: "dist",
       emptyOutDir: true,
       assetsDir: "assets",
       rollupOptions: {
@@ -51,13 +39,8 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: parseInt(process.env.PORT || "5000"),
-      proxy: {
-        "/api": {
-          target: `http://localhost:${process.env.PORT || 5000}`,
-          changeOrigin: true,
-        },
-      },
+      port: 5173,
+      open: true,
     },
   };
 });

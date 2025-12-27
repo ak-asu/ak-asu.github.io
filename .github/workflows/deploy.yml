@@ -1,14 +1,18 @@
+# Simple workflow for deploying static content to GitHub Pages
 name: Deploy to GitHub Pages
 
 on:
+  # Runs on pushes targeting the default branch
   push:
-    branches: [main]
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # Define deployment environment variables
-env:
-  NODE_VERSION: 20
-  BUILD_DIR: ./dist/public # Adjusted to match your actual build output directory
+# env:
+#   NODE_VERSION: 20
+#   BUILD_DIR: ./dist/public # Adjusted to match your actual build output directory
 
 permissions:
   contents: read
@@ -21,128 +25,113 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # Cache dependencies for faster workflows
-      - name: Setup Node.js cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.npm
-            node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build website
-        run: npm run build:github
-        env:
-          NODE_ENV: production
-
-      - name: Verify build output
-        run: |
-          if [ ! -d "${{ env.BUILD_DIR }}" ]; then
-            echo "::error::Build output directory '${{ env.BUILD_DIR }}' not found."
-            echo "Available directories:"
-            find ./dist -type d
-            exit 1
-          fi
-
-          if [ ! -f "${{ env.BUILD_DIR }}/index.html" ]; then
-            echo "::error::index.html not found in build output directory."
-            echo "Files in build directory:"
-            find "${{ env.BUILD_DIR }}" -type f | sort
-            exit 1
-          fi
-
-      - name: Create .nojekyll file
-        run: touch ${{ env.BUILD_DIR }}/.nojekyll
-
-      - name: Add CNAME file if needed
-        # Uncomment and modify if you have a custom domain
-        # run: echo "your-custom-domain.com" > ${{ env.BUILD_DIR }}/CNAME
-        run: echo "No custom domain configured"
-        continue-on-error: true
-
-      - name: Copy 404 page for SPA support
-        run: |
-          if [ -f "${{ env.BUILD_DIR }}/index.html" ]; then
-            cp "${{ env.BUILD_DIR }}/index.html" "${{ env.BUILD_DIR }}/404.html"
-          fi
-        continue-on-error: true
-
-      - name: Optimize assets (images)
-        run: |
-          # Install image optimization tools
-          if [ -d "${{ env.BUILD_DIR }}/assets" ]; then
-            echo "Skipping image optimization in this run"
-            # Uncomment to enable image optimization
-            # sudo apt-get update && sudo apt-get install -y jpegoptim optipng
-            # find "${{ env.BUILD_DIR }}" -type f -name "*.jpg" -exec jpegoptim --strip-all --max=85 {} \;
-            # find "${{ env.BUILD_DIR }}" -type f -name "*.png" -exec optipng -quiet -strip all {} \;
-          fi
-        continue-on-error: true
-
-      - name: Debug build information
-        run: |
-          echo "Repository: ${{ github.repository }}"
-          echo "Build directory structure:"
-          find "${{ env.BUILD_DIR }}" -type f | head -n 30
-          echo "Index HTML content preview:"
-          head -n 15 "${{ env.BUILD_DIR }}/index.html"
-          echo "Total build size:"
-          du -sh "${{ env.BUILD_DIR }}"
-        continue-on-error: true
-
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ${{ env.BUILD_DIR }}
-          retention-days: 7
-
-  # Security scan job (optional but recommended)
-  security-scan:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Run security scan
-        run: echo "Security scan placeholder - implement actual scanning as needed"
-        continue-on-error: true
-
+  # Build and deploy job
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: [build, security-scan]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # Fetch all history for accurate builds
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build
+        env:
+          NODE_ENV: production
+
+      - name: Verify build output
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "::error::Build output directory 'dist' not found"
+            exit 1
+          fi
+
+          if [ ! -f "dist/index.html" ]; then
+            echo "::error::index.html not found in build output"
+            ls -la dist/
+            exit 1
+          fi
+
+          echo "✓ Build verified successfully"
+          du -sh dist/
+
+      - name: Add .nojekyll file
+        run: touch dist/.nojekyll
+
+      - name: Create 404 page for SPA routing
+        run: |
+          # Copy index.html to 404.html for SPA support on GitHub Pages
+          # This allows client-side routing to work properly
+          cp dist/index.html dist/404.html
+        continue-on-error: true
+
+      - name: Optimize assets (images)
+        run: |
+          if [ -d "dist/assets" ]; then
+            echo "Checking for image optimization opportunities..."
+            # Uncomment below lines to enable image optimization
+            # sudo apt-get update && sudo apt-get install -y jpegoptim optipng
+            # find "dist" -type f -name "*.jpg" -exec jpegoptim --strip-all --max=85 {} \;
+            # find "dist" -type f -name "*.png" -exec optipng -quiet -strip all {} \;
+            echo "Image optimization skipped (enable by uncommenting commands above)"
+          fi
+        continue-on-error: true
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: "./dist"
+          retention-days: 7
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          token: ${{ github.token }}
 
-      - name: Verify deployment
-        if: success()
-        run: |
-          echo "🚀 Deployment successful! Site available at ${{ steps.deployment.outputs.page_url }}"
-          # You could add automated checks here
+  # Security scan job (should run before deployment)
+  # security-scan:
+  #   runs-on: ubuntu-latest
+  #   needs: deploy
+  #   if: success()
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v5
+
+  #     - name: Run Trivy vulnerability scanner
+  #       uses: aquasecurity/trivy-action@0.28.0
+  #       with:
+  #         scan-type: 'fs'
+  #         scan-ref: '.'
+  #         format: 'sarif'
+  #         output: 'trivy-results.sarif'
+  #       continue-on-error: true
+
+  #     - name: Upload Trivy results to GitHub Security
+  #       uses: github/codeql-action/upload-sarif@v3
+  #       with:
+  #         sarif_file: 'trivy-results.sarif'
+  #       continue-on-error: true
+
+  #     - name: Security scan summary
+  #       run: |
+  #         echo "✓ Security scan completed"
+  #         echo "View results in the Security tab of your repository"
