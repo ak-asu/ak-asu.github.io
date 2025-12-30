@@ -1,13 +1,21 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import { Award, Trophy, Shield, FileText, Brain, Code } from "lucide-react";
+import {
+  Award,
+  Trophy,
+  Shield,
+  FileText,
+  Brain,
+  Code,
+  type LucideIcon,
+} from "lucide-react";
 import { ArcReactor } from "@/components/ui/ArcReactor";
 import { useAudioSystem } from "@/hooks/useAudioSystem";
 import achievementsDataRaw from "@/data/achievements.json";
 
 // Icon mapping based on achievement type
-const getIconForType = (type: string) => {
-  const iconMap: Record<string, any> = {
+const getIconForType = (type: string): LucideIcon => {
+  const iconMap: Record<string, LucideIcon> = {
     recognition: Trophy,
     certification: Shield,
     course: FileText,

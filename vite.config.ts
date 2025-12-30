@@ -31,6 +31,7 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       assetsDir: "assets",
       rollupOptions: {
+        external: [/^\.claude/, /^docs/],
         output: {
           assetFileNames: "assets/[name]-[hash][extname]",
           chunkFileNames: "assets/[name]-[hash].js",

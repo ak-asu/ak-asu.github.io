@@ -10,86 +10,21 @@ import {
   MicOff,
   Volume2,
   VolumeX,
+  Download,
 } from "lucide-react";
 import { useAudioSystem } from "@/hooks/useAudioSystem";
 import { useSpeech } from "@/hooks/useSpeech";
 import { cn } from "@/lib/utils";
+import { webLLMService } from "@/services/webLLMService";
+import type { ChatMessage } from "@/services/webLLMService";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  isStreaming?: boolean;
 }
-
-// TODO: Replace with actual AI API call
-// This is a placeholder that simulates JARVIS-style responses
-const getJarvisResponse = async (
-  userMessage: string,
-  conversationHistory: Message[],
-): Promise<string> => {
-  // Simulate API delay
-  await new Promise((resolve) =>
-    setTimeout(resolve, 1000 + Math.random() * 1500),
-  );
-
-  const lowerMessage = userMessage.toLowerCase();
-
-  // Context-aware responses based on portfolio content
-  if (lowerMessage.includes("skill") || lowerMessage.includes("tech")) {
-    return "I've analyzed the skill matrix. Primary proficiencies include Python, React, Django, and various modern web technologies. The expertise spans full-stack development with a focus on AI/ML applications. Shall I elaborate on any specific domain?";
-  }
-  if (lowerMessage.includes("project")) {
-    return "I've catalogued several notable projects including LocalScholar (Privacy-First AI Assistant), VisionForge (Deep Learning IDE), and NMTSA Education LMS. Each demonstrates unique technical expertise and innovation. Would you like me to highlight a particular project?";
-  }
-  if (lowerMessage.includes("experience") || lowerMessage.includes("work")) {
-    return "The professional timeline includes experience at Fractal as a Full-Stack Developer and Backend Developer, as well as the current Graduate Student Assistant role at ASU. I can provide detailed analysis of any specific role upon request.";
-  }
-  if (
-    lowerMessage.includes("contact") ||
-    lowerMessage.includes("hire") ||
-    lowerMessage.includes("reach")
-  ) {
-    return "Certainly. The 'Let's Talk' interface is available in the navigation bar. You can reach out via the contact form or directly at akhepar@asu.edu. I can facilitate a direct communication channel if you prefer.";
-  }
-  if (
-    lowerMessage.includes("hello") ||
-    lowerMessage.includes("hi") ||
-    lowerMessage.includes("hey")
-  ) {
-    return "Hello! I'm your AI portfolio assistant. How may I assist you in exploring Aakash's professional journey and technical capabilities?";
-  }
-  if (
-    lowerMessage.includes("who are you") ||
-    lowerMessage.includes("what are you")
-  ) {
-    return "I'm an AI assistant designed to help you navigate this portfolio. I can provide information about Aakash's skills, projects, experience, education, and achievements. Feel free to ask me anything!";
-  }
-  if (lowerMessage.includes("game")) {
-    return "The portfolio includes interactive games like Tic-Tac-Toe and Color Tap for entertainment. Shall I navigate you to the Games section?";
-  }
-  if (
-    lowerMessage.includes("education") ||
-    lowerMessage.includes("study") ||
-    lowerMessage.includes("degree")
-  ) {
-    return "Educational credentials include a Master of Science in Computer Science from Arizona State University (2024-2026) and a Bachelor in Technology - Engineering Physics from IIT Roorkee (2017-2021). I can provide more details if you'd like.";
-  }
-  if (lowerMessage.includes("achievement")) {
-    return "Notable achievements include 1st Place at HackASU 2025 (Claude Developer Tools Track), 2nd Place at Opportunity Hack 2025, SoDA LLM Workshop Winner, and JEE Advanced 2017 Rank 3006. Shall I reveal more accomplishments?";
-  }
-
-  // Default responses with some variety
-  const defaultResponses = [
-    "I'm processing your inquiry. Is there a specific aspect of the portfolio you'd like me to analyze?",
-    "Interesting question! While I compile the relevant data, perhaps you'd like to explore the Skills or Projects section?",
-    "I'm here to help! Feel free to ask about skills, projects, experience, education, or achievements.",
-    "Processing your request. My systems are ready to assist with any portfolio-related inquiries.",
-    "The portfolio contains extensive information about Aakash's work and expertise. How may I help you explore it today?",
-  ];
-
-  return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
-};
 
 export const JarvisChat = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -106,6 +41,11 @@ export const JarvisChat = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isModelLoading, setIsModelLoading] = useState(true);
+  const [modelLoadProgress, setModelLoadProgress] = useState(0);
+  const [modelLoadText, setModelLoadText] = useState(
+    "Initializing AI systems...",
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { playClick, playBeep, playSuccess, playHover, playPowerUp } =
@@ -147,8 +87,32 @@ export const JarvisChat = () => {
     }
   }, [isOpen, isMinimized]);
 
+  // Initialize WebLLM on component mount
+  useEffect(() => {
+    const initializeModel = async () => {
+      setIsModelLoading(true);
+
+      const result = await webLLMService.initialize((progress) => {
+        setModelLoadProgress(Math.round(progress.progress * 100));
+        setModelLoadText(progress.text);
+      });
+
+      if (result.success) {
+        setIsModelLoading(false);
+        playSuccess();
+        console.log("JARVIS AI systems online");
+      } else {
+        setIsModelLoading(false);
+        setModelLoadText(`Initialization failed: ${result.error}`);
+        console.error("Failed to initialize WebLLM:", result.error);
+      }
+    };
+
+    initializeModel();
+  }, [playSuccess]);
+
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || isModelLoading) return;
 
     playClick();
     const userMessage: Message = {
@@ -162,35 +126,74 @@ export const JarvisChat = () => {
     setInput("");
     setIsLoading(true);
 
+    // Create a placeholder message for streaming
+    const assistantMessageId = (Date.now() + 1).toString();
+    const assistantMessage: Message = {
+      id: assistantMessageId,
+      role: "assistant",
+      content: "",
+      timestamp: new Date(),
+      isStreaming: true,
+    };
+
+    setMessages((prev) => [...prev, assistantMessage]);
+    playBeep();
+
     try {
-      // TODO: Replace with actual API call
-      const response = await getJarvisResponse(userMessage.content, messages);
+      // Convert message history to ChatMessage format
+      const chatHistory: ChatMessage[] = messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
 
-      playBeep();
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: response,
-        timestamp: new Date(),
-      };
+      let fullResponse = "";
 
-      setMessages((prev) => [...prev, assistantMessage]);
-      playSuccess();
+      // Stream response from WebLLM
+      await webLLMService.chat(
+        userMessage.content,
+        chatHistory,
+        (delta, isDone) => {
+          if (!isDone && delta) {
+            fullResponse += delta;
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === assistantMessageId
+                  ? { ...msg, content: fullResponse }
+                  : msg,
+              ),
+            );
+          } else if (isDone) {
+            // Mark as done streaming
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === assistantMessageId
+                  ? { ...msg, isStreaming: false }
+                  : msg,
+              ),
+            );
+            playSuccess();
 
-      // Speak the response if voice is enabled
-      if (voiceEnabled && isSupported) {
-        speak(response);
-      }
+            // Speak the response if voice is enabled
+            if (voiceEnabled && isSupported && fullResponse) {
+              speak(fullResponse);
+            }
+          }
+        },
+      );
     } catch (error) {
       console.error("Error getting response:", error);
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content:
-          "I apologize, sir. There seems to be a temporary disruption in my neural network. Please try again.",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      const errorContent =
+        error instanceof Error
+          ? `I apologize, sir. ${error.message}`
+          : "I apologize, sir. There seems to be a temporary disruption in my neural network. Please try again.";
+
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === assistantMessageId
+            ? { ...msg, content: errorContent, isStreaming: false }
+            : msg,
+        ),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -312,11 +315,13 @@ export const JarvisChat = () => {
                     J.A.R.V.I.S
                   </h3>
                   <p className="text-cyan-400/70 text-xs">
-                    {isSpeaking
-                      ? "Speaking..."
-                      : isListening
-                        ? "Listening..."
-                        : "Online • Ready to assist"}
+                    {isModelLoading
+                      ? `Initializing... ${modelLoadProgress}%`
+                      : isSpeaking
+                        ? "Speaking..."
+                        : isListening
+                          ? "Listening..."
+                          : "Online • Ready to assist"}
                   </p>
                 </div>
               </div>
@@ -367,45 +372,64 @@ export const JarvisChat = () => {
                   exit={{ height: 0, opacity: 0 }}
                   className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[300px] max-h-[350px] scrollbar-thin scrollbar-thumb-red-600/30 scrollbar-track-transparent"
                 >
-                  {messages.map((message, index) => (
+                  {isModelLoading && (
                     <motion.div
-                      key={message.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className={cn(
-                        "flex",
-                        message.role === "user"
-                          ? "justify-end"
-                          : "justify-start",
-                      )}
+                      className="flex flex-col items-center justify-center gap-3 py-8"
                     >
-                      <div
-                        className={cn(
-                          "max-w-[85%] px-4 py-2.5 rounded-xl text-sm",
-                          message.role === "user"
-                            ? "bg-gradient-to-r from-red-600/80 to-red-700/80 text-white rounded-br-sm"
-                            : "bg-gradient-to-r from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 text-cyan-100 rounded-bl-sm",
-                        )}
-                      >
-                        {message.content}
+                      <div className="relative w-16 h-16">
+                        <div className="absolute inset-0 rounded-full bg-cyan-400/20 animate-pulse" />
+                        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-cyan-400/40 to-blue-500/40 animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Download className="w-8 h-8 text-cyan-400 animate-bounce" />
+                        </div>
                       </div>
-                    </motion.div>
-                  ))}
-                  {isLoading && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="flex justify-start"
-                    >
-                      <div className="bg-gradient-to-r from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 px-4 py-3 rounded-xl rounded-bl-sm flex items-center gap-2">
-                        <Loader2 className="w-4 h-4 text-cyan-400 animate-spin" />
-                        <span className="text-cyan-400 text-sm">
-                          Processing...
-                        </span>
+                      <div className="text-center">
+                        <p className="text-cyan-400 text-sm font-medium">
+                          {modelLoadText}
+                        </p>
+                        <p className="text-cyan-400/60 text-xs mt-1">
+                          {modelLoadProgress}% complete
+                        </p>
+                      </div>
+                      <div className="w-full max-w-[200px] h-1 bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300"
+                          style={{ width: `${modelLoadProgress}%` }}
+                        />
                       </div>
                     </motion.div>
                   )}
+                  {!isModelLoading &&
+                    messages.map((message, index) => (
+                      <motion.div
+                        key={message.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className={cn(
+                          "flex",
+                          message.role === "user"
+                            ? "justify-end"
+                            : "justify-start",
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            "max-w-[85%] px-4 py-2.5 rounded-xl text-sm",
+                            message.role === "user"
+                              ? "bg-gradient-to-r from-red-600/80 to-red-700/80 text-white rounded-br-sm"
+                              : "bg-gradient-to-r from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 text-cyan-100 rounded-bl-sm",
+                          )}
+                        >
+                          {message.content}
+                          {message.isStreaming && (
+                            <span className="inline-block w-1 h-4 bg-cyan-400 ml-1 animate-pulse" />
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
                   <div ref={messagesEndRef} />
                 </motion.div>
               )}
@@ -428,12 +452,14 @@ export const JarvisChat = () => {
                         whileTap={{ scale: 0.95 }}
                         onClick={handleMicClick}
                         onMouseEnter={playHover}
-                        disabled={isLoading}
+                        disabled={isLoading || isModelLoading}
                         className={cn(
                           "p-2.5 rounded-lg transition-all relative",
                           isListening
                             ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-500/30"
                             : "bg-slate-700/50 text-cyan-400 hover:bg-slate-600/50",
+                          (isLoading || isModelLoading) &&
+                            "opacity-50 cursor-not-allowed",
                         )}
                       >
                         {isListening && (
@@ -452,27 +478,38 @@ export const JarvisChat = () => {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyPress}
+                      disabled={isModelLoading}
                       placeholder={
-                        isListening ? "Listening..." : "Ask JARVIS anything..."
+                        isModelLoading
+                          ? "Initializing AI..."
+                          : isListening
+                            ? "Listening..."
+                            : "Ask JARVIS anything..."
                       }
-                      className="flex-1 bg-slate-800/50 border border-cyan-500/30 rounded-lg px-4 py-2.5 text-sm text-cyan-100 placeholder:text-cyan-500/50 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition-colors"
+                      className="flex-1 bg-slate-800/50 border border-cyan-500/30 rounded-lg px-4 py-2.5 text-sm text-cyan-100 placeholder:text-cyan-500/50 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     />
-                    <motion.button
-                      id="jarvis-send-btn"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleSend}
-                      onMouseEnter={playHover}
-                      disabled={isLoading || !input.trim()}
-                      className={cn(
-                        "p-2.5 rounded-lg transition-all",
-                        input.trim() && !isLoading
-                          ? "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-500/30"
-                          : "bg-slate-700/50 text-slate-500 cursor-not-allowed",
-                      )}
-                    >
-                      <Send className="w-4 h-4" />
-                    </motion.button>
+                    {!isLoading ? (
+                      <motion.button
+                        id="jarvis-send-btn"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleSend}
+                        onMouseEnter={playHover}
+                        disabled={isLoading || !input.trim() || isModelLoading}
+                        className={cn(
+                          "p-2.5 rounded-lg transition-all",
+                          input.trim() && !isLoading && !isModelLoading
+                            ? "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-500/30"
+                            : "bg-slate-700/50 text-slate-500 cursor-not-allowed",
+                        )}
+                      >
+                        <Send className="w-4 h-4" />
+                      </motion.button>
+                    ) : (
+                      <div className="p-2.5">
+                        <Loader2 className="w-4 h-4 text-cyan-400 animate-spin" />
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )}

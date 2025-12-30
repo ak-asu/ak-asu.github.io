@@ -1,4 +1,4 @@
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree, ThreeEvent } from "@react-three/fiber";
 import { Html, Sphere, RoundedBox } from "@react-three/drei";
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
@@ -46,67 +46,47 @@ const HologramCard = ({
   isActive: boolean;
 }) => {
   const groupRef = useRef<THREE.Group>(null);
-  const { gl } = useThree();
   const isMobile = useIsMobile();
   const prefersReducedMotion = useReducedMotion();
-  const [isDragging, setIsDragging] = useState(false);
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-  const lastMousePos = useRef({ x: 0, y: 0 });
+  const [isRotating, setIsRotating] = useState(true);
 
   useFrame(() => {
-    if (groupRef.current && !isDragging && !prefersReducedMotion) {
-      // Auto-rotate slowly when not dragging and animations are enabled
-      groupRef.current.rotation.y += 0.003;
+    if (groupRef.current) {
+      if (prefersReducedMotion) {
+        // Reset to neutral position when animations are off
+        groupRef.current.rotation.y = 0;
+        groupRef.current.rotation.x = 0;
+      } else if (isRotating) {
+        // Auto-rotate when rotation is enabled and animations are on
+        groupRef.current.rotation.y += 0.003;
+      }
     }
   });
 
-  const handlePointerDown = (e: any) => {
-    e.stopPropagation();
-    setIsDragging(true);
-    lastMousePos.current = { x: e.point?.x || 0, y: e.point?.y || 0 };
-    gl.domElement.style.cursor = "grabbing";
-  };
-
-  const handlePointerUp = () => {
-    setIsDragging(false);
-    gl.domElement.style.cursor = "grab";
-  };
-
-  const handlePointerMove = (e: any) => {
-    if (!isDragging || !groupRef.current) return;
-
-    const deltaX = (e.point?.x || 0) - lastMousePos.current.x;
-    const deltaY = (e.point?.y || 0) - lastMousePos.current.y;
-
-    groupRef.current.rotation.y += deltaX * 0.5;
-    groupRef.current.rotation.x -= deltaY * 0.5;
-
-    // Clamp X rotation
-    groupRef.current.rotation.x = Math.max(
-      -0.5,
-      Math.min(0.5, groupRef.current.rotation.x),
-    );
-
-    lastMousePos.current = { x: e.point?.x || 0, y: e.point?.y || 0 };
+  const handleClick = () => {
+    // Toggle rotation only when animations are enabled
+    if (!prefersReducedMotion) {
+      setIsRotating((prev) => !prev);
+    }
   };
 
   return (
-    <group
-      ref={groupRef}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerUp}
-      onPointerMove={handlePointerMove}
-    >
+    <group ref={groupRef}>
+      {/* Clickable area behind the card */}
+      <mesh onClick={handleClick} position={[0, 0, 0]}>
+        <planeGeometry args={[isMobile ? 2.5 : 4, 3]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
+
       {/* Content via Html */}
       <Html
         position={[0, 0, 0.1]}
         transform
         occlude
+        pointerEvents="none"
         style={{
           width: isMobile ? "190px" : "380px",
-          height: "36vh",
-          pointerEvents: "none",
+          height: "32vh",
         }}
       >
         <div
@@ -147,7 +127,12 @@ const HologramCard = ({
 
           <div className="h-px bg-linear-to-r from-transparent via-arc-blue/50 to-transparent my-0.5" />
 
-          <ul className="space-y-0.5 text-left flex-1 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-arc-blue/30">
+          <ul
+            className="space-y-0.5 text-left flex-1 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-arc-blue/30 select-text"
+            style={{ pointerEvents: "auto" }}
+            onClick={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
+          >
             {work.highlights.map((highlight, index) => (
               <li
                 key={index}
@@ -195,51 +180,6 @@ const SceneContent = ({
       >
         <HologramCard work={selectedWork} isActive={true} />
       </group>
-
-      {/* Projection light rays - fan out from selected label to panel center vertical - Desktop only */}
-      {!isMobile &&
-        (() => {
-          const selectedIndex = workData.findIndex(
-            (w) => w.id === selectedWork.id,
-          );
-          if (selectedIndex === -1) return null;
-
-          const spacing = workData.length > 1 ? 3 / (workData.length - 1) : 0;
-          const labelY = 1.5 - selectedIndex * spacing;
-          const startX = -3.8; // Just to the right of label
-          const startY = labelY;
-          const endX = 0.5; // Center X of hologram panel
-
-          // Create 10 rays fanning out from single point to center vertical line of panel
-          const numRays = 10;
-          const hologramHeight = 2.4; // Height of hologram card
-          const fanStart = -hologramHeight / 2;
-          const fanEnd = hologramHeight / 2;
-
-          return Array.from({ length: numRays }).map((_, i) => {
-            const endY = fanStart + (i / (numRays - 1)) * (fanEnd - fanStart);
-
-            // Create line geometry
-            const points = [
-              new THREE.Vector3(startX, startY, -0.5),
-              new THREE.Vector3(endX, endY, -0.5),
-            ];
-            const lineGeometry = new THREE.BufferGeometry().setFromPoints(
-              points,
-            );
-
-            return (
-              <line key={i} geometry={lineGeometry}>
-                <lineBasicMaterial
-                  color="#00BFFF"
-                  transparent
-                  opacity={0.4}
-                  linewidth={2}
-                />
-              </line>
-            );
-          });
-        })()}
 
       {/* Grid lines for depth */}
       {Array.from({ length: 11 }).map((_, i) => (
@@ -307,7 +247,7 @@ export const WorkSection = () => {
       />
 
       {/* 3D Canvas */}
-      <div className="relative z-10 p-4 h-[420px] lg:h-[560px] items-center justify-center flex">
+      <div className="relative z-10 p-4 h-105 lg:h-140 items-center justify-center flex">
         <WorkScene selectedWork={selectedWork} />
       </div>
 

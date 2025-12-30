@@ -7,13 +7,14 @@ import {
   Terminal,
   Cloud,
   GitBranch,
+  type LucideIcon,
 } from "lucide-react";
 import { useAudioSystem } from "@/hooks/useAudioSystem";
 import skillsDataRaw from "@/data/skills.json";
 
 // Icon mapping based on category
-const getIconForCategory = (category: string) => {
-  const iconMap: Record<string, any> = {
+const getIconForCategory = (category: string): LucideIcon => {
+  const iconMap: Record<string, LucideIcon> = {
     Languages: Code,
     "Front-End": Code,
     Frameworks: Terminal,
