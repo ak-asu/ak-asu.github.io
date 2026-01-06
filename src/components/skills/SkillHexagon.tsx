@@ -71,7 +71,7 @@ export const SkillHexagon = memo(function SkillHexagon({
         }}
       >
         <img
-          src={skill.icon}
+          src={`${import.meta.env.BASE_URL}${skill.icon.startsWith("/") ? skill.icon.slice(1) : skill.icon}`}
           alt={skill.name}
           className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 object-contain transition-transform duration-300 group-hover:scale-110"
         />

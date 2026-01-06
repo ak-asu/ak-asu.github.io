@@ -66,6 +66,19 @@
     "type": "volunteer"
   },
   {
+    "position": "Graduate Instructional Assistant",
+    "company": "ASU",
+    "location": "Tempe, USA",
+    "startDate": "2026-01-05",
+    "endDate": "2026-05-10",
+    "description": [
+      "Instructional Assistant for a 250-student graduate course in Data Visualization (CSE 578), conducting weekly doubt sessions, assisting with assignments and providing support to students in understanding data visualization concepts and tools."
+    ],
+    "technologies": ["Data Visualization", "Python", "Matplotlib", "Seaborn"],
+    "links": [],
+    "type": "volunteer"
+  },
+  {
     "position": "Data Engineer",
     "company": "Fractal",
     "location": "Mumbai, India",

@@ -245,7 +245,7 @@
     "description": "Developed a web application that analyzes the SEO performance of websites, providing insights and recommendations for improvement. The app includes features for keyword analysis, backlink tracking, and on-page optimization.",
     "technologies": ["React", "Typescript", "Tailwind CSS"],
     "duration": "1 week",
-    "url": "https://seoanalyzerpro.netlify.app/",
+    "url": "https://seoanalyzer.pages.dev/",
     "media": "",
     "type": "personal"
   },
@@ -267,7 +267,7 @@
     "description": "Developed a web application that provides a suite of general purpose utility tools for basic everyday tasks.",
     "technologies": ["React", "Typescript", "Tailwind CSS"],
     "duration": "1 week",
-    "url": "https://utilixpro.vercel.app/",
+    "url": "https://utilixpro.netlify.app/",
     "media": "",
     "type": "personal"
   },
@@ -278,7 +278,7 @@
     "description": "Cryptogak is a lightweight and efficient cross-platform command-line utility for encrypting and decrypting strings using common hash algorithms. It works on Linux and Windows.",
     "technologies": ["C"],
     "duration": "2 weeks",
-    "url": "https://github.com/ak-asu/public-releases/tree/main/releases/v1.1.0",
+    "url": "https://github.com/ak-asu/public-releases/tree/main/releases",
     "media": "",
     "type": "personal"
   },

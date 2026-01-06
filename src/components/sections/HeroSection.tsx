@@ -2,6 +2,8 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
 import heroImage from "@/assets/hero-ironman.png";
 import { ArcReactor } from "@/components/ui/ArcReactor";
+import { Github, Linkedin, Globe, Code } from "lucide-react";
+import contactData from "@/data/contact.json";
 
 export const HeroSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -205,18 +207,65 @@ export const HeroSection = () => {
         </motion.div>
       </motion.div>
 
-      {/* Bottom System Status */}
+      {/* Social Media Links */}
       <motion.div
         className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 md:left-16 flex items-center gap-2 sm:gap-3 z-20"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2 }}
       >
-        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-arc-blue animate-pulse" />
-        <span className="text-arc-blue text-[10px] sm:text-xs font-orbitron uppercase tracking-wider">
-          System Online
-        </span>
-        <div className="h-px w-10 sm:w-20 bg-linear-to-r from-arc-blue to-transparent" />
+        <a
+          href={contactData.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg glass-panel border border-iron-gold/30 hover:border-arc-blue/60 transition-all duration-300"
+          aria-label="GitHub"
+        >
+          <Github className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold group-hover:text-arc-blue transition-colors duration-300" />
+          <div
+            className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{ boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }}
+          />
+        </a>
+        <a
+          href={contactData.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg glass-panel border border-iron-gold/30 hover:border-arc-blue/60 transition-all duration-300"
+          aria-label="LinkedIn"
+        >
+          <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold group-hover:text-arc-blue transition-colors duration-300" />
+          <div
+            className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{ boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }}
+          />
+        </a>
+        <a
+          href={contactData.devpost}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg glass-panel border border-iron-gold/30 hover:border-arc-blue/60 transition-all duration-300"
+          aria-label="Devpost"
+        >
+          <Code className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold group-hover:text-arc-blue transition-colors duration-300" />
+          <div
+            className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{ boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }}
+          />
+        </a>
+        <a
+          href={contactData.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg glass-panel border border-iron-gold/30 hover:border-arc-blue/60 transition-all duration-300"
+          aria-label="Website"
+        >
+          <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold group-hover:text-arc-blue transition-colors duration-300" />
+          <div
+            className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{ boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }}
+          />
+        </a>
       </motion.div>
 
       {/* Floating Arc Reactor Decorations */}
