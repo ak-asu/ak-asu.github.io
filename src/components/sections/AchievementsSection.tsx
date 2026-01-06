@@ -37,13 +37,17 @@ const getColorForType = (type: string) => {
   return colorMap[type] || "hsl(195 100% 50%)";
 };
 
-// Transform achievements data to match component structure
-const achievementsData = achievementsDataRaw.map((achievement, index) => ({
-  id: index + 1,
-  title: achievement.title,
-  icon: getIconForType(achievement.type),
-  color: getColorForType(achievement.type),
-}));
+// Transform achievements data to match component structure and sort by date ascending
+const achievementsData = achievementsDataRaw
+  .slice()
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  .map((achievement, index) => ({
+    id: index + 1,
+    title: achievement.title,
+    icon: getIconForType(achievement.type),
+    color: getColorForType(achievement.type),
+    image: achievement.image,
+  }));
 
 export const AchievementsSection = () => {
   const [isRevealed, setIsRevealed] = useState(false);
@@ -202,26 +206,44 @@ export const AchievementsSection = () => {
                 return (
                   <motion.div
                     key={achievement.id}
-                    className="iron-panel p-3 sm:p-4 flex flex-col items-center justify-center text-center gap-2 sm:gap-3 min-h-32 sm:min-h-36 md:min-h-40"
+                    className="iron-panel relative overflow-hidden p-3 sm:p-4 flex flex-col items-center justify-center text-center gap-2 sm:gap-3 min-h-32 sm:min-h-36 md:min-h-40"
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={isRevealed ? { opacity: 1, scale: 1 } : {}}
                     transition={{ delay: 0.5 + index * 0.1 }}
                   >
+                    {/* Translucent background image if present */}
+                    {achievement.image && (
+                      <div className="absolute inset-0 opacity-40">
+                        <img
+                          src={`${import.meta.env.BASE_URL}${achievement.image.startsWith("/") ? achievement.image.slice(1) : achievement.image}`}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+
+                    {/* Icon area - always reserve space so title doesn't shift when icon is absent */}
                     <div
-                      className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg flex items-center justify-center shrink-0"
-                      style={{
-                        background: `${achievement.color}20`,
-                        border: `2px solid ${achievement.color}`,
-                        boxShadow: `0 0 15px ${achievement.color}40`,
-                      }}
+                      className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg flex items-center justify-center shrink-0"
+                      style={
+                        achievement.image
+                          ? undefined
+                          : {
+                              background: `${achievement.color}20`,
+                              border: `2px solid ${achievement.color}`,
+                              boxShadow: `0 0 15px ${achievement.color}40`,
+                            }
+                      }
                     >
-                      <IconComponent
-                        size={28}
-                        style={{ color: achievement.color }}
-                        className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
-                      />
+                      {!achievement.image && (
+                        <IconComponent
+                          size={28}
+                          style={{ color: achievement.color }}
+                          className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
+                        />
+                      )}
                     </div>
-                    <p className="font-orbitron text-[10px] sm:text-xs text-iron-gold leading-tight line-clamp-3">
+                    <p className="relative font-orbitron text-[10px] sm:text-xs text-accent leading-tight line-clamp-3">
                       {achievement.title}
                     </p>
                   </motion.div>

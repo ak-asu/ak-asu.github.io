@@ -112,8 +112,8 @@ export const TicTacToe = () => {
   return (
     <div className="flex flex-col items-center gap-6">
       {/* Status Display */}
-      <div className="iron-panel px-6 py-3">
-        <span className="font-orbitron text-lg uppercase tracking-wider">
+      <div className="iron-panel px-6 py-2">
+        <span className="font-orbitron text-md uppercase tracking-wider">
           {winner === "draw" ? (
             <span className="text-iron-gold">DRAW - NO WINNER</span>
           ) : winner ? (

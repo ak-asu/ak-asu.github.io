@@ -384,11 +384,11 @@
     position: relative;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     font-family: "Orbitron", sans-serif;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
+    font-size: 0.8rem;
+    line-height: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     transition-property: all;
@@ -521,6 +521,20 @@
   100% {
     transform: translateY(100vh);
     opacity: 0;
+  }
+}
+
+/* Matrix Scan Animation - CSS based instead of canvas */
+@keyframes matrix-scan {
+  0% {
+    background-position:
+      0 0,
+      0 0;
+  }
+  100% {
+    background-position:
+      0 100px,
+      100px 0;
   }
 }
 

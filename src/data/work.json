@@ -1,5 +1,173 @@
 [
   {
+    "position": "Graduate Instructional Assistant",
+    "company": "ASU",
+    "location": "Tempe, USA",
+    "startDate": "2026-01-05",
+    "endDate": "2026-05-10",
+    "description": [
+      "Instructional Assistant for a 250-student graduate course in Data Visualization (CSE 578), conducting weekly doubt sessions, assisting with assignments and providing support to students in understanding data visualization concepts and tools."
+    ],
+    "technologies": ["Data Visualization", "Python", "Matplotlib", "Seaborn"],
+    "links": [],
+    "type": "volunteer"
+  },
+  {
+    "position": "Graduate Student Assistant",
+    "company": "ASU",
+    "location": "Tempe, USA",
+    "startDate": "2025-08-18",
+    "endDate": "2025-12-10",
+    "description": [
+      "Lead Grader for a 340-student graduate course in Knowledge Representation and Reasoning (CSE 579), overseeing graders, preparing exams and assignments, and ensuring accurate, timely grading and communication."
+    ],
+    "technologies": [
+      "KRR",
+      "Clingo",
+      "Canvas",
+      "Knowledge Representation and Reasoning"
+    ],
+    "links": [],
+    "type": "volunteer"
+  },
+  {
+    "position": "Software Engineer Intern",
+    "company": "Opportunity Hack",
+    "location": "United States",
+    "startDate": "2025-06-01",
+    "endDate": "2025-07-31",
+    "description": [
+      "Led a team to achieve 3rd place in the Summer Volunteer Internship Hackathon 2025 out of a total of 18 participating teams, developing an innovative drive management solution with a collaborative chat interface and agentic AI integration.",
+      "Designed the complete system architecture and technical workflow, including frontend, backend, AI, and database layers.",
+      "Implemented 80% of the codebase, ensuring scalability, maintainability, and high performance across the application.",
+      "Integrated advanced technologies including TypeScript, React, Python, LangChain, Google Gemini, and Supabase to deliver AI-driven functionalities and real-time collaboration features.",
+      "Engineered drive integration for seamless file management and designed a robust database schema for efficient data handling.",
+      "Organized and led weekly team meetings, assigning tasks, tracking progress, and ensuring alignment with project goals.",
+      "Established GitHub workflows with structured branching strategies, PR reviews, coding guidelines, and version control best practices.",
+      "Acted as a mentor and technical guide, helping teammates solve complex issues, optimize code, and adopt best development practices."
+    ],
+    "technologies": [
+      "Chromadb",
+      "Fastapi",
+      "Gemini",
+      "Langchain",
+      "Nextjs",
+      "Pydantic",
+      "Python",
+      "React",
+      "Supabase",
+      "Tailwindcss",
+      "Typescript"
+    ],
+    "links": [
+      {
+        "title": "GitHub Repository",
+        "url": "https://github.com/2025-Arizona-Opportunity-Hack-Summer/GenZents-HeritageSquareFounda",
+        "type": "github"
+      },
+      {
+        "title": "Demo",
+        "url": "https://devpost.com/software/archyx-ai?_gl=1*ipuhrf*_gcl_au*MzMyNDQwOTkyLjE3NTUxMTIwNjE.*_ga*NTk3NDAwNDE1LjE3MzkyMzYxNjA.*_ga_0YHJK3Y10M*czE3NTUxMTIwNjEkbzk3JGcxJHQxNzU1MTEzMDQxJGoyOSRsMCRoMA..",
+        "type": "other"
+      }
+    ],
+    "type": "internship"
+  },
+  {
+    "position": "Mentor",
+    "company": "SoDA ASU",
+    "location": "Tempe, USA",
+    "startDate": "2025-03-01",
+    "endDate": "2025-04-29",
+    "description": [
+      "Mentored two undergraduate students on development of a Book Recommendation System project and Local Image Finder application",
+      "Provided technical guidance, code reviews, and architectural design support for student projects",
+      "Helped with the complete project lifecycle, from ideation to deployment",
+      "BookTrack - Mentored Jesus Aguilar in building an AI-powered book recommendation web app using Next.js and React. The app personalizes suggestions based on user-defined prompts and delivers a rich discovery experience with enhanced metadata and visual presentation.",
+      "Local Image Finder (LIF) - Guided Quy Hoang Nguyen in developing a privacy-first, cross-platform desktop image search application using Python, Flask and Electron.js. The app performs on-device semantic search using natural language or image queries to organize and retrieve local images efficiently."
+    ],
+    "technologies": [
+      "Next.js",
+      "React",
+      "Python",
+      "Flask",
+      "Electron.js",
+      "AI/ML",
+      "Semantic Search",
+      "Mentoring",
+      "Project Management"
+    ],
+    "links": [
+      {
+        "title": "BookTrack Project",
+        "url": "https://github.com/jesus-aguilar/booktrack",
+        "type": "github"
+      },
+      {
+        "title": "LIF Project",
+        "url": "https://github.com/quy-nguyen/local-image-finder",
+        "type": "github"
+      }
+    ],
+    "type": "volunteer"
+  },
+  {
+    "position": "Full-stack Developer",
+    "company": "Fractal",
+    "location": "Gurgaon, India",
+    "startDate": "2023-03-01",
+    "endDate": "2024-07-31",
+    "description": [
+      "Improved backend systems using Python and Django: Analyzed, corrected and optimized existing data processing and computation algorithms; designed and implemented new ones to improve performance and accuracy.",
+      "Enhanced frontend features using React, JavaScript, Redux, Node.js and Express.js: Built and integrated new UI components to improve user experience, interactivity and service accessibility.",
+      "Integrated and managed Celery, Redis, RabbitMQ and MongoDB to ensure efficient task queuing, caching and database operations.",
+      "Deployed, maintained and monitored, Docker images on GCR and Kubernetes containers on Google Kubernetes Engine (GKE) clusters within bastion-hosted environments.",
+      "Applied security patches and managed user access controls and privilege escalations.",
+      "Developed and implemented automated scripts for data migration, data ingestion and system integration processes to streamline data workflows."
+    ],
+    "technologies": [
+      "Python",
+      "Django",
+      "React",
+      "JavaScript",
+      "Redux",
+      "Node.js",
+      "Express.js",
+      "Celery",
+      "Redis",
+      "RabbitMQ",
+      "MongoDB",
+      "Docker",
+      "Kubernetes",
+      "GKE",
+      "GCR"
+    ],
+    "links": [],
+    "type": "professional"
+  },
+  {
+    "position": "Data Engineer",
+    "company": "Fractal",
+    "location": "Mumbai, India",
+    "startDate": "2022-04-01",
+    "endDate": "2022-09-30",
+    "description": [
+      "Set up and maintained CI/CD pipelines for the AbInBev codebase using Azure DevOps, enabling streamlined code integration and deployment workflows.",
+      "Developed and configured data ingestion pipelines and established cloud connectivity to read/write data in Azure Blob Storage.",
+      "Refactored and productionized Jupyter Notebook codebases by applying best practices, modularization and industry standards for maintainability and scalability."
+    ],
+    "technologies": [
+      "Azure DevOps",
+      "Azure Blob Storage",
+      "CI/CD",
+      "Python",
+      "Jupyter Notebooks",
+      "Data Pipelines"
+    ],
+    "links": [],
+    "type": "professional"
+  },
+  {
     "position": "Backend Developer",
     "company": "Fractal",
     "location": "Mumbai, India",
@@ -48,131 +216,6 @@
     "type": "volunteer"
   },
   {
-    "position": "Graduate Student Assistant",
-    "company": "ASU",
-    "location": "Tempe, USA",
-    "startDate": "2025-08-18",
-    "endDate": "2025-12-10",
-    "description": [
-      "Lead Grader for a 340-student graduate course in Knowledge Representation and Reasoning (CSE 579), overseeing graders, preparing exams and assignments, and ensuring accurate, timely grading and communication."
-    ],
-    "technologies": [
-      "KRR",
-      "Clingo",
-      "Canvas",
-      "Knowledge Representation and Reasoning"
-    ],
-    "links": [],
-    "type": "volunteer"
-  },
-  {
-    "position": "Graduate Instructional Assistant",
-    "company": "ASU",
-    "location": "Tempe, USA",
-    "startDate": "2026-01-05",
-    "endDate": "2026-05-10",
-    "description": [
-      "Instructional Assistant for a 250-student graduate course in Data Visualization (CSE 578), conducting weekly doubt sessions, assisting with assignments and providing support to students in understanding data visualization concepts and tools."
-    ],
-    "technologies": ["Data Visualization", "Python", "Matplotlib", "Seaborn"],
-    "links": [],
-    "type": "volunteer"
-  },
-  {
-    "position": "Data Engineer",
-    "company": "Fractal",
-    "location": "Mumbai, India",
-    "startDate": "2022-04-01",
-    "endDate": "2022-09-30",
-    "description": [
-      "Set up and maintained CI/CD pipelines for the AbInBev codebase using Azure DevOps, enabling streamlined code integration and deployment workflows.",
-      "Developed and configured data ingestion pipelines and established cloud connectivity to read/write data in Azure Blob Storage.",
-      "Refactored and productionized Jupyter Notebook codebases by applying best practices, modularization and industry standards for maintainability and scalability."
-    ],
-    "technologies": [
-      "Azure DevOps",
-      "Azure Blob Storage",
-      "CI/CD",
-      "Python",
-      "Jupyter Notebooks",
-      "Data Pipelines"
-    ],
-    "links": [],
-    "type": "professional"
-  },
-  {
-    "position": "Full-stack Developer",
-    "company": "Fractal",
-    "location": "Gurgaon, India",
-    "startDate": "2023-03-01",
-    "endDate": "2024-07-31",
-    "description": [
-      "Improved backend systems using Python and Django: Analyzed, corrected and optimized existing data processing and computation algorithms; designed and implemented new ones to improve performance and accuracy.",
-      "Enhanced frontend features using React, JavaScript, Redux, Node.js and Express.js: Built and integrated new UI components to improve user experience, interactivity and service accessibility.",
-      "Integrated and managed Celery, Redis, RabbitMQ and MongoDB to ensure efficient task queuing, caching and database operations.",
-      "Deployed, maintained and monitored, Docker images on GCR and Kubernetes containers on Google Kubernetes Engine (GKE) clusters within bastion-hosted environments.",
-      "Applied security patches and managed user access controls and privilege escalations.",
-      "Developed and implemented automated scripts for data migration, data ingestion and system integration processes to streamline data workflows."
-    ],
-    "technologies": [
-      "Python",
-      "Django",
-      "React",
-      "JavaScript",
-      "Redux",
-      "Node.js",
-      "Express.js",
-      "Celery",
-      "Redis",
-      "RabbitMQ",
-      "MongoDB",
-      "Docker",
-      "Kubernetes",
-      "GKE",
-      "GCR"
-    ],
-    "links": [],
-    "type": "professional"
-  },
-  {
-    "position": "Mentor",
-    "company": "SoDA ASU",
-    "location": "Tempe, USA",
-    "startDate": "2025-03-01",
-    "endDate": "2025-04-29",
-    "description": [
-      "Mentored two undergraduate students on development of a Book Recommendation System project and Local Image Finder application",
-      "Provided technical guidance, code reviews, and architectural design support for student projects",
-      "Helped with the complete project lifecycle, from ideation to deployment",
-      "BookTrack - Mentored Jesus Aguilar in building an AI-powered book recommendation web app using Next.js and React. The app personalizes suggestions based on user-defined prompts and delivers a rich discovery experience with enhanced metadata and visual presentation.",
-      "Local Image Finder (LIF) - Guided Quy Hoang Nguyen in developing a privacy-first, cross-platform desktop image search application using Python, Flask and Electron.js. The app performs on-device semantic search using natural language or image queries to organize and retrieve local images efficiently."
-    ],
-    "technologies": [
-      "Next.js",
-      "React",
-      "Python",
-      "Flask",
-      "Electron.js",
-      "AI/ML",
-      "Semantic Search",
-      "Mentoring",
-      "Project Management"
-    ],
-    "links": [
-      {
-        "title": "BookTrack Project",
-        "url": "https://github.com/jesus-aguilar/booktrack",
-        "type": "github"
-      },
-      {
-        "title": "LIF Project",
-        "url": "https://github.com/quy-nguyen/local-image-finder",
-        "type": "github"
-      }
-    ],
-    "type": "volunteer"
-  },
-  {
     "position": "Team Lead",
     "company": "IIT Roorkee",
     "location": "Roorkee, India",
@@ -194,48 +237,5 @@
     ],
     "links": [],
     "type": "volunteer"
-  },
-  {
-    "position": "Software Engineer Intern",
-    "company": "Opportunity Hack",
-    "location": "United States",
-    "startDate": "2025-06-01",
-    "endDate": "2025-07-31",
-    "description": [
-      "Led a team to achieve 3rd place in the Summer Volunteer Internship Hackathon 2025 out of a total of 18 participating teams, developing an innovative drive management solution with a collaborative chat interface and agentic AI integration.",
-      "Designed the complete system architecture and technical workflow, including frontend, backend, AI, and database layers.",
-      "Implemented 80% of the codebase, ensuring scalability, maintainability, and high performance across the application.",
-      "Integrated advanced technologies including TypeScript, React, Python, LangChain, Google Gemini, and Supabase to deliver AI-driven functionalities and real-time collaboration features.",
-      "Engineered drive integration for seamless file management and designed a robust database schema for efficient data handling.",
-      "Organized and led weekly team meetings, assigning tasks, tracking progress, and ensuring alignment with project goals.",
-      "Established GitHub workflows with structured branching strategies, PR reviews, coding guidelines, and version control best practices.",
-      "Acted as a mentor and technical guide, helping teammates solve complex issues, optimize code, and adopt best development practices."
-    ],
-    "technologies": [
-      "Chromadb",
-      "Fastapi",
-      "Gemini",
-      "Langchain",
-      "Nextjs",
-      "Pydantic",
-      "Python",
-      "React",
-      "Supabase",
-      "Tailwindcss",
-      "Typescript"
-    ],
-    "links": [
-      {
-        "title": "GitHub Repository",
-        "url": "https://github.com/2025-Arizona-Opportunity-Hack-Summer/GenZents-HeritageSquareFounda",
-        "type": "github"
-      },
-      {
-        "title": "Demo",
-        "url": "https://devpost.com/software/archyx-ai?_gl=1*ipuhrf*_gcl_au*MzMyNDQwOTkyLjE3NTUxMTIwNjE.*_ga*NTk3NDAwNDE1LjE3MzkyMzYxNjA.*_ga_0YHJK3Y10M*czE3NTUxMTIwNjEkbzk3JGcxJHQxNzU1MTEzMDQxJGoyOSRsMCRoMA..",
-        "type": "other"
-      }
-    ],
-    "type": "internship"
   }
 ]

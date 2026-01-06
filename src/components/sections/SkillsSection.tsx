@@ -3,6 +3,7 @@ import { useHoneycombLayout } from "@/hooks/useHoneycombLayout";
 import { PhysicsEngine } from "@/components/skills/PhysicsEngine";
 import { HoneycombLayout } from "@/components/skills/HoneycombLayout";
 import { SkillsViewport } from "@/components/skills/SkillsViewport";
+import { useAppStore } from "@/store/useAppStore";
 import skillsDataRaw from "@/data/skills.json";
 
 // Category color mapping
@@ -27,69 +28,14 @@ const skillsData = skillsDataRaw.map((skill) => ({
   color: getCategoryColor(skill.category),
 }));
 
-// Matrix Rain Effect Component
-const MatrixRain = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const chars =
-      "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
-    const fontSize = 14;
-    const columns = Math.floor(canvas.width / fontSize);
-    const drops: number[] = Array(columns).fill(1);
-
-    const draw = () => {
-      ctx.fillStyle = "rgba(10, 15, 25, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "hsl(195 100% 50% / 0.5)";
-      ctx.font = `${fontSize}px monospace`;
-
-      for (let i = 0; i < drops.length; i++) {
-        const char = chars[Math.floor(Math.random() * chars.length)];
-        const x = i * fontSize;
-        const y = drops[i] * fontSize;
-
-        ctx.fillText(char, x, y);
-
-        if (y > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i]++;
-      }
-    };
-
-    const interval = setInterval(draw, 50);
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 opacity-60" />;
-};
-
 export const SkillsSection = () => {
+  const animationEnabled = useAppStore((state) => state.animationEnabled);
   // Responsive hexagon sizing and viewport calculations
   const [hexSize, setHexSize] = useState(108); // 3x the original 36
-  const [viewportSize, setViewportSize] = useState({ width: 500, height: 500 });
+  const [viewportSize, setViewportSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   useEffect(() => {
     const updateSizes = () => {
@@ -106,34 +52,10 @@ export const SkillsSection = () => {
 
       setHexSize(newHexSize);
 
-      // Calculate actual structure size for 31 skills
-      // Level 0: 1 node, Level 1: 6 nodes, Level 2: 12 nodes, Level 3: 12 nodes = 31 total
-      // Using corrected honeycomb spacing
-      const maxLevel = 3;
-      const horizontalSpacing = newHexSize * 0.75;
-      const verticalSpacing = newHexSize * 0.866;
-      // Max distance is roughly level * max(horizontal, vertical) + hexRadius for padding
-      const structureRadius =
-        maxLevel * Math.max(horizontalSpacing, verticalSpacing) + newHexSize;
-
-      // Boundary is 1.75x structure radius (where it bounces)
-      const boundaryRadius = structureRadius * 1.75;
-
-      // Viewport is 0.75x of the inscribed square in the boundary circle
-      // Inscribed square side = diameter / √2
-      const inscribedSquareSide = (boundaryRadius * 2) / Math.sqrt(2);
-      const viewportDimension = inscribedSquareSide * 0.75;
-
-      // Apply screen constraints - keep window smaller
-      const maxWidth = Math.min(screenWidth * 0.7, 500); // Max 500px
-      const maxHeight = Math.min(screenHeight * 0.5, 500); // Max 500px
-
-      const finalWidth = Math.min(viewportDimension, maxWidth);
-      const finalHeight = Math.min(viewportDimension, maxHeight);
-
+      // Use full screen dimensions as viewport
       setViewportSize({
-        width: Math.floor(finalWidth),
-        height: Math.floor(finalHeight),
+        width: screenWidth,
+        height: screenHeight,
       });
     };
 
@@ -153,8 +75,16 @@ export const SkillsSection = () => {
       id="skills"
       className="relative min-h-screen w-full overflow-hidden py-20"
     >
-      {/* Matrix Background */}
-      <MatrixRain />
+      {/* Animated Digital Background - CSS only, no canvas */}
+      <div className="absolute inset-0 bg-linear-to-b from-background via-arc-blue/5 to-background" />
+      <div
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, hsl(195 100% 50% / 0.1) 2px, hsl(195 100% 50% / 0.1) 4px),
+                           repeating-linear-gradient(90deg, transparent, transparent 2px, hsl(195 100% 50% / 0.1) 2px, hsl(195 100% 50% / 0.1) 4px)`,
+          animation: "matrix-scan 20s linear infinite",
+        }}
+      />
 
       {/* Circuit pattern overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-30">
@@ -194,8 +124,11 @@ export const SkillsSection = () => {
         <SkillsViewport width={viewportSize.width} height={viewportSize.height}>
           <PhysicsEngine
             structureRadius={structureRadius}
-            boundaryRadius={boundaryRadius}
+            boundaryRadius={
+              Math.max(viewportSize.width, viewportSize.height) / 2
+            }
             isActive={true}
+            animationEnabled={animationEnabled}
           >
             <HoneycombLayout
               skills={skillsData}

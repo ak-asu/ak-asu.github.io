@@ -1,30 +1,13 @@
 import { Canvas, useFrame, useThree, ThreeEvent } from "@react-three/fiber";
 import { Html, Sphere, RoundedBox } from "@react-three/drei";
 import { motion } from "framer-motion";
-import { useState, useRef } from "react";
+import { useState, useRef, memo } from "react";
 import * as THREE from "three";
 import { useAudioSystem } from "@/hooks/useAudioSystem";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useAppStore } from "@/store/useAppStore";
+import { formatPeriod, isCurrentlyActive } from "@/lib/dateUtils";
 import workDataRaw from "@/data/work.json";
-
-// Format date to readable period
-const formatPeriod = (startDate: string, endDate: string) => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const startMonth = start.toLocaleString("en-US", { month: "short" });
-  const startYear = start.getFullYear();
-  const endMonth = end.toLocaleString("en-US", { month: "short" });
-  const endYear = end.getFullYear();
-
-  const isPresent = new Date(endDate) > new Date();
-  return `${startMonth} ${startYear} - ${isPresent ? "Present" : `${endMonth} ${endYear}`}`;
-};
-
-// Check if position is currently active
-const isCurrentlyActive = (endDate: string) => {
-  return new Date(endDate) > new Date();
-};
 
 // Transform work data to match component structure
 const workData = workDataRaw.map((work, index) => ({
@@ -37,56 +20,109 @@ const workData = workDataRaw.map((work, index) => ({
   active: isCurrentlyActive(work.endDate),
 }));
 
+// 2D Card Component for when animations are disabled
+const WorkCard2D = memo(function WorkCard2D({
+  work,
+}: {
+  work: (typeof workData)[0];
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="w-full max-w-2xl mx-auto"
+    >
+      <div
+        className="px-6 py-5 rounded-lg h-full flex flex-col"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(0, 100, 24, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%)",
+          border: "2px solid rgba(0, 191, 255, 0.3)",
+          boxShadow: "0 0 20px rgba(0, 191, 255, 0.2)",
+        }}
+      >
+        <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-3 mb-4">
+          <div className="text-left">
+            <h3 className="font-orbitron text-base sm:text-lg text-foreground leading-tight">
+              {work.role}
+            </h3>
+            <p className="font-rajdhani text-iron-gold text-sm sm:text-base mt-1">
+              {work.company}
+            </p>
+            <p className="font-rajdhani text-foreground/50 text-xs sm:text-sm">
+              {work.location}
+            </p>
+          </div>
+          <div className="text-left sm:text-right">
+            <p className="font-orbitron text-arc-blue text-xs sm:text-sm">
+              {work.period}
+            </p>
+            {work.active && (
+              <div className="flex items-center gap-1 mt-1 px-2 py-1 bg-arc-blue/20 border border-arc-blue/50 rounded-full">
+                <div className="w-2 h-2 rounded-full bg-arc-blue animate-pulse" />
+                <span className="font-orbitron text-[10px] sm:text-xs text-arc-blue">
+                  ACTIVE
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="h-px bg-linear-to-r from-transparent via-arc-blue/50 to-transparent my-3" />
+
+        <ul className="space-y-2 text-left flex-1 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-arc-blue/30">
+          {work.highlights.map((highlight, index) => (
+            <li
+              key={index}
+              className="flex items-start gap-2 text-foreground/80 font-rajdhani text-sm sm:text-base leading-relaxed"
+            >
+              <span className="text-arc-blue text-base sm:text-lg shrink-0">
+                ▸
+              </span>
+              <span>{highlight}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </motion.div>
+  );
+});
+
 // Interactive 3D Hologram Card
-const HologramCard = ({
+const HologramCard = memo(function HologramCard({
   work,
   isActive,
 }: {
   work: (typeof workData)[0];
   isActive: boolean;
-}) => {
+}) {
   const groupRef = useRef<THREE.Group>(null);
   const isMobile = useIsMobile();
-  const prefersReducedMotion = useReducedMotion();
-  const [isRotating, setIsRotating] = useState(true);
+  const animationEnabled = useAppStore((state) => state.animationEnabled);
 
   useFrame(() => {
-    if (groupRef.current) {
-      if (prefersReducedMotion) {
-        // Reset to neutral position when animations are off
-        groupRef.current.rotation.y = 0;
-        groupRef.current.rotation.x = 0;
-      } else if (isRotating) {
-        // Auto-rotate when rotation is enabled and animations are on
-        groupRef.current.rotation.y += 0.003;
-      }
+    if (groupRef.current && animationEnabled) {
+      // Auto-rotate when animations are on
+      groupRef.current.rotation.y += 0.003;
+    } else if (groupRef.current && !animationEnabled) {
+      // Reset to neutral position when animations are off
+      groupRef.current.rotation.y = 0;
+      groupRef.current.rotation.x = 0;
     }
   });
 
-  const handleClick = () => {
-    // Toggle rotation only when animations are enabled
-    if (!prefersReducedMotion) {
-      setIsRotating((prev) => !prev);
-    }
-  };
-
   return (
     <group ref={groupRef}>
-      {/* Clickable area behind the card */}
-      <mesh onClick={handleClick} position={[0, 0, 0]}>
-        <planeGeometry args={[isMobile ? 2.5 : 4, 3]} />
-        <meshBasicMaterial transparent opacity={0} />
-      </mesh>
-
       {/* Content via Html */}
       <Html
         position={[0, 0, 0.1]}
         transform
         occlude
-        pointerEvents="none"
         style={{
           width: isMobile ? "190px" : "380px",
           height: "32vh",
+          pointerEvents: "auto",
         }}
       >
         <div
@@ -129,7 +165,6 @@ const HologramCard = ({
 
           <ul
             className="space-y-0.5 text-left flex-1 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-arc-blue/30 select-text"
-            style={{ pointerEvents: "auto" }}
             onClick={(e) => e.stopPropagation()}
             onWheel={(e) => e.stopPropagation()}
           >
@@ -149,7 +184,7 @@ const HologramCard = ({
       </Html>
     </group>
   );
-};
+});
 
 // Scene content component to use hooks
 const SceneContent = ({
@@ -195,13 +230,16 @@ const SceneContent = ({
 // 3D Scene with hologram
 const WorkScene = ({
   selectedWork,
+  animationEnabled,
 }: {
   selectedWork: (typeof workData)[0];
+  animationEnabled: boolean;
 }) => {
   return (
     <Canvas
       camera={{ position: [0, 0, 7], fov: 50 }}
       style={{ width: "100%", height: "100%" }}
+      frameloop={animationEnabled ? "always" : "demand"}
     >
       <SceneContent selectedWork={selectedWork} />
     </Canvas>
@@ -212,6 +250,7 @@ export const WorkSection = () => {
   const [selectedId, setSelectedId] = useState(1);
   const selectedWork = workData.find((w) => w.id === selectedId) || workData[0];
   const { playClick, playHover, playBeep } = useAudioSystem();
+  const animationEnabled = useAppStore((state) => state.animationEnabled);
 
   const handleSelect = (id: number) => {
     playBeep();
@@ -246,9 +285,16 @@ export const WorkSection = () => {
         }}
       />
 
-      {/* 3D Canvas */}
+      {/* 3D Canvas or 2D Card */}
       <div className="relative z-10 p-4 h-105 lg:h-140 items-center justify-center flex">
-        <WorkScene selectedWork={selectedWork} />
+        {animationEnabled ? (
+          <WorkScene
+            selectedWork={selectedWork}
+            animationEnabled={animationEnabled}
+          />
+        ) : (
+          <WorkCard2D work={selectedWork} />
+        )}
       </div>
 
       {/* Clickable labels on left side - Desktop only */}

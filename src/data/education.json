@@ -20,9 +20,21 @@
       {
         "name": "CSE 578: Data Visualization",
         "grade": "A+"
+      },
+      {
+        "name": "CSE 572: Data Mining",
+        "grade": "A"
+      },
+      {
+        "name": "CSE 540: Engr Blockchain Applications",
+        "grade": "A+"
+      },
+      {
+        "name": "CSE 511: Data Processing at Scale",
+        "grade": "A+"
       }
     ],
-    "gpa": 3.5,
+    "gpa": 3.75,
     "startDate": 2024,
     "endDate": 2026
   },

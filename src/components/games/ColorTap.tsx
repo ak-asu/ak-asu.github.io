@@ -19,7 +19,8 @@ export const ColorTap = () => {
   const [targetColor, setTargetColor] = useState(COLORS[0]);
   const [displayedColor, setDisplayedColor] = useState(COLORS[0]);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<number | null>(null);
+  const scoreRef = useRef<number>(score);
   const { playClick, playSuccess, playBeep, playPowerUp } = useAudioSystem();
 
   const generateRound = useCallback(() => {
@@ -57,9 +58,11 @@ export const ColorTap = () => {
 
   useEffect(() => {
     if (gameState === "playing") {
-      timerRef.current = setInterval(() => {
+      timerRef.current = window.setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
+            // Update high score using latest score from ref, then end game
+            setHighScore((hs) => Math.max(hs, scoreRef.current));
             setGameState("ended");
             return 0;
           }
@@ -69,46 +72,48 @@ export const ColorTap = () => {
     }
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     };
   }, [gameState]);
 
   useEffect(() => {
-    if (gameState === "ended" && score > highScore) {
-      setHighScore(score);
-    }
-  }, [gameState, score, highScore]);
+    // keep scoreRef current for use inside interval callbacks
+    scoreRef.current = score;
+  }, [score]);
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-md">
       {/* Score & Timer */}
       <div className="flex items-center justify-between w-full gap-4">
-        <div className="iron-panel px-4 py-2 flex-1 text-center">
+        <div className="iron-panel p-2 flex-1 text-center">
           <div className="text-xs text-muted-foreground uppercase tracking-wider">
             Score
           </div>
           <div
-            className="font-orbitron text-2xl text-arc-blue"
+            className="font-orbitron text-xl text-arc-blue"
             style={{ textShadow: "0 0 10px hsl(195 100% 50%)" }}
           >
             {score}
           </div>
         </div>
-        <div className="iron-panel px-4 py-2 flex-1 text-center">
+        <div className="iron-panel p-2 flex-1 text-center">
           <div className="text-xs text-muted-foreground uppercase tracking-wider">
             Time
           </div>
           <div
-            className={`font-orbitron text-2xl ${timeLeft <= 10 ? "text-iron-red-light animate-pulse" : "text-iron-gold"}`}
+            className={`font-orbitron text-xl ${timeLeft <= 10 ? "text-iron-red-light animate-pulse" : "text-iron-gold"}`}
           >
             {timeLeft}s
           </div>
         </div>
-        <div className="iron-panel px-4 py-2 flex-1 text-center">
+        <div className="iron-panel p-2 flex-1 text-center">
           <div className="text-xs text-muted-foreground uppercase tracking-wider">
             Best
           </div>
-          <div className="font-orbitron text-2xl text-iron-gold">
+          <div className="font-orbitron text-xl text-iron-gold">
             {highScore}
           </div>
         </div>

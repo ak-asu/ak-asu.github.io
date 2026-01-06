@@ -1,28 +1,8 @@
 import { motion } from "framer-motion";
+import { memo } from "react";
 import { ArcReactorIcon } from "@/components/ui/ArcReactor";
+import { formatPeriod } from "@/lib/dateUtils";
 import educationDataRaw from "@/data/education.json";
-
-// Format period from start and end years
-const formatPeriod = (startYear: number, endYear: number) => {
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const currentYear = new Date().getFullYear();
-  const isOngoing = endYear >= currentYear;
-
-  return `${months[7]} ${startYear} - ${isOngoing ? "Present" : `${months[4]} ${endYear}`}`;
-};
 
 // Format subjects into description
 const formatDescription = (
@@ -43,15 +23,16 @@ const educationData = educationDataRaw.map((edu, index) => ({
   period: formatPeriod(edu.startDate, edu.endDate),
   score: `GPA: ${edu.gpa}/4.0`,
   description: formatDescription(edu.subjects),
+  image: edu.image,
 }));
 
-const EducationCard = ({
+const EducationCard = memo(function EducationCard({
   education,
   index,
 }: {
   education: (typeof educationData)[0];
   index: number;
-}) => {
+}) {
   return (
     <motion.div
       className="relative group"
@@ -81,36 +62,46 @@ const EducationCard = ({
           <div className="absolute bottom-2 left-2 w-4 h-4 sm:w-6 sm:h-6 border-b-2 border-l-2 border-arc-blue/50 rounded-bl-lg" />
           <div className="absolute bottom-2 right-2 w-4 h-4 sm:w-6 sm:h-6 border-b-2 border-r-2 border-arc-blue/50 rounded-br-lg" />
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-            {/* Institution Logo Placeholder */}
-            <div className="shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-iron-red-dark border border-iron-gold/30 flex items-center justify-center">
-              <span className="font-orbitron text-base sm:text-lg text-iron-gold font-bold">
-                {education.institution
-                  .split(" ")[0]
-                  .substring(0, 3)
-                  .toUpperCase()}
-              </span>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-row gap-4">
+              {/* Institution Logo */}
+              <div className="shrink-0 w-20 h-20 rounded-lg bg-iron-red-dark border border-iron-gold/30 overflow-hidden">
+                <img
+                  src={`${import.meta.env.BASE_URL}${education.image.startsWith("/") ? education.image.slice(1) : education.image}`}
+                  alt={education.institution}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex flex-col">
+                <h3 className="font-orbitron text-xs sm:text-sm md:text-base uppercase text-iron-gold-light leading-tight mb-1">
+                  {education.degree}
+                </h3>
+                <p className="text-iron-gold font-rajdhani text-xs sm:text-sm mb-1">
+                  {education.period}
+                </p>
+                <p className="text-arc-blue font-orbitron text-[10px] sm:text-xs mb-2">
+                  {education.score}
+                </p>
+              </div>
             </div>
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <h3 className="font-orbitron text-xs sm:text-sm md:text-base uppercase text-iron-gold-light leading-tight mb-1">
-                {education.degree}
-              </h3>
-              <p className="text-iron-gold font-rajdhani text-xs sm:text-sm mb-1">
-                {education.period}
-              </p>
-              <p className="text-arc-blue font-orbitron text-[10px] sm:text-xs mb-2">
-                {education.score}
-              </p>
               <p className="text-foreground/70 font-rajdhani text-xs sm:text-sm">
-                {education.description}
+                {education.description.startsWith("Key Courses:") ? (
+                  <>
+                    <span className="font-bold">Key Courses:</span>
+                    {education.description.slice(12)}
+                  </>
+                ) : (
+                  education.description
+                )}
               </p>
             </div>
           </div>
 
           {/* Arc Reactor decoration */}
-          <div className="absolute bottom-3 left-3">
+          <div className="absolute bottom-3 right-3">
             <ArcReactorIcon size={20} className="text-arc-blue opacity-60" />
           </div>
         </div>
@@ -123,13 +114,13 @@ const EducationCard = ({
       />
     </motion.div>
   );
-};
+});
 
 export const EducationSection = () => {
   return (
     <section
       id="education"
-      className="relative min-h-screen w-full overflow-hidden py-12 sm:py-16 md:py-20"
+      className="relative min-h-screen w-full overflow-hidden py-16 sm:py-20 md:py-24"
     >
       {/* Background */}
       <div className="absolute inset-0">
@@ -159,24 +150,9 @@ export const EducationSection = () => {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <motion.div
-          className="text-center mb-8 sm:mb-12 md:mb-16"
-          initial={{ opacity: 0, y: -30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="font-orbitron text-3xl sm:text-4xl md:text-5xl font-bold gold-text tracking-wider mb-3 sm:mb-4">
-            EDUCATION
-          </h2>
-          <p className="font-orbitron text-xs sm:text-sm text-arc-blue uppercase tracking-widest">
-            Academic Journey & Qualifications
-          </p>
-        </motion.div>
-
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6">
           {educationData.map((education, index) => (
             <EducationCard
               key={education.id}

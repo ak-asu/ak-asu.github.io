@@ -41,7 +41,8 @@ export const JarvisChat = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isModelLoading, setIsModelLoading] = useState(true);
+  const [isModelLoading, setIsModelLoading] = useState(false);
+  const [isModelInitialized, setIsModelInitialized] = useState(false);
   const [modelLoadProgress, setModelLoadProgress] = useState(0);
   const [modelLoadText, setModelLoadText] = useState(
     "Initializing AI systems...",
@@ -87,32 +88,32 @@ export const JarvisChat = () => {
     }
   }, [isOpen, isMinimized]);
 
-  // Initialize WebLLM on component mount
-  useEffect(() => {
-    const initializeModel = async () => {
-      setIsModelLoading(true);
+  // Function to initialize WebLLM when user clicks Enable AI button
+  const initializeAI = async () => {
+    if (isModelInitialized || isModelLoading) return;
 
-      const result = await webLLMService.initialize((progress) => {
-        setModelLoadProgress(Math.round(progress.progress * 100));
-        setModelLoadText(progress.text);
-      });
+    setIsModelLoading(true);
+    playPowerUp();
 
-      if (result.success) {
-        setIsModelLoading(false);
-        playSuccess();
-        console.log("JARVIS AI systems online");
-      } else {
-        setIsModelLoading(false);
-        setModelLoadText(`Initialization failed: ${result.error}`);
-        console.error("Failed to initialize WebLLM:", result.error);
-      }
-    };
+    const result = await webLLMService.initialize((progress) => {
+      setModelLoadProgress(Math.round(progress.progress * 100));
+      setModelLoadText(progress.text);
+    });
 
-    initializeModel();
-  }, [playSuccess]);
+    if (result.success) {
+      setIsModelLoading(false);
+      setIsModelInitialized(true);
+      playSuccess();
+      console.log("JARVIS AI systems online");
+    } else {
+      setIsModelLoading(false);
+      setModelLoadText(`Initialization failed: ${result.error}`);
+      console.error("Failed to initialize WebLLM:", result.error);
+    }
+  };
 
   const handleSend = async () => {
-    if (!input.trim() || isLoading || isModelLoading) return;
+    if (!input.trim() || isLoading || !isModelInitialized) return;
 
     playClick();
     const userMessage: Message = {
@@ -250,11 +251,11 @@ export const JarvisChat = () => {
             whileTap={{ scale: 0.95 }}
             onClick={toggleOpen}
             onMouseEnter={playHover}
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-red-600 to-red-800 border-2 border-amber-400/50 shadow-lg shadow-red-500/30 flex items-center justify-center group"
+            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-linear-to-br from-red-600 to-red-800 border-2 border-amber-400/50 shadow-lg shadow-red-500/30 flex items-center justify-center group"
           >
             {/* Arc Reactor Glow */}
             <div className="absolute inset-0 rounded-full bg-cyan-400/20 animate-pulse" />
-            <div className="absolute inset-2 rounded-full bg-gradient-to-br from-cyan-400/30 to-blue-500/30 animate-[spin_3s_linear_infinite]" />
+            <div className="absolute inset-2 rounded-full bg-linear-to-br from-cyan-400/30 to-blue-500/30 animate-[spin_3s_linear_infinite]" />
             <MessageCircle className="w-6 h-6 text-cyan-400 relative z-10" />
           </motion.button>
         )}
@@ -274,14 +275,14 @@ export const JarvisChat = () => {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className={cn(
-              "fixed bottom-6 right-6 z-50 w-[380px] rounded-xl overflow-hidden",
-              "bg-gradient-to-b from-slate-900/95 to-slate-950/95 backdrop-blur-xl",
+              "fixed bottom-6 right-6 z-50 w-95 rounded-xl overflow-hidden",
+              "bg-linear-to-b from-slate-900/95 to-slate-950/95 backdrop-blur-xl",
               "border-2 border-red-600/50 shadow-2xl shadow-red-500/20",
               "flex flex-col",
             )}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-red-900/50 via-red-800/30 to-amber-900/30 border-b border-amber-500/30">
+            <div className="flex items-center justify-between px-4 py-3 bg-linear-to-r from-red-900/50 via-red-800/30 to-amber-900/30 border-b border-amber-500/30">
               <div className="flex items-center gap-3">
                 {/* Mini Arc Reactor */}
                 <div className="relative w-8 h-8">
@@ -297,8 +298,8 @@ export const JarvisChat = () => {
                     className={cn(
                       "absolute inset-1 rounded-full opacity-60",
                       isSpeaking
-                        ? "bg-gradient-to-br from-green-400 to-emerald-500"
-                        : "bg-gradient-to-br from-cyan-400 to-blue-500",
+                        ? "bg-linear-to-br from-green-400 to-emerald-500"
+                        : "bg-linear-to-br from-cyan-400 to-blue-500",
                     )}
                   />
                   <div className="absolute inset-2 rounded-full bg-slate-900 flex items-center justify-center">
@@ -317,15 +318,29 @@ export const JarvisChat = () => {
                   <p className="text-cyan-400/70 text-xs">
                     {isModelLoading
                       ? `Initializing... ${modelLoadProgress}%`
-                      : isSpeaking
-                        ? "Speaking..."
-                        : isListening
-                          ? "Listening..."
-                          : "Online • Ready to assist"}
+                      : !isModelInitialized
+                        ? "AI Offline • Click Enable AI"
+                        : isSpeaking
+                          ? "Speaking..."
+                          : isListening
+                            ? "Listening..."
+                            : "Online • Ready to assist"}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
+                {/* Enable AI Button */}
+                {!isModelInitialized && !isModelLoading && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={initializeAI}
+                    onMouseEnter={playHover}
+                    className="px-3 py-1.5 rounded-lg bg-linear-to-r from-cyan-600 to-blue-600 text-white text-xs font-medium shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all"
+                  >
+                    Enable AI
+                  </motion.button>
+                )}
                 {/* Voice Toggle */}
                 {isSupported && (
                   <button
@@ -370,7 +385,7 @@ export const JarvisChat = () => {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[300px] max-h-[350px] scrollbar-thin scrollbar-thumb-red-600/30 scrollbar-track-transparent"
+                  className="flex-1 overflow-y-auto p-4 space-y-4 min-h-75 max-h-87.5 scrollbar-thin scrollbar-thumb-red-600/30 scrollbar-track-transparent"
                 >
                   {isModelLoading && (
                     <motion.div
@@ -380,7 +395,7 @@ export const JarvisChat = () => {
                     >
                       <div className="relative w-16 h-16">
                         <div className="absolute inset-0 rounded-full bg-cyan-400/20 animate-pulse" />
-                        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-cyan-400/40 to-blue-500/40 animate-spin" />
+                        <div className="absolute inset-2 rounded-full bg-linear-to-br from-cyan-400/40 to-blue-500/40 animate-spin" />
                         <div className="absolute inset-0 flex items-center justify-center">
                           <Download className="w-8 h-8 text-cyan-400 animate-bounce" />
                         </div>
@@ -393,9 +408,9 @@ export const JarvisChat = () => {
                           {modelLoadProgress}% complete
                         </p>
                       </div>
-                      <div className="w-full max-w-[200px] h-1 bg-slate-700 rounded-full overflow-hidden">
+                      <div className="w-full max-w-50 h-1 bg-slate-700 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300"
+                          className="h-full bg-linear-to-r from-cyan-400 to-blue-500 transition-all duration-300"
                           style={{ width: `${modelLoadProgress}%` }}
                         />
                       </div>
@@ -419,8 +434,8 @@ export const JarvisChat = () => {
                           className={cn(
                             "max-w-[85%] px-4 py-2.5 rounded-xl text-sm",
                             message.role === "user"
-                              ? "bg-gradient-to-r from-red-600/80 to-red-700/80 text-white rounded-br-sm"
-                              : "bg-gradient-to-r from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 text-cyan-100 rounded-bl-sm",
+                              ? "bg-linear-to-r from-red-600/80 to-red-700/80 text-white rounded-br-sm"
+                              : "bg-linear-to-r from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 text-cyan-100 rounded-bl-sm",
                           )}
                         >
                           {message.content}
@@ -452,13 +467,13 @@ export const JarvisChat = () => {
                         whileTap={{ scale: 0.95 }}
                         onClick={handleMicClick}
                         onMouseEnter={playHover}
-                        disabled={isLoading || isModelLoading}
+                        disabled={isLoading || !isModelInitialized}
                         className={cn(
                           "p-2.5 rounded-lg transition-all relative",
                           isListening
-                            ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-500/30"
+                            ? "bg-linear-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-500/30"
                             : "bg-slate-700/50 text-cyan-400 hover:bg-slate-600/50",
-                          (isLoading || isModelLoading) &&
+                          (isLoading || !isModelInitialized) &&
                             "opacity-50 cursor-not-allowed",
                         )}
                       >
@@ -478,13 +493,15 @@ export const JarvisChat = () => {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyPress}
-                      disabled={isModelLoading}
+                      disabled={!isModelInitialized || isModelLoading}
                       placeholder={
-                        isModelLoading
-                          ? "Initializing AI..."
-                          : isListening
-                            ? "Listening..."
-                            : "Ask JARVIS anything..."
+                        !isModelInitialized
+                          ? "Enable AI to start chatting..."
+                          : isModelLoading
+                            ? "Initializing AI..."
+                            : isListening
+                              ? "Listening..."
+                              : "Ask JARVIS anything..."
                       }
                       className="flex-1 bg-slate-800/50 border border-cyan-500/30 rounded-lg px-4 py-2.5 text-sm text-cyan-100 placeholder:text-cyan-500/50 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     />
@@ -495,11 +512,13 @@ export const JarvisChat = () => {
                         whileTap={{ scale: 0.95 }}
                         onClick={handleSend}
                         onMouseEnter={playHover}
-                        disabled={isLoading || !input.trim() || isModelLoading}
+                        disabled={
+                          isLoading || !input.trim() || !isModelInitialized
+                        }
                         className={cn(
                           "p-2.5 rounded-lg transition-all",
-                          input.trim() && !isLoading && !isModelLoading
-                            ? "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-500/30"
+                          input.trim() && !isLoading && isModelInitialized
+                            ? "bg-linear-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-500/30"
                             : "bg-slate-700/50 text-slate-500 cursor-not-allowed",
                         )}
                       >

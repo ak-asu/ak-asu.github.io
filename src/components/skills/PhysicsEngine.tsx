@@ -7,6 +7,7 @@ interface PhysicsEngineProps {
   structureRadius: number;
   boundaryRadius: number;
   isActive: boolean;
+  animationEnabled: boolean;
 }
 
 export function PhysicsEngine({
@@ -14,6 +15,7 @@ export function PhysicsEngine({
   structureRadius,
   boundaryRadius,
   isActive,
+  animationEnabled,
 }: PhysicsEngineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -29,6 +31,7 @@ export function PhysicsEngine({
     energyLoss: 0.9,
     maxVelocity: 500,
     minVelocity: 1,
+    animationEnabled,
   });
 
   // Update physics on each frame

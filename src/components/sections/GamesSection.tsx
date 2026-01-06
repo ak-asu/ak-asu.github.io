@@ -37,44 +37,32 @@ export const GamesSection = () => {
   const ActiveGame = games[activeGameIndex].component;
 
   return (
-    <section className="relative min-h-screen w-full flex items-center justify-center px-2 sm:px-4 py-12 sm:py-16 md:py-20 overflow-hidden">
+    <section className="relative min-h-screen w-full flex items-center justify-center px-4 py-16 sm:py-20 md:py-24 overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-linear-to-b from-background via-iron-red-dark/20 to-background" />
 
-      {/* Decorative Grid */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `
-            linear-gradient(hsl(var(--iron-gold) / 0.3) 1px, transparent 1px),
-            linear-gradient(90deg, hsl(var(--iron-gold) / 0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: "50px 50px",
-        }}
-      />
-
       {/* Main Arcade Cabinet */}
-      <div className="relative z-10 flex flex-col items-center max-w-2xl w-full">
+      <div className="relative z-10 flex flex-col items-center max-w-xl w-full">
         {/* Game Cabinet Frame */}
         <motion.div
-          className="relative w-full mb-4"
+          className="relative w-full "
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.4 }}
         >
-          {/* Outer Frame */}
+          {/* Outer Frame (reduced) */}
           <div
-            className="absolute -inset-3 rounded-2xl"
+            className="absolute -inset-1 rounded-2xl"
             style={{
               background:
                 "linear-gradient(135deg, hsl(44 98% 39%), hsl(44 98% 25%), hsl(44 98% 39%))",
-              boxShadow: "0 0 30px hsl(44 98% 39% / 0.4)",
+              boxShadow: "0 0 18px hsl(44 98% 39% / 0.35)",
             }}
           />
 
-          {/* Inner Frame */}
+          {/* Inner Frame (reduced) */}
           <div
-            className="absolute -inset-1 rounded-xl"
+            className="absolute -inset-0.5 rounded-xl"
             style={{
               background:
                 "linear-gradient(180deg, hsl(0 100% 20%), hsl(0 100% 12%))",
@@ -83,13 +71,13 @@ export const GamesSection = () => {
 
           {/* Screen */}
           <div
-            className="relative rounded-lg p-4 sm:p-6 md:p-8 min-h-75 sm:min-h-87.5 md:min-h-112.5 flex items-center justify-center scanlines"
+            className="relative rounded-lg p-1 h-110 flex items-center justify-center scanlines"
             style={{
               background:
                 "linear-gradient(180deg, hsl(220 30% 8%), hsl(220 35% 5%))",
-              border: "3px solid hsl(44 98% 39% / 0.6)",
+              border: "2px solid hsl(44 98% 39% / 0.6)",
               boxShadow:
-                "inset 0 0 50px hsl(195 100% 50% / 0.1), 0 0 20px hsl(0 0% 0% / 0.5)",
+                "inset 0 0 30px hsl(195 100% 50% / 0.08), 0 0 12px hsl(0 0% 0% / 0.45)",
             }}
           >
             {/* Screen Glow Effect */}
@@ -109,33 +97,16 @@ export const GamesSection = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.3 }}
-                className="relative z-10 w-full flex justify-center"
+                className="relative z-10 w-full h-full flex items-center justify-center overflow-hidden"
               >
                 <ActiveGame />
               </motion.div>
             </AnimatePresence>
           </div>
-
-          {/* Cabinet Bottom Decoration */}
-          <div className="flex justify-center gap-3 sm:gap-4 mt-3 sm:mt-4">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="w-3 h-3 sm:w-4 sm:h-4 rounded-full"
-                style={{
-                  background: i === 1 ? "hsl(195 100% 50%)" : "hsl(44 98% 39%)",
-                  boxShadow:
-                    i === 1
-                      ? "0 0 10px hsl(195 100% 50%)"
-                      : "0 0 5px hsl(44 98% 39%)",
-                }}
-              />
-            ))}
-          </div>
         </motion.div>
         {/* Game Navigation */}
         <motion.div
-          className="flex items-center gap-3 sm:gap-4 mt-4 sm:mt-6"
+          className="flex items-center gap-2 sm:gap-3 mt-3 sm:mt-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -143,24 +114,21 @@ export const GamesSection = () => {
           <motion.button
             onClick={prevGame}
             onMouseEnter={playHover}
-            className="iron-panel p-2 sm:p-3 hover:bg-iron-red/50 transition-colors"
-            whileHover={{
-              scale: 1.1,
-              boxShadow: "0 0 20px hsl(195 100% 50% / 0.4)",
-            }}
-            whileTap={{ scale: 0.9 }}
+            className="p-1 sm:p-1 rounded-md bg-transparent"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-iron-gold" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold" />
           </motion.button>
 
-          <div className="iron-panel px-4 sm:px-6 py-2 sm:py-3 min-w-37.5 sm:min-w-50 text-center">
+          <div className="px-2 text-center">
             <div
-              className="font-orbitron text-sm sm:text-base md:text-lg text-arc-blue uppercase tracking-wider"
-              style={{ textShadow: "0 0 10px hsl(195 100% 50%)" }}
+              className="font-orbitron text-xs sm:text-sm md:text-sm text-arc-blue uppercase tracking-wider"
+              style={{ textShadow: "0 0 6px hsl(195 100% 50%)" }}
             >
               {games[activeGameIndex].name}
             </div>
-            <div className="text-[10px] sm:text-xs text-muted-foreground mt-1">
+            <div className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5">
               {games[activeGameIndex].description}
             </div>
           </div>
@@ -168,14 +136,11 @@ export const GamesSection = () => {
           <motion.button
             onClick={nextGame}
             onMouseEnter={playHover}
-            className="iron-panel p-2 sm:p-3 hover:bg-iron-red/50 transition-colors"
-            whileHover={{
-              scale: 1.1,
-              boxShadow: "0 0 20px hsl(195 100% 50% / 0.4)",
-            }}
-            whileTap={{ scale: 0.9 }}
+            className="p-1 sm:p-1 rounded-md bg-transparent"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-iron-gold" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold" />
           </motion.button>
         </motion.div>
       </div>

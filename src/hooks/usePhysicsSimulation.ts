@@ -14,6 +14,7 @@ interface PhysicsConfig {
   energyLoss: number;
   maxVelocity: number;
   minVelocity: number;
+  animationEnabled: boolean;
 }
 
 interface DragState {
@@ -31,6 +32,7 @@ const DEFAULT_CONFIG: PhysicsConfig = {
   energyLoss: 0.9,
   maxVelocity: 500,
   minVelocity: 1,
+  animationEnabled: true,
 };
 
 /**
@@ -56,6 +58,16 @@ export function usePhysicsSimulation(config: Partial<PhysicsConfig> = {}) {
     (deltaTime: number) => {
       setPhysics((prev) => {
         if (prev.isDragging) return prev;
+
+        // If animations are disabled, don't update physics (no velocity/bouncing)
+        if (!fullConfig.animationEnabled) {
+          return prev;
+        }
+
+        // If velocity is already zero, skip all calculations to save CPU
+        if (prev.vx === 0 && prev.vy === 0) {
+          return prev;
+        }
 
         // Update position based on velocity
         let newX = prev.x + prev.vx * deltaTime;
@@ -92,7 +104,7 @@ export function usePhysicsSimulation(config: Partial<PhysicsConfig> = {}) {
           newY = ny * maxDist * 0.99;
         }
 
-        // Stop if velocity too low
+        // Stop completely if velocity too low
         const speed = Math.sqrt(newVx * newVx + newVy * newVy);
         if (speed < fullConfig.minVelocity) {
           newVx = 0;
@@ -163,28 +175,28 @@ export function usePhysicsSimulation(config: Partial<PhysicsConfig> = {}) {
   const handleDragEnd = useCallback(() => {
     if (!dragStateRef.current) return;
 
-    const now = Date.now();
-    const dt = (now - dragStateRef.current.lastTime) / 1000;
-
-    // Calculate velocity from recent movement
-    const dx = dragStateRef.current.lastX - dragStateRef.current.startX;
-    const dy = dragStateRef.current.lastY - dragStateRef.current.startY;
-    const totalDt = (now - dragStateRef.current.startTime) / 1000;
-
     let vx = 0;
     let vy = 0;
 
-    if (totalDt > 0.05) {
-      // Only calculate if drag lasted long enough
-      vx = dx / totalDt;
-      vy = dy / totalDt;
+    // Only calculate velocity if animations are enabled
+    if (fullConfig.animationEnabled) {
+      const now = Date.now();
+      const dx = dragStateRef.current.lastX - dragStateRef.current.startX;
+      const dy = dragStateRef.current.lastY - dragStateRef.current.startY;
+      const totalDt = (now - dragStateRef.current.startTime) / 1000;
 
-      // Clamp to max velocity
-      const speed = Math.sqrt(vx * vx + vy * vy);
-      if (speed > fullConfig.maxVelocity) {
-        const scale = fullConfig.maxVelocity / speed;
-        vx *= scale;
-        vy *= scale;
+      if (totalDt > 0.05) {
+        // Only calculate if drag lasted long enough
+        vx = dx / totalDt;
+        vy = dy / totalDt;
+
+        // Clamp to max velocity
+        const speed = Math.sqrt(vx * vx + vy * vy);
+        if (speed > fullConfig.maxVelocity) {
+          const scale = fullConfig.maxVelocity / speed;
+          vx *= scale;
+          vy *= scale;
+        }
       }
     }
 
@@ -196,7 +208,7 @@ export function usePhysicsSimulation(config: Partial<PhysicsConfig> = {}) {
       vx,
       vy,
     }));
-  }, [fullConfig.maxVelocity]);
+  }, [fullConfig.maxVelocity, fullConfig.animationEnabled]);
 
   return {
     physics,
