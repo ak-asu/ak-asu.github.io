@@ -2,7 +2,7 @@
 
 ## Overview
 
-This portfolio features an AI-powered JARVIS chat assistant using **WebLLM** - a fully client-side LLM solution that runs entirely in the browser with **zero server costs** and **complete privacy**.
+This portfolio features an AI-powered AK chat assistant using **WebLLM** - a fully client-side LLM solution that runs entirely in the browser with **zero server costs** and **complete privacy**.
 
 ## Key Features
 
@@ -30,7 +30,7 @@ This portfolio features an AI-powered JARVIS chat assistant using **WebLLM** - a
 - **Streaming Responses**: Real-time token-by-token generation
 - **Progress Tracking**: Visual progress bar during initial model download
 - **Voice Integration**: Text-to-speech for responses (optional)
-- **JARVIS Theme**: Iron Man-inspired UI with Arc Reactor animations
+- **AK Theme**: Arc Reactor-inspired UI and assistant animations
 
 ## Architecture
 
@@ -43,7 +43,7 @@ src/
 │   └── contextManager.ts     # Smart RAG retrieval system
 ├── components/
 │   └── chat/
-│       └── JarvisChat.tsx    # Chat UI component
+│       └── AKChat.tsx        # Chat UI component
 └── data/
     ├── about.json
     ├── projects.json
@@ -69,7 +69,7 @@ src/
 - Formats context for LLM consumption
 - Implements keyword-based semantic matching
 
-#### 3. **JARVIS Chat** (`JarvisChat.tsx`)
+#### 3. **AK Chat** (`AKChat.tsx`)
 
 - React component with Framer Motion animations
 - Manages chat state and message history
@@ -157,8 +157,7 @@ src/
 ### System Prompt
 
 ```
-You are JARVIS (Just A Rather Very Intelligent System),
-an AI assistant for Aakash Khepar's portfolio website.
+You are AK, an AI assistant for Aakash Khepar's portfolio website.
 
 - Professional yet conversational
 - Concise responses (2-4 sentences)

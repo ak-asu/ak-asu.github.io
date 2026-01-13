@@ -56,11 +56,35 @@
     "type": "recognition"
   },
   {
-    "title": "Ohacks Summer 2025 Winner",
+    "title": "Ohacks Summer 2025 — 3rd Place",
     "description": "Led a team to achieve 3rd place in the Summer Volunteer Internship Hackathon 2025 out of a total of 18 participating teams and 123 participants, developing an innovative drive management solution with a collaborative chat interface and agentic AI integration.",
     "date": "2025-08-01",
     "image": "/images/achievements/ohacks_summer_2025_winner.png",
     "points": 25,
+    "type": "hackathon"
+  },
+  {
+    "title": "Ohacks ASU Fall Hackathon 2025 — 2nd Place & Best Polish Product",
+    "description": "Awarded 2nd place and Best Polish Product (85 participants) for building an accessibility-first LMS (NMTSA) focused on autism-friendly learning, robust RBAC, semantic search, and multilingual support.",
+    "date": "2025-10-13",
+    "image": "",
+    "points": 40,
+    "type": "hackathon"
+  },
+  {
+    "title": "HackASU 2025 — 1st Place",
+    "description": "Won 1st place at HackASU 2025 for VisionForge: a no-code, AI-supported machine-learning model architecture builder featuring drag-and-drop network design, automatic shape inference, and production code export for PyTorch/TensorFlow.",
+    "date": "2025-11-07",
+    "image": "",
+    "points": 50,
+    "type": "hackathon"
+  },
+  {
+    "title": "IISE X: Think, Solve, Hack! 2025 — 3rd Place",
+    "description": "Placed 3rd in IISE X: Think, Solve, Hack! 2025 for Elektraz: an ML + optimization toolkit that recommends optimal solar-powered EV charging station placements across Arizona to reduce energy use and maximize equity.",
+    "date": "2025-11-20",
+    "image": "",
+    "points": 35,
     "type": "hackathon"
   },
   {

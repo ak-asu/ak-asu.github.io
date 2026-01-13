@@ -10,6 +10,30 @@ import {
 import { useAudioSystem } from "@/hooks/useAudioSystem";
 import projectsDataRaw from "@/data/projects.json";
 
+// Helper function to convert YouTube URLs to embed format
+const convertToEmbedUrl = (url: string): string => {
+  if (!url) return "";
+
+  // Handle youtu.be short format
+  const youtuBeMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  if (youtuBeMatch) {
+    return `https://www.youtube.com/embed/${youtuBeMatch[1]}`;
+  }
+
+  // Handle youtube.com/watch?v= format
+  const youtubeMatch = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/);
+  if (youtubeMatch) {
+    return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+  }
+
+  // Return empty string for non-YouTube URLs (like LinkedIn)
+  if (!url.includes("youtube.com") && !url.includes("youtu.be")) {
+    return "";
+  }
+
+  return url;
+};
+
 // Transform projects data to match component structure
 const projectsData = projectsDataRaw.map((project, index) => ({
   id: index + 1,
@@ -17,9 +41,8 @@ const projectsData = projectsDataRaw.map((project, index) => ({
   subtitle: `${project.type.charAt(0).toUpperCase() + project.type.slice(1)} Project`,
   description: project.description,
   tech: project.technologies,
-  videoUrl: project.media ? project.media : "",
+  videoUrl: convertToEmbedUrl(project.media || ""),
   liveUrl: project.url || "#",
-  repoUrl: project.url || "#",
 }));
 
 export const ProjectsSection = () => {
@@ -135,25 +158,6 @@ export const ProjectsSection = () => {
                                 title="Live Demo"
                               >
                                 <ExternalLink
-                                  size={16}
-                                  className="sm:w-4.5 sm:h-4.5"
-                                />
-                              </motion.a>
-                            )}
-                          {currentProject.repoUrl &&
-                            currentProject.repoUrl !== "#" && (
-                              <motion.a
-                                href={currentProject.repoUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-1.5 sm:p-2 rounded-lg border border-iron-gold/50 bg-iron-gold/10 text-iron-gold hover:bg-iron-gold/20 transition-all"
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={playClick}
-                                onMouseEnter={playHover}
-                                title="Repository"
-                              >
-                                <Github
                                   size={16}
                                   className="sm:w-4.5 sm:h-4.5"
                                 />

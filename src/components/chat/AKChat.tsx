@@ -26,7 +26,7 @@ interface Message {
   isStreaming?: boolean;
 }
 
-export const JarvisChat = () => {
+export const AKChat = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
@@ -35,7 +35,7 @@ export const JarvisChat = () => {
       id: "1",
       role: "assistant",
       content:
-        "Good day, sir. I am JARVIS, at your service. How may I assist you in exploring this portfolio?",
+        "Good day, sir. I am AK, at your service. How may I assist you in exploring this portfolio?",
       timestamp: new Date(),
     },
   ]);
@@ -56,7 +56,7 @@ export const JarvisChat = () => {
     setInput(transcript);
     // Auto-send after voice input
     setTimeout(() => {
-      const sendButton = document.getElementById("jarvis-send-btn");
+      const sendButton = document.getElementById("ak-send-btn");
       if (sendButton) sendButton.click();
     }, 300);
   }, []);
@@ -104,7 +104,7 @@ export const JarvisChat = () => {
       setIsModelLoading(false);
       setIsModelInitialized(true);
       playSuccess();
-      console.log("JARVIS AI systems online");
+      console.log("AK AI systems online");
     } else {
       setIsModelLoading(false);
       setModelLoadText(`Initialization failed: ${result.error}`);
@@ -313,7 +313,7 @@ export const JarvisChat = () => {
                 </div>
                 <div>
                   <h3 className="text-amber-400 font-bold text-sm tracking-wider">
-                    J.A.R.V.I.S
+                    AK
                   </h3>
                   <p className="text-cyan-400/70 text-xs">
                     {isModelLoading
@@ -501,13 +501,13 @@ export const JarvisChat = () => {
                             ? "Initializing AI..."
                             : isListening
                               ? "Listening..."
-                              : "Ask JARVIS anything..."
+                              : "Ask AK anything..."
                       }
                       className="flex-1 bg-slate-800/50 border border-cyan-500/30 rounded-lg px-4 py-2.5 text-sm text-cyan-100 placeholder:text-cyan-500/50 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     {!isLoading ? (
                       <motion.button
-                        id="jarvis-send-btn"
+                        id="ak-send-btn"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleSend}
@@ -539,3 +539,5 @@ export const JarvisChat = () => {
     </>
   );
 };
+
+export default AKChat;

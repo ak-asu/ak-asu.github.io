@@ -24,7 +24,7 @@ interface PortfolioData {
 interface RetrievalResult {
   category: string;
   relevance: number;
-  data: any;
+  data: unknown;
   snippet: string;
 }
 
@@ -198,53 +198,77 @@ export class ContextManager {
       case "about":
         return JSON.stringify(this.data.about, null, 2);
 
-      case "projects":
+      case "projects": {
         // Return top projects with key info
-        const topProjects = this.data.projects.slice(0, limit).map((p) => ({
-          name: p.name,
-          shortDescription: p.shortDescription,
-          technologies: p.technologies,
-          url: p.url,
-        }));
+        const topProjects = this.data.projects
+          .slice(0, limit)
+          .map(
+            (p: {
+              name: string;
+              shortDescription: string;
+              technologies: string[];
+              url: string;
+            }) => ({
+              name: p.name,
+              shortDescription: p.shortDescription,
+              technologies: p.technologies,
+              url: p.url,
+            }),
+          );
         return JSON.stringify(topProjects, null, 2);
+      }
 
-      case "skills":
+      case "skills": {
         // Group skills by category
         const skillsByCategory: Record<string, string[]> = {};
-        this.data.skills.forEach((skill) => {
-          if (!skillsByCategory[skill.category]) {
-            skillsByCategory[skill.category] = [];
-          }
-          skillsByCategory[skill.category].push(
-            `${skill.name} (${skill.level})`,
-          );
-        });
+        this.data.skills.forEach(
+          (skill: { category: string; name: string; level: string }) => {
+            if (!skillsByCategory[skill.category]) {
+              skillsByCategory[skill.category] = [];
+            }
+            skillsByCategory[skill.category].push(
+              `${skill.name} (${skill.level})`,
+            );
+          },
+        );
         return JSON.stringify(skillsByCategory, null, 2);
+      }
 
-      case "work":
+      case "work": {
         // Return work experience with key details
-        const workExperience = this.data.work.map((w) => ({
-          position: w.position,
-          company: w.company,
-          duration: `${w.startDate} to ${w.endDate}`,
-          description: w.description.slice(0, 2), // First 2 points
-          technologies: w.technologies,
-        }));
+        const workExperience = this.data.work.map(
+          (w: {
+            position: string;
+            company: string;
+            startDate: string;
+            endDate: string;
+            description: string[];
+            technologies: string[];
+          }) => ({
+            position: w.position,
+            company: w.company,
+            duration: `${w.startDate} to ${w.endDate}`,
+            description: w.description.slice(0, 2), // First 2 points
+            technologies: w.technologies,
+          }),
+        );
         return JSON.stringify(workExperience, null, 2);
+      }
 
       case "education":
         return JSON.stringify(this.data.education, null, 2);
 
-      case "achievements":
+      case "achievements": {
         // Return recent achievements
         const recentAchievements = this.data.achievements
           .slice(0, limit)
-          .map((a) => ({
+          .map((a: { title: string; description: string; date: string }) => ({
             title: a.title,
             description: a.description,
             date: a.date,
           }));
         return JSON.stringify(recentAchievements, null, 2);
+      }
 
       default:
         return "";
@@ -279,10 +303,15 @@ export class ContextManager {
   /**
    * Search for specific project by name or keyword
    */
-  public searchProjects(searchTerm: string): any[] {
+  public searchProjects(searchTerm: string): unknown[] {
     const lowerSearch = searchTerm.toLowerCase();
     return this.data.projects.filter(
-      (project) =>
+      (project: {
+        name: string;
+        shortDescription: string;
+        description: string;
+        technologies: string[];
+      }) =>
         project.name.toLowerCase().includes(lowerSearch) ||
         project.shortDescription.toLowerCase().includes(lowerSearch) ||
         project.description.toLowerCase().includes(lowerSearch) ||
@@ -295,11 +324,11 @@ export class ContextManager {
   /**
    * Get detailed project information
    */
-  public getProjectDetails(projectName: string): any | null {
+  public getProjectDetails(projectName: string): unknown | null {
     const lowerName = projectName.toLowerCase();
     return (
       this.data.projects.find(
-        (p) =>
+        (p: { name: string }) =>
           p.name.toLowerCase() === lowerName ||
           p.name.toLowerCase().includes(lowerName),
       ) || null
@@ -309,7 +338,7 @@ export class ContextManager {
   /**
    * Get all data for a specific category
    */
-  public getCategoryData(category: string): any {
+  public getCategoryData(category: string): unknown {
     return this.data[category as keyof PortfolioData] || null;
   }
 

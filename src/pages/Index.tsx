@@ -4,7 +4,7 @@ import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { HudOverlay } from "@/components/ui/HudOverlay";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { Terminal } from "@/components/terminal/Terminal";
-import { JarvisChat } from "@/components/chat/JarvisChat";
+import { AKChat } from "@/components/chat/AKChat";
 import { useAppStore } from "@/store/useAppStore";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -149,8 +149,8 @@ const Index = () => {
         </motion.main>
       </AnimatePresence>
 
-      {/* JARVIS AI Chat */}
-      <JarvisChat />
+      {/* AK AI Chat */}
+      <AKChat />
     </div>
   );
 };

@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useHoneycombLayout } from "@/hooks/useHoneycombLayout";
 import { PhysicsEngine } from "@/components/skills/PhysicsEngine";
 import { HoneycombLayout } from "@/components/skills/HoneycombLayout";
-import { SkillsViewport } from "@/components/skills/SkillsViewport";
 import { useAppStore } from "@/store/useAppStore";
 import skillsDataRaw from "@/data/skills.json";
 
@@ -75,8 +74,6 @@ export const SkillsSection = () => {
       id="skills"
       className="relative min-h-screen w-full overflow-hidden py-20"
     >
-      {/* Animated Digital Background - CSS only, no canvas */}
-      <div className="absolute inset-0 bg-linear-to-b from-background via-arc-blue/5 to-background" />
       <div
         className="absolute inset-0 opacity-30"
         style={{
@@ -121,7 +118,7 @@ export const SkillsSection = () => {
       {/* Content */}
       <div className="relative z-10">
         {/* Honeycomb Physics Viewport */}
-        <SkillsViewport width={viewportSize.width} height={viewportSize.height}>
+        <div className="relative w-full flex items-start justify-start pt-64 pb-12 pl-20">
           <PhysicsEngine
             structureRadius={structureRadius}
             boundaryRadius={
@@ -136,7 +133,7 @@ export const SkillsSection = () => {
               hexSize={hexSize}
             />
           </PhysicsEngine>
-        </SkillsViewport>
+        </div>
       </div>
     </section>
   );

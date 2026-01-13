@@ -4,7 +4,7 @@ import { ArcReactor } from "./ArcReactor";
 
 const bootSequence = [
   { text: "INITIALIZING SYSTEM...", delay: 0 },
-  { text: "LOADING J.A.R.V.I.S. PROTOCOLS...", delay: 400 },
+  { text: "LOADING AK PROTOCOLS...", delay: 400 },
   { text: "SCANNING BIOMETRICS...", delay: 800 },
   { text: "ARC REACTOR: ONLINE", delay: 1200 },
   { text: "WEAPONS SYSTEMS: STANDBY", delay: 1500 },
@@ -85,7 +85,7 @@ export const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
-              STARK INDUSTRIES
+              Devsarc
             </motion.h1>
 
             {/* Boot sequence terminal */}

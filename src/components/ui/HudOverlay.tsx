@@ -30,7 +30,7 @@ export const HudOverlay = () => {
           animate={{ opacity: [0.4, 1, 0.4] }}
           transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
         >
-          J.A.R.V.I.S.
+          AK
         </motion.div>
       </div>
 
@@ -95,7 +95,7 @@ export const HudOverlay = () => {
           transition={{ duration: 3, repeat: Infinity }}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-green-400/80" />
-          <span>STARK INDUSTRIES HUD v3.7</span>
+          <span>Devsarc HUD v3.7</span>
         </motion.div>
         <div className="w-16 h-[1px] bg-gradient-to-l from-transparent to-arc-blue/60" />
       </div>

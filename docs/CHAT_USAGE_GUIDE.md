@@ -1,4 +1,4 @@
-# JARVIS Chat - User Guide
+# AK Chat - User Guide
 
 ## Quick Start
 
@@ -20,7 +20,7 @@
 4. **Chat is Ready!**
    - Status changes to "Online • Ready to assist"
    - Input field becomes enabled
-   - JARVIS greeting appears
+   - AK greeting appears
 
 5. **Start Chatting**
    - Type your question or use voice input
@@ -50,7 +50,7 @@ No re-download needed. The model is stored in your browser's IndexedDB.
 ### 🔊 Voice Output
 
 - Toggle speaker icon to enable/disable
-- JARVIS speaks responses aloud
+- AK speaks responses aloud
 - Uses browser's text-to-speech (British English voice when available)
 
 ### 📱 Window Controls
@@ -119,7 +119,7 @@ No re-download needed. The model is stored in your browser's IndexedDB.
 ### ✅ Do's
 
 - Ask specific questions for detailed answers
-- Use natural language (JARVIS understands context)
+  - Use natural language (AK understands context)
 - Try voice input for hands-free interaction
 - Minimize when not actively chatting (saves screen space)
 
@@ -128,7 +128,7 @@ No re-download needed. The model is stored in your browser's IndexedDB.
 - Don't expect answers about information not in the portfolio
 - Don't ask questions requiring external knowledge
 - Don't close browser during initial model download (progress will be lost)
-- JARVIS only knows about Aakash's portfolio data
+  - AK only knows about Aakash's portfolio data
 
 ## Browser Compatibility
 
@@ -198,7 +198,7 @@ To remove the cached model:
 
 ### Slow Responses
 
-**Problem**: JARVIS takes long to respond
+**Problem**: AK takes long to respond
 
 **Solutions**:
 
@@ -231,7 +231,7 @@ To remove the cached model:
 
 ### Voice Output Not Working
 
-**Problem**: JARVIS doesn't speak responses
+**Problem**: AK doesn't speak responses
 
 **Solutions**:
 
@@ -271,4 +271,4 @@ For issues or questions:
 
 ---
 
-**Enjoy chatting with JARVIS!** 🤖✨
+**Enjoy chatting with AK!** 🤖✨

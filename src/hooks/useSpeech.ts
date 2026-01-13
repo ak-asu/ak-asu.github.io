@@ -8,17 +8,29 @@ interface UseSpeechOptions {
 export const useSpeech = (options: UseSpeechOptions = {}) => {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isSupported, setIsSupported] = useState(true);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
 
+  // Check browser support at initialization
+  const SpeechRecognitionAPI =
+    (
+      window as typeof window & {
+        SpeechRecognition?: typeof SpeechRecognition;
+        webkitSpeechRecognition?: typeof SpeechRecognition;
+      }
+    ).SpeechRecognition ||
+    (
+      window as typeof window & {
+        SpeechRecognition?: typeof SpeechRecognition;
+        webkitSpeechRecognition?: typeof SpeechRecognition;
+      }
+    ).webkitSpeechRecognition;
+  const [isSupported] = useState(
+    () => !!(SpeechRecognitionAPI && window.speechSynthesis),
+  );
+
   useEffect(() => {
-    // Check for browser support
-    const SpeechRecognitionAPI =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
     if (!SpeechRecognitionAPI || !window.speechSynthesis) {
-      setIsSupported(false);
       return;
     }
 
@@ -29,13 +41,13 @@ export const useSpeech = (options: UseSpeechOptions = {}) => {
     recognition.interimResults = false;
     recognition.lang = "en-US";
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       const transcript = event.results[0][0].transcript;
       options.onResult?.(transcript);
       setIsListening(false);
     };
 
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error("Speech recognition error:", event.error);
       options.onError?.(event.error);
       setIsListening(false);
@@ -51,6 +63,7 @@ export const useSpeech = (options: UseSpeechOptions = {}) => {
       recognition.abort();
       synthRef.current?.cancel();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startListening = useCallback(() => {
@@ -82,7 +95,7 @@ export const useSpeech = (options: UseSpeechOptions = {}) => {
     utterance.pitch = 0.9;
     utterance.volume = 1.0;
 
-    // Try to find a British English voice for JARVIS feel
+    // Try to find a British English voice for AK feel
     const voices = synthRef.current.getVoices();
     const britishVoice = voices.find(
       (v) =>

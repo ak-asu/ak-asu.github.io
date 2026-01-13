@@ -132,7 +132,26 @@ const COMMANDS: Record<string, { description: string; usage?: string }> = {
 };
 
 export const Terminal = () => {
-  const [lines, setLines] = useState<TerminalLine[]>([]);
+  const [lines, setLines] = useState<TerminalLine[]>(() => [
+    {
+      id: `init-${Date.now()}`,
+      type: "system",
+      content: "AK Interface v4.2.0 Initialized",
+      timestamp: new Date(),
+    },
+    {
+      id: `init-${Date.now() + 1}`,
+      type: "system",
+      content: "Welcome, Sir. How may I assist you today?",
+      timestamp: new Date(),
+    },
+    {
+      id: `init-${Date.now() + 2}`,
+      type: "system",
+      content: "Type 'help' to see available commands.",
+      timestamp: new Date(),
+    },
+  ]);
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -158,15 +177,6 @@ export const Terminal = () => {
     }
   }, [lines]);
 
-  // Focus input on mount
-  useEffect(() => {
-    inputRef.current?.focus();
-    // Welcome message
-    addSystemLine("J.A.R.V.I.S. Interface v4.2.0 Initialized");
-    addSystemLine("Welcome, Sir. How may I assist you today?");
-    addSystemLine("Type 'help' to see available commands.");
-  }, []);
-
   const addLine = useCallback((type: TerminalLine["type"], content: string) => {
     const newLine: TerminalLine = {
       id: `${Date.now()}-${Math.random()}`,
@@ -177,10 +187,27 @@ export const Terminal = () => {
     setLines((prev) => [...prev, newLine]);
   }, []);
 
-  const addSystemLine = (content: string) => addLine("system", content);
-  const addOutputLine = (content: string) => addLine("output", content);
-  const addErrorLine = (content: string) => addLine("error", content);
-  const addInputLine = (content: string) => addLine("input", content);
+  const addSystemLine = useCallback(
+    (content: string) => addLine("system", content),
+    [addLine],
+  );
+  const addOutputLine = useCallback(
+    (content: string) => addLine("output", content),
+    [addLine],
+  );
+  const addErrorLine = useCallback(
+    (content: string) => addLine("error", content),
+    [addLine],
+  );
+  const addInputLine = useCallback(
+    (content: string) => addLine("input", content),
+    [addLine],
+  );
+
+  // Focus input on mount
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   // Typewriter effect for output
   const typewriterOutput = async (lines: string[]) => {
@@ -206,7 +233,7 @@ export const Terminal = () => {
       case "help":
         await typewriterOutput([
           "╔══════════════════════════════════════════════════════════════╗",
-          "║              J.A.R.V.I.S. COMMAND INTERFACE                  ║",
+          "║              AK COMMAND INTERFACE                  ║",
           "╠══════════════════════════════════════════════════════════════╣",
           ...Object.entries(COMMANDS).map(
             ([cmd, info]) =>
@@ -232,7 +259,7 @@ export const Terminal = () => {
         ]);
         break;
 
-      case "skills":
+      case "skills": {
         const categoryFilter = args[0];
         const filteredSkills = categoryFilter
           ? portfolioData.skills.filter(
@@ -258,6 +285,7 @@ export const Terminal = () => {
           ]);
         }
         break;
+      }
 
       case "projects":
         await typewriterOutput([
@@ -322,24 +350,24 @@ export const Terminal = () => {
           "│                    CONTACT INFORMATION                       │",
           "├─────────────────────────────────────────────────────────────┤",
           `│  Email:    ${portfolioData.about.email.padEnd(48)}│`,
-          "│  GitHub:   github.com/tonystark                             │",
-          "│  LinkedIn: linkedin.com/in/tonystark                        │",
-          "│  Twitter:  @IronMan                                         │",
+          "│  GitHub:   github.com/devsarc                             │",
+          "│  LinkedIn: linkedin.com/in/devsarc                        │",
+          "│  Twitter:  @Devsarc                                        │",
           "└─────────────────────────────────────────────────────────────┘",
         ]);
         break;
 
       case "clear":
         setLines([]);
-        addSystemLine("Terminal cleared. J.A.R.V.I.S. standing by.");
+        addSystemLine("Terminal cleared. AK standing by.");
         break;
 
       case "whoami":
-        addOutputLine("Guest User @ J.A.R.V.I.S. Terminal");
+        addOutputLine("Guest User @ AK Terminal");
         addOutputLine("Access Level: Visitor | Clearance: Public");
         break;
 
-      case "date":
+      case "date": {
         const now = new Date();
         addOutputLine(`Current Date: ${now.toLocaleDateString()}`);
         addOutputLine(`Current Time: ${now.toLocaleTimeString()}`);
@@ -347,6 +375,7 @@ export const Terminal = () => {
           `Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`,
         );
         break;
+      }
 
       case "echo":
         if (args.length > 0) {
@@ -446,11 +475,11 @@ export const Terminal = () => {
           <div className="flex items-center gap-3">
             <ArcReactor size={24} />
             <span className="font-orbitron text-sm text-arc-blue uppercase tracking-wider">
-              J.A.R.V.I.S. Terminal v4.2.0
+              AK Terminal v4.2.0
             </span>
           </div>
           <div className="flex items-center gap-2">
-            {/* Mode Toggle */}
+            {/* View Mode Toggle */}
             <motion.button
               onClick={() => {
                 playToggle();
@@ -535,7 +564,7 @@ export const Terminal = () => {
                 }`}
               >
                 {line.type === "system" && (
-                  <span className="text-arc-blue mr-2">[JARVIS]</span>
+                  <span className="text-arc-blue mr-2">[AK]</span>
                 )}
                 {line.type === "error" && (
                   <span className="text-iron-red-light mr-2">[ERROR]</span>
