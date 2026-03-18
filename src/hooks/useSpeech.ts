@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 
 interface UseSpeechOptions {
   onResult?: (transcript: string) => void;
+  onInterimResult?: (transcript: string) => void;
   onError?: (error: string) => void;
 }
 
@@ -38,13 +39,29 @@ export const useSpeech = (options: UseSpeechOptions = {}) => {
 
     const recognition = new SpeechRecognitionAPI();
     recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.lang = "en-US";
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript;
-      options.onResult?.(transcript);
-      setIsListening(false);
+      let interimTranscript = "";
+      let finalTranscript = "";
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        if (result.isFinal) {
+          finalTranscript += result[0].transcript;
+        } else {
+          interimTranscript += result[0].transcript;
+        }
+      }
+
+      if (interimTranscript) {
+        options.onInterimResult?.(interimTranscript);
+      }
+
+      if (finalTranscript) {
+        options.onResult?.(finalTranscript);
+      }
     };
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {

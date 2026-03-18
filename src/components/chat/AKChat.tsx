@@ -61,6 +61,10 @@ export const AKChat = () => {
     }, 300);
   }, []);
 
+  const handleInterimResult = useCallback((transcript: string) => {
+    setInput(transcript);
+  }, []);
+
   const {
     isListening,
     isSpeaking,
@@ -71,6 +75,7 @@ export const AKChat = () => {
     stopSpeaking,
   } = useSpeech({
     onResult: handleVoiceResult,
+    onInterimResult: handleInterimResult,
     onError: (error) => console.error("Speech error:", error),
   });
 
