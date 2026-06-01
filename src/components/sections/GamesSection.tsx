@@ -1,95 +1,65 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { TicTacToe } from "@/components/games/TicTacToe";
-import { ColorTap } from "@/components/games/ColorTap";
-import { ChevronLeft, ChevronRight, Gamepad2 } from "lucide-react";
-import { useAudioSystem } from "@/hooks/useAudioSystem";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { TicTacToe } from '@/components/games/TicTacToe';
+import { ColorTap } from '@/components/games/ColorTap';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { useAudioSystem } from '@/hooks/useAudioSystem';
 
 const games = [
-  {
-    id: "tictactoe",
-    name: "TIC TAC TOE",
-    component: TicTacToe,
-    description: "Classic X vs O battle",
-  },
-  {
-    id: "colortap",
-    name: "COLOR TAP",
-    component: ColorTap,
-    description: "Test your reflexes",
-  },
+  { id: 'tictactoe', name: 'TIC TAC TOE', component: TicTacToe, description: 'Classic X vs O battle' },
+  { id: 'colortap',  name: 'COLOR TAP',   component: ColorTap,  description: 'Test your reflexes' },
 ];
 
 export const GamesSection = () => {
   const [activeGameIndex, setActiveGameIndex] = useState(0);
   const { playClick, playHover, playWhoosh } = useAudioSystem();
 
-  const nextGame = () => {
-    playWhoosh();
-    setActiveGameIndex((prev) => (prev + 1) % games.length);
-  };
-
-  const prevGame = () => {
-    playWhoosh();
-    setActiveGameIndex((prev) => (prev - 1 + games.length) % games.length);
-  };
-
+  const nextGame = () => { playWhoosh(); setActiveGameIndex(prev => (prev + 1) % games.length); };
+  const prevGame = () => { playWhoosh(); setActiveGameIndex(prev => (prev - 1 + games.length) % games.length); };
   const ActiveGame = games[activeGameIndex].component;
 
   return (
-    <section className="relative min-h-screen w-full flex items-center justify-center px-4 py-16 sm:py-20 md:py-24 overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-linear-to-b from-background via-iron-red-dark/20 to-background" />
+    <section
+      className="relative min-h-screen w-full flex flex-col items-center px-4 overflow-hidden"
+      style={{ paddingTop: '72px', paddingBottom: '28px' }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-iron-red-dark/20 to-background pointer-events-none" />
 
-      {/* Main Arcade Cabinet */}
-      <div className="relative z-10 flex flex-col items-center max-w-xl w-full">
-        {/* Game Cabinet Frame */}
+      <div className="relative z-10 flex flex-col items-center w-full max-w-xl">
+        <div className="w-full mb-6">
+          <SectionHeader label="arcade" title="GAMES" />
+        </div>
+
+        {/* Cabinet */}
         <motion.div
-          className="relative w-full "
+          className="relative w-full"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.4 }}
         >
-          {/* Outer Frame (reduced) */}
+          {/* Gold outer frame */}
           <div
             className="absolute -inset-1 rounded-2xl"
-            style={{
-              background:
-                "linear-gradient(135deg, hsl(44 98% 39%), hsl(44 98% 25%), hsl(44 98% 39%))",
-              boxShadow: "0 0 18px hsl(44 98% 39% / 0.35)",
-            }}
+            style={{ background: 'linear-gradient(135deg, hsl(44 98% 39%), hsl(44 98% 25%), hsl(44 98% 39%))', boxShadow: '0 0 18px hsl(44 98% 39% / 0.35)' }}
           />
-
-          {/* Inner Frame (reduced) */}
+          {/* Red inner frame */}
           <div
             className="absolute -inset-0.5 rounded-xl"
-            style={{
-              background:
-                "linear-gradient(180deg, hsl(0 100% 20%), hsl(0 100% 12%))",
-            }}
+            style={{ background: 'linear-gradient(180deg, hsl(0 100% 20%), hsl(0 100% 12%))' }}
           />
 
           {/* Screen */}
           <div
-            className="relative rounded-lg p-1 h-110 flex items-center justify-center scanlines"
+            className="relative rounded-lg p-1 flex items-center justify-center"
             style={{
-              background:
-                "linear-gradient(180deg, hsl(220 30% 8%), hsl(220 35% 5%))",
-              border: "2px solid hsl(44 98% 39% / 0.6)",
-              boxShadow:
-                "inset 0 0 30px hsl(195 100% 50% / 0.08), 0 0 12px hsl(0 0% 0% / 0.45)",
+              height: '440px',
+              background: 'linear-gradient(180deg, hsl(220 30% 8%), hsl(220 35% 5%))',
+              border: '2px solid rgba(196,145,2,0.6)',
+              boxShadow: 'inset 0 0 30px rgba(0,191,255,0.08), 0 0 12px rgba(0,0,0,0.45)',
             }}
           >
-            {/* Screen Glow Effect */}
-            <div
-              className="absolute inset-0 rounded-lg opacity-30 pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center, hsl(195 100% 50% / 0.2) 0%, transparent 70%)",
-              }}
-            />
-
-            {/* Game Content */}
+            <div className="absolute inset-0 rounded-lg pointer-events-none opacity-30" style={{ background: 'radial-gradient(ellipse at center, rgba(0,191,255,0.2) 0%, transparent 70%)' }} />
             <AnimatePresence mode="wait">
               <motion.div
                 key={games[activeGameIndex].id}
@@ -104,43 +74,43 @@ export const GamesSection = () => {
             </AnimatePresence>
           </div>
         </motion.div>
-        {/* Game Navigation */}
+
+        {/* Navigation */}
         <motion.div
-          className="flex items-center gap-2 sm:gap-3 mt-3 sm:mt-4"
+          className="flex items-center gap-3 mt-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
           <motion.button
-            onClick={prevGame}
-            onMouseEnter={playHover}
-            className="p-1 sm:p-1 rounded-md bg-transparent"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            onClick={prevGame} onMouseEnter={playHover}
+            className="p-1.5 transition-colors duration-150"
+            style={{ border: '1px solid rgba(196,145,2,0.2)', color: 'rgba(196,145,2,0.7)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,191,255,0.4)'; (e.currentTarget as HTMLButtonElement).style.color = '#00bfff'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(196,145,2,0.2)'; (e.currentTarget as HTMLButtonElement).style.color = 'rgba(196,145,2,0.7)'; }}
+            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
           >
-            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold" />
+            <ChevronLeft className="w-4 h-4" />
           </motion.button>
 
-          <div className="px-2 text-center">
-            <div
-              className="font-orbitron text-xs sm:text-sm md:text-sm text-arc-blue uppercase tracking-wider"
-              style={{ textShadow: "0 0 6px hsl(195 100% 50%)" }}
-            >
+          <div className="px-3 text-center">
+            <div className="font-orbitron text-sm text-arc-blue uppercase tracking-wider" style={{ textShadow: '0 0 6px hsl(195 100% 50%)' }}>
               {games[activeGameIndex].name}
             </div>
-            <div className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5">
+            <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '11px', color: 'rgba(224,221,216,0.4)', marginTop: '2px' }}>
               {games[activeGameIndex].description}
             </div>
           </div>
 
           <motion.button
-            onClick={nextGame}
-            onMouseEnter={playHover}
-            className="p-1 sm:p-1 rounded-md bg-transparent"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            onClick={nextGame} onMouseEnter={playHover}
+            className="p-1.5 transition-colors duration-150"
+            style={{ border: '1px solid rgba(196,145,2,0.2)', color: 'rgba(196,145,2,0.7)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,191,255,0.4)'; (e.currentTarget as HTMLButtonElement).style.color = '#00bfff'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(196,145,2,0.2)'; (e.currentTarget as HTMLButtonElement).style.color = 'rgba(196,145,2,0.7)'; }}
+            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
           >
-            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold" />
+            <ChevronRight className="w-4 h-4" />
           </motion.button>
         </motion.div>
       </div>
