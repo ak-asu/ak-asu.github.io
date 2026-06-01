@@ -562,3 +562,256 @@
   background: hsl(var(--arc-blue) / 0.3);
   color: hsl(var(--arc-blue-light));
 }
+
+/* --- Option C Global Additions ---------------------------------------- */
+
+/* Noise texture overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.45;
+}
+
+/* Data stream particles */
+.particles-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  background: linear-gradient(
+    transparent,
+    hsl(195 100% 50% / 0.6),
+    transparent
+  );
+  animation: particleFall linear infinite;
+}
+
+@keyframes particleFall {
+  0% {
+    transform: translateY(-120px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* HUD corner brackets */
+.hud-corners {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.hud-corners::before,
+.hud-corners::after {
+  content: "";
+  position: absolute;
+  width: 56px;
+  height: 56px;
+}
+
+.hud-corners::before {
+  top: 14px;
+  left: 14px;
+  border-top: 2px solid hsl(44 98% 39% / 0.7);
+  border-left: 2px solid hsl(44 98% 39% / 0.7);
+  box-shadow: -2px -2px 8px hsl(44 98% 39% / 0.2);
+}
+
+.hud-corners::after {
+  right: 14px;
+  bottom: 14px;
+  border-right: 2px solid hsl(44 98% 39% / 0.7);
+  border-bottom: 2px solid hsl(44 98% 39% / 0.7);
+  box-shadow: 2px 2px 8px hsl(44 98% 39% / 0.2);
+}
+
+.hud-corner-tr {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 56px;
+  height: 56px;
+  border-top: 2px solid hsl(44 98% 39% / 0.7);
+  border-right: 2px solid hsl(44 98% 39% / 0.7);
+  box-shadow: 2px -2px 8px hsl(44 98% 39% / 0.2);
+}
+
+.hud-corner-bl {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  width: 56px;
+  height: 56px;
+  border-bottom: 2px solid hsl(44 98% 39% / 0.7);
+  border-left: 2px solid hsl(44 98% 39% / 0.7);
+  box-shadow: -2px 2px 8px hsl(44 98% 39% / 0.2);
+}
+
+/* Chamfered clip-path utility */
+.btn-chamfer {
+  clip-path: polygon(
+    8px 0,
+    100% 0,
+    100% calc(100% - 8px),
+    calc(100% - 8px) 100%,
+    0 100%,
+    0 8px
+  );
+}
+
+/* Glitch animation: hero name only */
+@keyframes glitch {
+  0%,
+  88%,
+  100% {
+    clip-path: none;
+    transform: none;
+  }
+  90% {
+    clip-path: inset(18% 0 62% 0);
+    transform: translate(-2px, 0);
+  }
+  92% {
+    clip-path: inset(58% 0 12% 0);
+    transform: translate(2px, 0);
+  }
+  94% {
+    clip-path: inset(38% 0 42% 0);
+    transform: translate(0, -1px);
+  }
+  96% {
+    clip-path: none;
+    transform: none;
+  }
+}
+
+.animate-glitch {
+  animation: glitch 9s ease-in-out infinite;
+}
+
+/* Metric highlight: gold numbers in Work section */
+.metric-highlight {
+  color: hsl(44 98% 50%);
+  font-weight: 700;
+}
+
+/* Section header */
+.section-header-label {
+  margin-bottom: 4px;
+  color: hsl(195 100% 50% / 0.5);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.section-header-title {
+  color: hsl(44 20% 90%);
+  font-family: "Orbitron", sans-serif;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.section-header-bar {
+  width: 40px;
+  height: 3px;
+  margin-top: 8px;
+  background: hsl(195 100% 50%);
+  box-shadow: 0 0 8px hsl(195 100% 50% / 0.6);
+}
+
+/* CSS border trace for Work section cards */
+@property --border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes borderTrace {
+  to {
+    --border-angle: 360deg;
+  }
+}
+
+.border-trace {
+  position: relative;
+}
+
+.border-trace::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 0%,
+    transparent 75%,
+    hsl(195 100% 50%) 88%,
+    hsl(195 100% 70%) 95%,
+    transparent 100%
+  );
+  pointer-events: none;
+  animation: borderTrace 4s linear infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Holographic shimmer on project cards */
+.holo-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.holo-shimmer::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    hsl(195 100% 50% / 0.07) 50%,
+    transparent 60%
+  );
+  background-position: var(--shimmer-x, -100%) 0;
+  background-size: 200% 100%;
+  pointer-events: none;
+  transition: background-position 0.05s linear;
+}
+
+/* Reduced motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  .animate-glitch,
+  .particle,
+  .border-trace::before {
+    animation: none !important;
+  }
+}
