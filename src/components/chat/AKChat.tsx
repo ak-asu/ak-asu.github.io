@@ -17,6 +17,7 @@ import { useSpeech } from "@/hooks/useSpeech";
 import { cn } from "@/lib/utils";
 import { webLLMService } from "@/services/webLLMService";
 import type { ChatMessage } from "@/services/webLLMService";
+import { useAppStore } from "@/store/useAppStore";
 
 interface Message {
   id: string;
@@ -27,7 +28,6 @@ interface Message {
 }
 
 export const AKChat = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [messages, setMessages] = useState<Message[]>([
@@ -51,6 +51,7 @@ export const AKChat = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { playClick, playBeep, playSuccess, playHover, playPowerUp } =
     useAudioSystem();
+  const { chatOpen: isOpen, toggleChat } = useAppStore();
 
   const handleVoiceResult = useCallback((transcript: string) => {
     setInput(transcript);
@@ -210,10 +211,10 @@ export const AKChat = () => {
   const toggleOpen = () => {
     playClick();
     if (!isOpen) {
-      setIsOpen(true);
+      toggleChat();
       setIsMinimized(false);
     } else {
-      setIsOpen(false);
+      toggleChat();
       stopSpeaking();
     }
   };

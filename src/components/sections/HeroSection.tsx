@@ -4,316 +4,587 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useRef } from "react";
-import heroImage from "@/assets/hero-ironman.png";
-import { ArcReactor } from "@/components/ui/ArcReactor";
-import { Github, Linkedin, Globe, Code, ChevronDown } from "lucide-react";
+import { useRef, useCallback, useState } from "react";
+import { ArcReactor3D } from "@/components/ui/ArcReactor3D";
+import { ActivityFeed } from "@/components/ui/ActivityFeed";
+import { Github, Linkedin, Globe, Code } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useAppStore } from "@/store/useAppStore";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import contactData from "@/data/contact.json";
+
+const TECH_CHIPS = [
+  { label: "LangChain", ai: true },
+  { label: "RAG", ai: true },
+  { label: "LLMs", ai: true },
+  { label: "MCP", ai: true },
+  { label: "Python", ai: false },
+  { label: "Django", ai: false },
+  { label: "React", ai: false },
+  { label: "K8s", ai: false },
+  { label: "FastAPI", ai: false },
+  { label: "TypeScript", ai: false },
+  { label: "AWS", ai: false },
+];
+
+const METRICS = [
+  { val: "3+", label: "Yrs Exp", tag: "exp" },
+  { val: "5x", label: "Hackathons", tag: "wins" },
+  { val: "370+", label: "Live Users", tag: "reach" },
+  { val: "35+", label: "Projects", tag: "proj" },
+];
+
+const TABLET_FEED = [
+  { label: "1st Place", date: "Nov 2025", title: "HackASU - VisionForge" },
+  { label: "Project", date: "Apr 2026", title: "CareCallerAI" },
+  { label: "Project", date: "Apr 2026", title: "CloudForge" },
+];
+
+const SOCIALS = [
+  { href: contactData.github, icon: Github, label: "GitHub" },
+  { href: contactData.linkedin, icon: Linkedin, label: "LinkedIn" },
+  { href: contactData.devpost, icon: Code, label: "Devpost" },
+  { href: contactData.website, icon: Globe, label: "Website" },
+];
+
+function MetricGrid({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={compact ? "grid grid-cols-2" : "flex"} style={{ gap: 0 }}>
+      {METRICS.map((m, i) => (
+        <div
+          key={m.tag}
+          className={`${compact ? "text-center" : "group flex-1 cursor-default"} relative px-3 py-2 lg:px-4 lg:py-3`}
+          style={{
+            border: "1px solid rgba(196,145,2,0.12)",
+            borderRight:
+              compact && i % 2 === 0
+                ? "none"
+                : i === METRICS.length - 1
+                  ? "1px solid rgba(196,145,2,0.12)"
+                  : compact
+                    ? "1px solid rgba(196,145,2,0.12)"
+                    : "none",
+            borderBottom:
+              compact && i < 2
+                ? "none"
+                : "1px solid rgba(196,145,2,0.12)",
+            background: "rgba(5,8,18,0.5)",
+            transition: "border-color 0.2s",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "rgba(0,191,255,0.25)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "rgba(196,145,2,0.12)";
+          }}
+        >
+          {!compact && (
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: "8px",
+                color: "rgba(224,221,216,0.2)",
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                position: "absolute",
+                top: "4px",
+                right: "6px",
+              }}
+            >
+              {m.tag}
+            </div>
+          )}
+          <div
+            style={{
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: compact ? "20px" : "26px",
+              fontWeight: 900,
+              color: "#c49102",
+              textShadow: "0 0 15px rgba(196,145,2,0.4)",
+              lineHeight: 1,
+            }}
+          >
+            {m.val}
+          </div>
+          <div
+            style={{
+              fontSize: compact ? "9px" : "10px",
+              color: "rgba(224,221,216,0.4)",
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              marginTop: "2px",
+            }}
+          >
+            {m.label}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SocialLinks({ centered = false }: { centered?: boolean }) {
+  return (
+    <div className={`flex gap-2 ${centered ? "justify-center" : ""}`}>
+      {SOCIALS.map(({ href, icon: Icon, label }) => (
+        <a
+          key={label}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={label}
+          className="flex h-9 w-9 items-center justify-center transition-all duration-200"
+          style={{
+            border: "1px solid rgba(196,145,2,0.25)",
+            background: "rgba(5,8,18,0.6)",
+            color: "rgba(196,145,2,0.7)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "rgba(0,191,255,0.5)";
+            e.currentTarget.style.color = "#00bfff";
+            e.currentTarget.style.boxShadow = "0 0 12px rgba(0,191,255,0.2)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "rgba(196,145,2,0.25)";
+            e.currentTarget.style.color = "rgba(196,145,2,0.7)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
+          <Icon size={16} />
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function CtaButtons({ compact = false }: { compact?: boolean }) {
+  const { setActiveSection, toggleChat } = useAppStore();
+
+  return (
+    <div className={`flex gap-3 ${compact ? "justify-center" : ""}`}>
+      <button
+        onClick={() => setActiveSection("projects")}
+        className="btn-chamfer font-orbitron text-[10px] uppercase tracking-wider transition-all duration-200"
+        style={{
+          padding: compact ? "8px 20px" : "10px 24px",
+          background:
+            "linear-gradient(180deg, rgba(80,0,0,0.9), rgba(40,0,0,0.95))",
+          border: "1px solid #c49102",
+          color: "#c49102",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = "#00bfff";
+          e.currentTarget.style.color = "#00bfff";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = "#c49102";
+          e.currentTarget.style.color = "#c49102";
+        }}
+      >
+        View Projects
+      </button>
+      <button
+        onClick={() => toggleChat()}
+        className="btn-chamfer font-orbitron text-[10px] uppercase tracking-wider transition-all duration-200"
+        style={{
+          padding: compact ? "8px 20px" : "10px 24px",
+          background: "rgba(0,191,255,0.05)",
+          border: "1px solid rgba(0,191,255,0.4)",
+          color: "rgba(0,191,255,0.8)",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = "0 0 20px rgba(0,191,255,0.2)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = "none";
+        }}
+      >
+        Contact
+      </button>
+    </div>
+  );
+}
 
 export const HeroSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const prefersReduced = useReducedMotion();
+  const [reactorMouse, setReactorMouse] = useState({ x: 0, y: 0 });
 
-  // Mouse position for parallax
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const springCfg = { damping: 28, stiffness: 140 };
+  const mx = useSpring(rawX, springCfg);
+  const my = useSpring(rawY, springCfg);
 
-  const springConfig = { damping: 25, stiffness: 150 };
-  const smoothMouseX = useSpring(mouseX, springConfig);
-  const smoothMouseY = useSpring(mouseY, springConfig);
+  const bgX = useTransform(mx, [-0.5, 0.5], [-25, 25]);
+  const bgY = useTransform(my, [-0.5, 0.5], [-25, 25]);
+  const textX = useTransform(mx, [-0.5, 0.5], [12, -12]);
+  const textY = useTransform(my, [-0.5, 0.5], [8, -8]);
+  const reactorX = useTransform(mx, [-0.5, 0.5], [-10, 10]);
+  const reactorY = useTransform(my, [-0.5, 0.5], [-10, 10]);
+  const feedX = useTransform(mx, [-0.5, 0.5], [-8, 8]);
+  const feedY = useTransform(my, [-0.5, 0.5], [-6, 6]);
 
-  // Parallax transforms
-  const bgX = useTransform(smoothMouseX, [-0.5, 0.5], [20, -20]);
-  const bgY = useTransform(smoothMouseY, [-0.5, 0.5], [20, -20]);
-  const heroX = useTransform(smoothMouseX, [-0.5, 0.5], [-30, 30]);
-  const heroY = useTransform(smoothMouseY, [-0.5, 0.5], [-20, 20]);
-  const textX = useTransform(smoothMouseX, [-0.5, 0.5], [15, -15]);
-  const textY = useTransform(smoothMouseY, [-0.5, 0.5], [10, -10]);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
-  };
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!containerRef.current || isMobile || prefersReduced) return;
+      const r = containerRef.current.getBoundingClientRect();
+      const nextX = (e.clientX - r.left) / r.width - 0.5;
+      const nextY = (e.clientY - r.top) / r.height - 0.5;
+      rawX.set(nextX);
+      rawY.set(nextY);
+      setReactorMouse({ x: nextX, y: nextY });
+    },
+    [isMobile, prefersReduced, rawX, rawY],
+  );
 
   return (
     <section
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative h-screen w-full overflow-hidden flex items-center justify-center"
+      className="relative h-screen w-full overflow-hidden"
+      style={{ paddingBottom: "28px" }}
     >
-      {/* Animated Background Layers */}
-      <motion.div className="absolute inset-0 z-0" style={{ x: bgX, y: bgY }}>
-        {/* Circuit pattern overlay */}
-        <div className="absolute inset-0 opacity-20">
-          <svg
-            className="w-full h-full"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <pattern
-                id="circuit"
-                patternUnits="userSpaceOnUse"
-                width="20"
-                height="20"
-              >
-                <path
-                  d="M10 0 L10 10 M0 10 L20 10"
-                  stroke="hsl(195 100% 50%)"
-                  strokeWidth="0.3"
-                  fill="none"
-                  opacity="0.5"
-                />
-                <circle
-                  cx="10"
-                  cy="10"
-                  r="1"
-                  fill="hsl(195 100% 50%)"
-                  opacity="0.5"
-                />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#circuit)" />
-          </svg>
-        </div>
-
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-linear-to-br from-iron-red-dark via-background to-iron-red-dark/50" />
-
-        {/* Decorative swoosh shapes */}
-        <motion.div
-          className="absolute -left-20 top-1/4 w-96 h-96 rounded-full bg-iron-gold/10 blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute -right-20 bottom-1/4 w-96 h-96 rounded-full bg-arc-blue/10 blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-      </motion.div>
-
-      {/* Large "DEVELOPER" Background Text */}
       <motion.div
-        className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none"
-        style={{ x: bgX, y: bgY }}
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={prefersReduced ? {} : { x: bgX, y: bgY }}
       >
-        <h1 className="font-orbitron text-[15vw] font-black text-iron-gold/5 select-none tracking-wider">
-          DEVELOPER
-        </h1>
-      </motion.div>
-
-      {/* Hero Image */}
-      <motion.div
-        className="absolute z-10 w-full h-full flex items-center justify-center"
-        style={{ x: heroX, y: heroY }}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, delay: 0.3 }}
-      >
-        <motion.img
-          src={heroImage}
-          alt="Hero Portrait"
-          className="max-h-[50vh] sm:max-h-[60vh] md:max-h-[70vh] w-auto object-contain drop-shadow-2xl"
-          animate={{ y: [0, -15, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          style={{ filter: "drop-shadow(0 0 30px hsl(195 100% 50% / 0.3))" }}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(196,145,2,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(196,145,2,0.04) 1px, transparent 1px)",
+            backgroundSize: "50px 50px",
+          }}
         />
+        <div className="absolute inset-0 bg-gradient-to-br from-iron-red-dark/40 via-background to-iron-red-dark/20" />
       </motion.div>
 
-      {/* Left Text Content */}
-      <motion.div
-        className="absolute left-4 sm:left-8 md:left-16 lg:left-24 top-1/2 -translate-y-1/2 z-20"
-        style={{ x: textX, y: textY }}
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
-      >
-        <motion.p
-          className="text-iron-gold text-sm sm:text-lg md:text-xl font-rajdhani italic mb-1 sm:mb-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          Hey,
-        </motion.p>
-        <motion.p
-          className="text-iron-gold text-base sm:text-xl md:text-2xl font-rajdhani italic"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
-          I'm{" "}
-          <span className="text-foreground font-semibold">Aakash Khepar</span>
-        </motion.p>
-        <motion.p
-          className="text-arc-blue text-lg sm:text-2xl md:text-3xl font-rajdhani italic font-bold"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          style={{ textShadow: "0 0 20px hsl(195 100% 50% / 0.5)" }}
-        >
-          Full-Stack Developer
-        </motion.p>
-      </motion.div>
-
-      {/* Right Content - Status Indicators */}
-      <motion.div
-        className="absolute right-4 sm:right-8 md:right-16 lg:right-24 top-1/2 -translate-y-1/2 z-20 flex flex-col items-end gap-3 sm:gap-6"
+      <div
+        className="relative z-10 hidden h-full w-full lg:grid"
         style={{
-          x: useTransform(smoothMouseX, [-0.5, 0.5], [-15, 15]),
-          y: textY,
+          gridTemplateColumns: "1fr auto 1fr",
+          padding: "80px 40px 20px",
         }}
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
       >
-        {/* ASU Student Badge */}
         <motion.div
-          className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 glass-panel rounded-full"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.4 }}
+          className="flex flex-col justify-center pr-6"
+          style={prefersReduced ? {} : { x: textX, y: textY }}
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
         >
-          <span className="text-iron-gold text-[10px] sm:text-xs font-orbitron uppercase whitespace-nowrap">
-            ASU Graduate Student
-          </span>
-          <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-arc-blue/20 border border-arc-blue flex items-center justify-center">
-            <svg
-              className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-arc-blue"
-              fill="currentColor"
-              viewBox="0 0 20 20"
+          <div
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "11px",
+              color: "rgba(0,191,255,0.5)",
+              letterSpacing: "0.25em",
+              marginBottom: "8px",
+            }}
+          >
+            <span style={{ color: "rgba(196,145,2,0.4)" }}>[</span> engineer
+            - builder - ai{" "}
+            <span style={{ color: "rgba(196,145,2,0.4)" }}>]</span>
+          </div>
+
+          <h1
+            className={`font-orbitron font-black text-foreground mb-1 ${prefersReduced ? "" : "animate-glitch"}`}
+            style={{
+              fontSize: "clamp(32px, 4vw, 52px)",
+              lineHeight: 1,
+              letterSpacing: "0.04em",
+              textShadow: "0 0 40px rgba(196,145,2,0.2)",
+            }}
+          >
+            AAKASH
+          </h1>
+          <div
+            style={{
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: "13px",
+              fontWeight: 400,
+              color: "rgba(196,145,2,0.7)",
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+              marginBottom: "20px",
+            }}
+          >
+            Khepar - Full-Stack - AI
+          </div>
+
+          <div className="mb-6 flex items-center gap-3">
+            <div
+              style={{
+                width: "3px",
+                height: "24px",
+                background: "#00bfff",
+                boxShadow: "0 0 10px #00bfff",
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "'Rajdhani', sans-serif",
+                fontSize: "20px",
+                fontWeight: 600,
+                color: "#00bfff",
+                textShadow: "0 0 15px rgba(0,191,255,0.4)",
+              }}
             >
-              <path
-                fillRule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
+              Software Engineer &amp; AI Builder
+            </span>
+          </div>
+
+          <div className="mb-6">
+            <MetricGrid />
+          </div>
+
+          <div className="mb-6 flex flex-wrap gap-1.5">
+            {TECH_CHIPS.map((c) => (
+              <span
+                key={c.label}
+                className="px-2.5 py-1 cursor-default transition-all duration-150"
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: "10px",
+                  border: `1px solid ${
+                    c.ai ? "rgba(0,191,255,0.3)" : "rgba(196,145,2,0.25)"
+                  }`,
+                  color: c.ai ? "rgba(0,191,255,0.75)" : "rgba(196,145,2,0.6)",
+                  background: c.ai
+                    ? "rgba(0,191,255,0.04)"
+                    : "rgba(196,145,2,0.04)",
+                }}
+              >
+                {c.label}
+              </span>
+            ))}
+          </div>
+
+          <div className="mb-8">
+            <CtaButtons />
+          </div>
+          <SocialLinks />
+        </motion.div>
+
+        <motion.div
+          className="flex items-center justify-center"
+          style={{
+            width: "280px",
+            ...(prefersReduced ? {} : { x: reactorX, y: reactorY }),
+          }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <div style={{ width: "280px", height: "280px" }}>
+            <ArcReactor3D mouseX={reactorMouse.x} mouseY={reactorMouse.y} />
           </div>
         </motion.div>
 
-        {/* Role Text */}
         <motion.div
-          className="text-right mt-2 sm:mt-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.8 }}
+          className="flex flex-col pl-6"
+          style={prefersReduced ? {} : { x: feedX, y: feedY }}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.5 }}
         >
-          <p className="text-foreground text-base sm:text-xl md:text-2xl font-rajdhani">
-            Software Engineer
-          </p>
-          <p className="text-iron-gold text-sm sm:text-lg md:text-xl font-rajdhani">
-            & AI/ML Enthusiast
-          </p>
+          <div
+            className="flex flex-1 flex-col"
+            style={{
+              border: "1px solid rgba(196,145,2,0.12)",
+              background: "rgba(3,5,12,0.7)",
+              backdropFilter: "blur(8px)",
+              maxHeight: "70vh",
+              overflow: "hidden",
+            }}
+          >
+            <ActivityFeed maxItems={7} />
+          </div>
         </motion.div>
-      </motion.div>
+      </div>
 
-      {/* Social Media Links */}
-      <motion.div
-        className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 md:left-16 flex items-center gap-2 sm:gap-3 z-20"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2 }}
+      <div
+        className="relative z-10 hidden h-full w-full md:grid lg:hidden"
+        style={{
+          gridTemplateColumns: "1fr 1fr",
+          padding: "80px 24px 20px",
+          gap: "24px",
+        }}
       >
-        <div className="relative">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <a
-              href={contactData.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg glass-panel border border-iron-gold/30 hover:border-arc-blue/60 transition-all duration-300"
-              aria-label="GitHub"
+        <motion.div
+          className="flex flex-col justify-center"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <div
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "10px",
+              color: "rgba(0,191,255,0.5)",
+              letterSpacing: "0.2em",
+              marginBottom: "6px",
+            }}
+          >
+            <span style={{ color: "rgba(196,145,2,0.4)" }}>[</span> engineer
+            - builder - ai{" "}
+            <span style={{ color: "rgba(196,145,2,0.4)" }}>]</span>
+          </div>
+          <h1
+            className="font-orbitron font-black text-foreground mb-1"
+            style={{ fontSize: "36px", lineHeight: 1 }}
+          >
+            AAKASH
+          </h1>
+          <div
+            style={{
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: "11px",
+              color: "rgba(196,145,2,0.7)",
+              letterSpacing: "0.25em",
+              textTransform: "uppercase",
+              marginBottom: "16px",
+            }}
+          >
+            Khepar - Full-Stack - AI
+          </div>
+          <div className="mb-5 flex items-center gap-2">
+            <div
+              style={{
+                width: "3px",
+                height: "20px",
+                background: "#00bfff",
+                boxShadow: "0 0 8px #00bfff",
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "'Rajdhani', sans-serif",
+                fontSize: "16px",
+                fontWeight: 600,
+                color: "#00bfff",
+              }}
             >
-              <Github className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold group-hover:text-arc-blue transition-colors duration-300" />
+              Software Engineer &amp; AI Builder
+            </span>
+          </div>
+          <div className="mb-4">
+            <MetricGrid compact />
+          </div>
+          <div className="mb-4">
+            <CtaButtons compact />
+          </div>
+          <SocialLinks />
+        </motion.div>
+
+        <motion.div
+          className="flex items-center justify-center"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+        >
+          <div style={{ width: "220px", height: "220px" }}>
+            <ArcReactor3D mouseX={0} mouseY={0} />
+          </div>
+        </motion.div>
+
+        <div
+          className="col-span-2 overflow-x-auto"
+          style={{
+            borderTop: "1px solid rgba(196,145,2,0.1)",
+            paddingTop: "12px",
+          }}
+        >
+          <div className="flex gap-3" style={{ minWidth: "max-content" }}>
+            {TABLET_FEED.map((item, i) => (
               <div
-                className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }}
-              />
-            </a>
-            <a
-              href={contactData.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg glass-panel border border-iron-gold/30 hover:border-arc-blue/60 transition-all duration-300"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold group-hover:text-arc-blue transition-colors duration-300" />
-              <div
-                className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }}
-              />
-            </a>
-            <a
-              href={contactData.devpost}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg glass-panel border border-iron-gold/30 hover:border-arc-blue/60 transition-all duration-300"
-              aria-label="Devpost"
-            >
-              <Code className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold group-hover:text-arc-blue transition-colors duration-300" />
-              <div
-                className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }}
-              />
-            </a>
-            <a
-              href={contactData.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg glass-panel border border-iron-gold/30 hover:border-arc-blue/60 transition-all duration-300"
-              aria-label="Website"
-            >
-              <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-iron-gold group-hover:text-arc-blue transition-colors duration-300" />
-              <div
-                className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }}
-              />
-            </a>
+                key={i}
+                className="p-3 shrink-0"
+                style={{
+                  width: "260px",
+                  border: "1px solid rgba(196,145,2,0.08)",
+                  background: "rgba(5,8,18,0.5)",
+                  fontSize: "11px",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: "8px",
+                    color: "rgba(0,191,255,0.75)",
+                    marginBottom: "4px",
+                  }}
+                >
+                  {item.label} - {item.date}
+                </div>
+                <div
+                  style={{
+                    color: "rgba(224,221,216,0.8)",
+                    fontFamily: "'Rajdhani', sans-serif",
+                    fontWeight: 500,
+                  }}
+                >
+                  {item.title}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Floating Arc Reactor Decorations */}
-      <motion.div
-        className="absolute bottom-20 right-20 z-0 opacity-30 hidden sm:block"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-      >
-        <ArcReactor size={100} />
-      </motion.div>
+      <div className="relative z-10 flex h-full w-full flex-col gap-4 overflow-y-auto px-4 pt-20 pb-4 md:hidden">
+        <motion.div
+          className="flex justify-center"
+          initial={{ opacity: 0, scale: 0.7 }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+            ...(prefersReduced ? {} : { y: [0, -8, 0] }),
+          }}
+          transition={{
+            opacity: { duration: 0.6 },
+            scale: { duration: 0.6 },
+            ...(prefersReduced
+              ? {}
+              : { y: { duration: 5, repeat: Infinity, ease: "easeInOut" } }),
+          }}
+        >
+          <div style={{ width: "160px", height: "160px" }}>
+            <ArcReactor3D mouseX={0} mouseY={0} />
+          </div>
+        </motion.div>
 
-      {/* HUD Lines */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <svg className="w-full h-full" preserveAspectRatio="none">
-          <motion.line
-            x1="0"
-            y1="50%"
-            x2="15%"
-            y2="50%"
-            stroke="hsl(195 100% 50%)"
-            strokeWidth="1"
-            strokeDasharray="5,5"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 1.5, duration: 1 }}
-          />
-          <motion.line
-            x1="85%"
-            y1="50%"
-            x2="100%"
-            y2="50%"
-            stroke="hsl(195 100% 50%)"
-            strokeWidth="1"
-            strokeDasharray="5,5"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 1.5, duration: 1 }}
-          />
-        </svg>
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <h1
+            className="font-orbitron font-black text-foreground"
+            style={{ fontSize: "28px", lineHeight: 1 }}
+          >
+            AAKASH KHEPAR
+          </h1>
+          <div
+            style={{
+              fontFamily: "'Rajdhani', sans-serif",
+              fontSize: "16px",
+              fontWeight: 600,
+              color: "#00bfff",
+              marginTop: "8px",
+            }}
+          >
+            Software Engineer &amp; AI Builder
+          </div>
+        </motion.div>
+
+        <MetricGrid compact />
+        <CtaButtons compact />
+        <SocialLinks centered />
       </div>
     </section>
   );
