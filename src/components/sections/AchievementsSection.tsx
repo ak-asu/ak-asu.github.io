@@ -1,254 +1,171 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
-import {
-  Award,
-  Trophy,
-  Shield,
-  FileText,
-  Brain,
-  Code,
-  type LucideIcon,
-} from "lucide-react";
-import { ArcReactor } from "@/components/ui/ArcReactor";
-import { useAudioSystem } from "@/hooks/useAudioSystem";
-import achievementsDataRaw from "@/data/achievements.json";
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { Award, Trophy, Shield, FileText, Brain, type LucideIcon } from 'lucide-react';
+import { ArcReactor } from '@/components/ui/ArcReactor';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { useAudioSystem } from '@/hooks/useAudioSystem';
+import achievementsDataRaw from '@/data/achievements.json';
 
-// Icon mapping based on achievement type
-const getIconForType = (type: string): LucideIcon => {
-  const iconMap: Record<string, LucideIcon> = {
-    recognition: Trophy,
-    certification: Shield,
-    course: FileText,
-    workshop: Brain,
-    hackathon: Award,
-  };
-  return iconMap[type] || Award;
+interface Achievement {
+  title: string; description: string; date: string; image: string; points: number; type: string;
+}
+
+const iconMap: Record<string, LucideIcon> = {
+  recognition: Trophy, certification: Shield, course: FileText, workshop: Brain, hackathon: Award,
 };
 
-// Color mapping based on achievement type
-const getColorForType = (type: string) => {
-  const colorMap: Record<string, string> = {
-    recognition: "hsl(44 98% 50%)",
-    certification: "hsl(30 100% 50%)",
-    course: "hsl(195 100% 50%)",
-    workshop: "hsl(280 80% 60%)",
-    hackathon: "hsl(120 60% 50%)",
-  };
-  return colorMap[type] || "hsl(195 100% 50%)";
+const typeColor: Record<string, string> = {
+  recognition: '#c49102', certification: '#ff9f43', course: '#00bfff', workshop: '#b088ff', hackathon: '#00c864',
 };
 
-// Transform achievements data to match component structure and sort by date ascending
-const achievementsData = achievementsDataRaw
-  .slice()
-  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-  .map((achievement, index) => ({
-    id: index + 1,
-    title: achievement.title,
-    icon: getIconForType(achievement.type),
-    color: getColorForType(achievement.type),
-    image: achievement.image,
-  }));
+// Sort most recent first
+const achievements = [...(achievementsDataRaw as Achievement[])].sort(
+  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+);
+
+function AchievementCard({ ach }: { ach: Achievement }) {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const isHackathon = ach.type === 'hackathon';
+  const color = typeColor[ach.type] ?? '#00bfff';
+  const IconComponent = iconMap[ach.type] ?? Award;
+  const dateStr = new Date(ach.date).getFullYear().toString();
+
+  return (
+    <motion.div
+      className="relative overflow-hidden flex flex-col items-center justify-center text-center gap-2 cursor-default select-none"
+      style={{
+        minHeight: '160px',
+        padding: '16px 12px',
+        background: ach.image ? 'transparent' : 'rgba(5,8,18,0.7)',
+        border: `${isHackathon ? 2 : 1}px solid ${isHackathon ? 'rgba(196,145,2,0.55)' : 'rgba(196,145,2,0.15)'}`,
+        boxShadow: isHackathon ? '0 0 16px rgba(196,145,2,0.15)' : 'none',
+        transition: 'transform 0.2s, box-shadow 0.2s',
+      }}
+      whileHover={{ scale: 1.03 }}
+      onHoverStart={() => setShowTooltip(true)}
+      onHoverEnd={() => setShowTooltip(false)}
+    >
+      {/* Background image */}
+      {ach.image && (
+        <>
+          <div className="absolute inset-0">
+            <img
+              src={`${import.meta.env.BASE_URL}${ach.image.replace(/^\//, '')}`}
+              alt=""
+              className="w-full h-full object-cover"
+              style={{ filter: 'brightness(0.5) saturate(0.7)' }}
+            />
+          </div>
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,18,0.95) 0%, rgba(5,8,18,0.5) 60%, transparent 100%)' }} />
+        </>
+      )}
+
+      {/* Date badge (top-right) */}
+      <div className="absolute top-2 right-2 z-10" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '8px', color: 'rgba(224,221,216,0.3)' }}>
+        {dateStr}
+      </div>
+
+      {/* Icon (no image) */}
+      {!ach.image && (
+        <div className="relative z-10 w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center" style={{ background: `${color}15`, border: `1.5px solid ${color}60`, boxShadow: `0 0 12px ${color}30` }}>
+          <IconComponent size={22} style={{ color }} />
+        </div>
+      )}
+
+      {/* Title */}
+      <p className="relative z-10 font-orbitron text-[10px] sm:text-xs text-arc-blue leading-tight line-clamp-3" style={{ maxWidth: '90%' }}>
+        {ach.title}
+      </p>
+
+      {/* Tooltip */}
+      <AnimatePresence>
+        {showTooltip && (
+          <motion.div
+            className="absolute inset-0 z-20 flex items-center justify-center p-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            style={{ background: 'rgba(5,8,18,0.92)', backdropFilter: 'blur(4px)' }}
+          >
+            <p style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '11px', color: 'rgba(224,221,216,0.8)', textAlign: 'center', lineHeight: 1.45 }}>
+              {ach.description}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
 
 export const AchievementsSection = () => {
   const [isRevealed, setIsRevealed] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const { playPowerUp, playHover } = useAudioSystem();
 
-  const handleReveal = () => {
-    playPowerUp();
-    setIsRevealed(true);
-  };
-
-  // Auto-scroll functionality with bidirectional scrolling
+  // Auto-scroll bidirectional
   useEffect(() => {
-    if (!isRevealed || !scrollContainerRef.current) return;
+    if (!isRevealed || !scrollRef.current) return;
+    const el = scrollRef.current;
+    let isAuto = true;
+    let isProg = false;
+    let dir: 'down' | 'up' = 'down';
 
-    const scrollContainer = scrollContainerRef.current;
-    let isAutoScrolling = true;
-    let isProgrammaticScroll = false;
-    let lastScrollTop = scrollContainer.scrollTop;
-    let scrollDirection: "down" | "up" = "down"; // Start scrolling down
-
-    // Auto-scroll interval
-    const scrollInterval = setInterval(() => {
-      if (!scrollContainer || !isAutoScrolling) return;
-
-      isProgrammaticScroll = true;
-      const scrollSpeed = 1;
-
-      // Scroll in current direction
-      if (scrollDirection === "down") {
-        scrollContainer.scrollTop += scrollSpeed;
-
-        // Check if reached bottom
-        if (
-          scrollContainer.scrollTop + scrollContainer.clientHeight >=
-          scrollContainer.scrollHeight - 5
-        ) {
-          scrollDirection = "up"; // Reverse direction
-        }
+    const interval = setInterval(() => {
+      if (!isAuto) return;
+      isProg = true;
+      if (dir === 'down') {
+        el.scrollTop += 1;
+        if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) dir = 'up';
       } else {
-        scrollContainer.scrollTop -= scrollSpeed;
-
-        // Check if reached top
-        if (scrollContainer.scrollTop <= 5) {
-          scrollDirection = "down"; // Reverse direction
-        }
+        el.scrollTop -= 1;
+        if (el.scrollTop <= 4) dir = 'down';
       }
-
-      lastScrollTop = scrollContainer.scrollTop;
-
-      // Reset flag after a short delay
-      setTimeout(() => {
-        isProgrammaticScroll = false;
-      }, 10);
+      setTimeout(() => { isProg = false; }, 10);
     }, 30);
 
-    // Detect user scroll
-    const handleScroll = () => {
-      if (isProgrammaticScroll) return;
-
-      // User is scrolling manually - pause auto-scroll
-      if (Math.abs(scrollContainer.scrollTop - lastScrollTop) > 0) {
-        isAutoScrolling = false;
-      }
-      lastScrollTop = scrollContainer.scrollTop;
+    const pause = () => { isAuto = false; };
+    const resume = (e: MouseEvent) => {
+      if (!el.contains(e.target as Node)) { isAuto = true; }
     };
-
-    // Detect user touch/wheel
-    const handleUserInput = () => {
-      isAutoScrolling = false;
-    };
-
-    // Resume on click outside
-    const handleClickOutside = (event: MouseEvent) => {
-      if (scrollContainer && !scrollContainer.contains(event.target as Node)) {
-        isAutoScrolling = true;
-
-        // Determine direction based on current position
-        const currentScroll = scrollContainer.scrollTop;
-        const maxScroll =
-          scrollContainer.scrollHeight - scrollContainer.clientHeight;
-        const scrollPosition = currentScroll / maxScroll;
-
-        // If in top half, scroll down; if in bottom half, scroll up
-        scrollDirection = scrollPosition < 0.5 ? "down" : "up";
-      }
-    };
-
-    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
-    scrollContainer.addEventListener("touchstart", handleUserInput, {
-      passive: true,
-    });
-    scrollContainer.addEventListener("wheel", handleUserInput, {
-      passive: true,
-    });
-    document.addEventListener("click", handleClickOutside);
+    el.addEventListener('wheel', pause, { passive: true });
+    el.addEventListener('touchstart', pause, { passive: true });
+    document.addEventListener('click', resume);
 
     return () => {
-      clearInterval(scrollInterval);
-      scrollContainer.removeEventListener("scroll", handleScroll);
-      scrollContainer.removeEventListener("touchstart", handleUserInput);
-      scrollContainer.removeEventListener("wheel", handleUserInput);
-      document.removeEventListener("click", handleClickOutside);
+      clearInterval(interval);
+      el.removeEventListener('wheel', pause);
+      el.removeEventListener('touchstart', pause);
+      document.removeEventListener('click', resume);
     };
   }, [isRevealed]);
 
   return (
-    <section
-      id="achievements"
-      className="relative min-h-screen w-full overflow-hidden py-8 flex items-center justify-center"
-    >
-      {/* Background */}
-      <div className="absolute inset-0 bg-linear-to-b from-iron-red-dark/30 via-background to-iron-red-dark/30" />
+    <section className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center" style={{ paddingBottom: '28px', paddingTop: '72px' }}>
+      <div className="absolute inset-0 bg-gradient-to-b from-iron-red-dark/25 via-background to-iron-red-dark/25 pointer-events-none" />
 
-      {/* Circuit background */}
-      <div className="absolute inset-0 opacity-20">
-        <svg className="w-full h-full" preserveAspectRatio="none">
-          <defs>
-            <pattern
-              id="circuitAch"
-              patternUnits="userSpaceOnUse"
-              width="40"
-              height="40"
-            >
-              <path
-                d="M20 0 L20 20 M0 20 L40 20"
-                stroke="hsl(44 98% 39%)"
-                strokeWidth="0.3"
-                fill="none"
-              />
-              <rect
-                x="18"
-                y="18"
-                width="4"
-                height="4"
-                fill="hsl(195 100% 50%)"
-                opacity="0.5"
-              />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#circuitAch)" />
-        </svg>
-      </div>
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 flex flex-col">
+        <SectionHeader label="milestones" title="ACHIEVEMENTS" />
 
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6">
-        {/* Curtain Container */}
-        <div className="relative min-h-75 sm:min-h-100 md:min-h-125">
-          {/* Achievements Grid (Behind curtains) */}
+        {/* Curtain container */}
+        <div className="relative" style={{ minHeight: '400px', height: '60vh' }}>
+          {/* Grid — always rendered, behind curtains */}
           <div
-            ref={scrollContainerRef}
-            className="absolute inset-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-track-iron-red-dark scrollbar-thumb-arc-blue/30 p-4 sm:p-6 md:p-8"
+            ref={scrollRef}
+            className="absolute inset-0 overflow-y-auto p-4"
+            style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,191,255,0.2) transparent' }}
           >
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3 sm:gap-4">
-              {achievementsData.map((achievement, index) => {
-                const IconComponent = achievement.icon;
-                return (
-                  <motion.div
-                    key={achievement.id}
-                    className="iron-panel relative overflow-hidden p-3 sm:p-4 flex flex-col items-center justify-center text-center gap-2 sm:gap-3 min-h-32 sm:min-h-36 md:min-h-40"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={isRevealed ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ delay: 0.5 + index * 0.1 }}
-                  >
-                    {/* Translucent background image if present */}
-                    {achievement.image && (
-                      <div className="absolute inset-0 opacity-40">
-                        <img
-                          src={`${import.meta.env.BASE_URL}${achievement.image.startsWith("/") ? achievement.image.slice(1) : achievement.image}`}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
-
-                    {/* Icon area - always reserve space so title doesn't shift when icon is absent */}
-                    <div
-                      className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg flex items-center justify-center shrink-0"
-                      style={
-                        achievement.image
-                          ? undefined
-                          : {
-                              background: `${achievement.color}20`,
-                              border: `2px solid ${achievement.color}`,
-                              boxShadow: `0 0 15px ${achievement.color}40`,
-                            }
-                      }
-                    >
-                      {!achievement.image && (
-                        <IconComponent
-                          size={28}
-                          style={{ color: achievement.color }}
-                          className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
-                        />
-                      )}
-                    </div>
-                    <p className="relative font-orbitron text-[10px] sm:text-xs text-accent leading-tight line-clamp-3">
-                      {achievement.title}
-                    </p>
-                  </motion.div>
-                );
-              })}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {achievements.map((ach, i) => (
+                <motion.div
+                  key={ach.title}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={isRevealed ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ delay: 0.4 + i * 0.07, duration: 0.3 }}
+                >
+                  <AchievementCard ach={ach} />
+                </motion.div>
+              ))}
             </div>
           </div>
 
@@ -256,76 +173,42 @@ export const AchievementsSection = () => {
           <AnimatePresence>
             {!isRevealed && (
               <>
-                {/* Left Curtain */}
                 <motion.div
                   className="absolute top-0 left-0 w-1/2 h-full z-20"
                   initial={{ x: 0 }}
-                  exit={{ x: "-100%" }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
-                  style={{
-                    background:
-                      "linear-gradient(90deg, hsl(44 90% 45%) 0%, hsl(44 98% 39%) 20%, hsl(0 100% 24%) 40%, hsl(0 100% 20%) 100%)",
-                    borderRight: "4px solid hsl(44 98% 50%)",
-                    boxShadow: "inset 0 0 50px hsl(0 0% 0% / 0.5)",
-                  }}
+                  exit={{ x: '-100%' }}
+                  transition={{ duration: 0.75, ease: 'easeInOut' }}
+                  style={{ background: 'linear-gradient(90deg, hsl(44 90% 45%) 0%, hsl(44 98% 39%) 20%, hsl(0 100% 24%) 40%, hsl(0 100% 18%) 100%)', borderRight: '3px solid hsl(44 98% 50%)' }}
                 >
-                  {/* Metallic pattern lines */}
-                  <div className="absolute inset-0 opacity-30">
-                    {[...Array(10)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="absolute w-full h-px bg-iron-gold/50"
-                        style={{ top: `${i * 10 + 5}%` }}
-                      />
-                    ))}
+                  <div className="absolute inset-0 opacity-25">
+                    {[...Array(10)].map((_, i) => <div key={i} className="absolute w-full h-px bg-iron-gold/50" style={{ top: `${i * 10 + 5}%` }} />)}
                   </div>
                 </motion.div>
 
-                {/* Right Curtain */}
                 <motion.div
                   className="absolute top-0 right-0 w-1/2 h-full z-20"
                   initial={{ x: 0 }}
-                  exit={{ x: "100%" }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
-                  style={{
-                    background:
-                      "linear-gradient(270deg, hsl(44 90% 45%) 0%, hsl(44 98% 39%) 20%, hsl(0 100% 24%) 40%, hsl(0 100% 20%) 100%)",
-                    borderLeft: "4px solid hsl(44 98% 50%)",
-                    boxShadow: "inset 0 0 50px hsl(0 0% 0% / 0.5)",
-                  }}
+                  exit={{ x: '100%' }}
+                  transition={{ duration: 0.75, ease: 'easeInOut' }}
+                  style={{ background: 'linear-gradient(270deg, hsl(44 90% 45%) 0%, hsl(44 98% 39%) 20%, hsl(0 100% 24%) 40%, hsl(0 100% 18%) 100%)', borderLeft: '3px solid hsl(44 98% 50%)' }}
                 >
-                  {/* Metallic pattern lines */}
-                  <div className="absolute inset-0 opacity-30">
-                    {[...Array(10)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="absolute w-full h-px bg-iron-gold/50"
-                        style={{ top: `${i * 10 + 5}%` }}
-                      />
-                    ))}
+                  <div className="absolute inset-0 opacity-25">
+                    {[...Array(10)].map((_, i) => <div key={i} className="absolute w-full h-px bg-iron-gold/50" style={{ top: `${i * 10 + 5}%` }} />)}
                   </div>
                 </motion.div>
 
-                {/* Center Arc Reactor Button */}
+                {/* Reveal button */}
                 <motion.button
-                  onClick={handleReveal}
+                  onClick={() => { playPowerUp(); setIsRevealed(true); }}
                   onMouseEnter={playHover}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-3 sm:gap-4"
-                  whileHover={{ scale: 1.1 }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-3"
+                  whileHover={{ scale: 1.08 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <motion.div
-                    className="relative"
-                    animate={{ rotate: 360 }}
-                    transition={{
-                      duration: 10,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                  >
-                    <ArcReactor size={60} className="sm:w-20 sm:h-20" />
+                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}>
+                    <ArcReactor size={60} />
                   </motion.div>
-                  <span className="font-orbitron text-xs sm:text-sm text-arc-blue uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-background/80 rounded-full border border-arc-blue/50">
+                  <span className="font-orbitron text-xs text-arc-blue uppercase tracking-wider px-4 py-2 bg-background/80" style={{ border: '1px solid rgba(0,191,255,0.4)' }}>
                     Reveal Achievements
                   </span>
                 </motion.button>
