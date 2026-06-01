@@ -217,14 +217,11 @@ export const HeroSection = () => {
   const mx = useSpring(rawX, springCfg);
   const my = useSpring(rawY, springCfg);
 
-  const bgX = useTransform(mx, [-0.5, 0.5], [-25, 25]);
-  const bgY = useTransform(my, [-0.5, 0.5], [-25, 25]);
-  const textX = useTransform(mx, [-0.5, 0.5], [12, -12]);
-  const textY = useTransform(my, [-0.5, 0.5], [8, -8]);
-  const reactorX = useTransform(mx, [-0.5, 0.5], [-10, 10]);
-  const reactorY = useTransform(my, [-0.5, 0.5], [-10, 10]);
-  const feedX = useTransform(mx, [-0.5, 0.5], [-8, 8]);
-  const feedY = useTransform(my, [-0.5, 0.5], [-6, 6]);
+  // Parallax restricted to background grid and arc reactor only
+  const bgX = useTransform(mx, [-0.5, 0.5], [-20, 20]);
+  const bgY = useTransform(my, [-0.5, 0.5], [-20, 20]);
+  const reactorX = useTransform(mx, [-0.5, 0.5], [-18, 18]);
+  const reactorY = useTransform(my, [-0.5, 0.5], [-18, 18]);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -270,7 +267,6 @@ export const HeroSection = () => {
       >
         <motion.div
           className="flex flex-col justify-center pr-6"
-          style={prefersReduced ? {} : { x: textX, y: textY }}
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
@@ -386,7 +382,6 @@ export const HeroSection = () => {
 
         <motion.div
           className="flex flex-col pl-6"
-          style={prefersReduced ? {} : { x: feedX, y: feedY }}
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}

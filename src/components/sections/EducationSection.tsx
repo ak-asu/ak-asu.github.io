@@ -86,7 +86,10 @@ function EducationCard({ edu }: { edu: Education }) {
                 transition={{ duration: 0.25 }}
                 style={{ overflow: 'hidden' }}
               >
-                <div className="flex flex-col gap-1.5">
+                <div
+                  className="flex flex-col gap-1.5 overflow-y-auto"
+                  style={{ maxHeight: '220px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,191,255,0.2) transparent' }}
+                >
                   {edu.subjects.map(s => (
                     <div key={s.name} className="flex items-center justify-between gap-3" style={{ padding: '5px 8px', background: 'rgba(5,8,18,0.5)', border: '1px solid rgba(196,145,2,0.07)' }}>
                       <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '13px', color: 'rgba(224,221,216,0.65)', flex: 1 }}>{s.name}</span>

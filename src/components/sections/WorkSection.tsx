@@ -134,7 +134,7 @@ export const WorkSection = () => {
               <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0,191,255,0.3), transparent)', margin: '0 0 12px' }} />
 
               {/* Bullets with scroll */}
-              <ul className="space-y-2 overflow-y-auto" style={{ maxHeight: '55vh' }}>
+              <ul className="space-y-2 overflow-y-auto" style={{ maxHeight: '52vh', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,191,255,0.25) transparent' }}>
                 {selected.highlights.map((h, i) => (
                   <li key={i} className="flex items-start gap-2" style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '14px', color: 'rgba(224,221,216,0.78)', lineHeight: 1.55 }}>
                     <span style={{ color: '#00bfff', fontSize: '16px', flexShrink: 0 }}>▸</span>
@@ -194,7 +194,7 @@ export const WorkSection = () => {
             <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '13px', color: '#c49102', marginBottom: '2px' }}>{selected.company} · {selected.location}</div>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '9px', color: 'rgba(0,191,255,0.6)', marginBottom: '10px' }}>{selected.period}</div>
             <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0,191,255,0.3), transparent)', marginBottom: '10px' }} />
-            <ul className="space-y-2 overflow-y-auto" style={{ maxHeight: '45vh' }}>
+            <ul className="space-y-2 overflow-y-auto" style={{ maxHeight: '38vh', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,191,255,0.25) transparent' }}>
               {selected.highlights.map((h, i) => (
                 <li key={i} className="flex items-start gap-1.5" style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '13px', color: 'rgba(224,221,216,0.75)', lineHeight: 1.5 }}>
                   <span style={{ color: '#00bfff', flexShrink: 0 }}>▸</span>
