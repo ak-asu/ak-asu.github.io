@@ -15,6 +15,7 @@ interface AppState {
   animationEnabled: boolean;
   soundEnabled: boolean;
   activeSection: Section;
+  chatOpen: boolean;
 
   setViewMode: (mode: ViewMode) => void;
   setAnimationEnabled: (enabled: boolean) => void;
@@ -23,6 +24,7 @@ interface AppState {
   toggleViewMode: () => void;
   toggleSound: () => void;
   toggleAnimation: () => void;
+  toggleChat: () => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -30,12 +32,12 @@ export const useAppStore = create<AppState>((set) => ({
   animationEnabled: true,
   soundEnabled: false,
   activeSection: "home",
+  chatOpen: false,
 
   setViewMode: (mode) => set({ viewMode: mode }),
   setAnimationEnabled: (enabled) => set({ animationEnabled: enabled }),
   setSoundEnabled: (enabled) => set({ soundEnabled: enabled }),
   setActiveSection: (section) => {
-    // Update URL hash when section changes
     window.location.hash = section;
     set({ activeSection: section });
   },
@@ -46,4 +48,5 @@ export const useAppStore = create<AppState>((set) => ({
   toggleSound: () => set((state) => ({ soundEnabled: !state.soundEnabled })),
   toggleAnimation: () =>
     set((state) => ({ animationEnabled: !state.animationEnabled })),
+  toggleChat: () => set((state) => ({ chatOpen: !state.chatOpen })),
 }));

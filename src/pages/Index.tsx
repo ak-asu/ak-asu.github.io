@@ -1,14 +1,14 @@
 import { useState, lazy, Suspense } from "react";
 import { Navbar } from "@/components/ui/Navbar";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
-import { HudOverlay } from "@/components/ui/HudOverlay";
+import { StatusBar } from "@/components/ui/StatusBar";
+import { ParticlesBg } from "@/components/ui/ParticlesBg";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { Terminal } from "@/components/terminal/Terminal";
 import { AKChat } from "@/components/chat/AKChat";
 import { useAppStore } from "@/store/useAppStore";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Lazy load heavy sections to reduce initial bundle size and memory usage
 const SkillsSection = lazy(() =>
   import("@/components/sections/SkillsSection").then((m) => ({
     default: m.SkillsSection,
@@ -40,7 +40,6 @@ const GamesSection = lazy(() =>
   })),
 );
 
-// Fallback component for lazy loaded sections
 const SectionFallback = () => (
   <div className="flex items-center justify-center h-screen">
     <div className="relative w-16 h-16">
@@ -49,17 +48,18 @@ const SectionFallback = () => (
     </div>
   </div>
 );
+
 const sectionVariants = {
-  initial: { opacity: 0, scale: 0.95 },
+  initial: { opacity: 0, scale: 0.97 },
   animate: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.4, ease: "easeOut" },
+    transition: { duration: 0.35, ease: "easeOut" },
   },
   exit: {
     opacity: 0,
-    scale: 0.95,
-    transition: { duration: 0.3, ease: "easeIn" },
+    scale: 0.97,
+    transition: { duration: 0.25, ease: "easeIn" },
   },
 };
 
@@ -67,12 +67,8 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { viewMode, activeSection } = useAppStore();
 
-  // Show loading screen on initial load
-  if (isLoading) {
-    return <LoadingScreen onComplete={() => setIsLoading(false)} />;
-  }
+  if (isLoading) return <LoadingScreen onComplete={() => setIsLoading(false)} />;
 
-  // Terminal Mode
   if (viewMode === "terminal") {
     return (
       <div className="relative h-screen bg-background overflow-hidden">
@@ -81,7 +77,6 @@ const Index = () => {
     );
   }
 
-  // Render active section component
   const renderSection = () => {
     switch (activeSection) {
       case "home":
@@ -129,13 +124,14 @@ const Index = () => {
 
   return (
     <div className="relative h-screen bg-background overflow-hidden">
-      {/* HUD Overlay */}
-      <HudOverlay />
+      <ParticlesBg />
+      <div className="hud-corners" aria-hidden="true">
+        <div className="hud-corner-tr" />
+        <div className="hud-corner-bl" />
+      </div>
 
-      {/* Navigation */}
       <Navbar />
 
-      {/* Active Section with Animation */}
       <AnimatePresence mode="wait">
         <motion.main
           key={activeSection}
@@ -149,8 +145,8 @@ const Index = () => {
         </motion.main>
       </AnimatePresence>
 
-      {/* AK AI Chat */}
       <AKChat />
+      <StatusBar />
     </div>
   );
 };
