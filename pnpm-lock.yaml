@@ -20,6 +20,9 @@ importers:
       '@mlc-ai/web-llm':
         specifier: ^0.2.80
         version: 0.2.80
+      '@playwright/mcp':
+        specifier: ^0.0.75
+        version: 0.0.75
       '@react-three/drei':
         specifier: ^10.7.7
         version: 10.7.7(@react-three/fiber@9.5.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.182.0))(@types/react@19.2.14)(@types/three@0.182.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.182.0)
@@ -78,6 +81,9 @@ importers:
       '@eslint/js':
         specifier: ^9.39.2
         version: 9.39.2
+      '@playwright/test':
+        specifier: ^1.60.0
+        version: 1.60.0
       '@tailwindcss/typography':
         specifier: ^0.5.19
         version: 0.5.19(tailwindcss@4.1.18)
@@ -505,6 +511,16 @@ packages:
     resolution: {integrity: sha512-2Z0FATFHaoYJ8b+Y4y4Hgfn3FRFwuU5zRrk+9dFWp4uGAdHGqVEdP7HP+gLA3X469KXHmfupJaUbKo1b/aDKIg==}
     peerDependencies:
       three: '>= 0.159.0'
+
+  '@playwright/mcp@0.0.75':
+    resolution: {integrity: sha512-oBjzVXfEGZ9Ev45tKKQULNDVdF83B82lg0uPejEK3xsp/zWmdNdNVnPi032fmd/o20ZZXs+LX7cr77qRNbV4VA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  '@playwright/test@1.60.0':
+    resolution: {integrity: sha512-O71yZIbAh/PxDMNGns37GHBIfrVkEVyn+AXyIa5dOTfb4/xNvRWV+Vv/NMbNCtODB/pO7vLlF2OTmMVLhmr7Ag==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   '@react-aria/focus@3.21.4':
     resolution: {integrity: sha512-6gz+j9ip0/vFRTKJMl3R30MHopn4i19HqqLfSQfElxJD+r9hBnYG1Q6Wd/kl/WRR1+CALn2F+rn06jUnf5sT8Q==}
@@ -1327,6 +1343,11 @@ packages:
       react-dom:
         optional: true
 
+  fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -1693,6 +1714,26 @@ packages:
   picomatch@4.0.4:
     resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
     engines: {node: '>=12'}
+
+  playwright-core@1.60.0:
+    resolution: {integrity: sha512-9bW6zvX/m0lEbgTKJ6YppOKx8H3VOPBMOCFh2irXFOT4BbHgrx5hPjwJYLT40Lu+4qtD36qKc/Hn56StUW57IA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright-core@1.61.0-alpha-1778188671000:
+    resolution: {integrity: sha512-nsw2Crz0uZS3IRHiEcOXUt+RaKB/Hna+GAD4oD6cPqCHfJfW77cJdgktC0jzp3Ndyv23EJI3bcWSqFIiqSNE5A==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.60.0:
+    resolution: {integrity: sha512-hheHdokM8cdqCb0lcE3s+zT4t4W+vvjpGxsZlDnikarzx8tSzMebh3UiFtgqwFwnTnjYQcsyMF8ei2mCO/tpeA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.61.0-alpha-1778188671000:
+    resolution: {integrity: sha512-A6fFc7ExLRmvm0ZHqCyY2uHXSvEdpb8W+/HyIPK4ecRqNil8Mc1Vig1WFYoqk82x3+U9Qb571fQE95wgKqIQ1g==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   postcss-selector-parser@6.0.10:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
@@ -2403,6 +2444,15 @@ snapshots:
     dependencies:
       promise-worker-transferable: 1.0.4
       three: 0.182.0
+
+  '@playwright/mcp@0.0.75':
+    dependencies:
+      playwright: 1.61.0-alpha-1778188671000
+      playwright-core: 1.61.0-alpha-1778188671000
+
+  '@playwright/test@1.60.0':
+    dependencies:
+      playwright: 1.60.0
 
   '@react-aria/focus@3.21.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
@@ -3228,6 +3278,9 @@ snapshots:
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
 
+  fsevents@2.3.2:
+    optional: true
+
   fsevents@2.3.3:
     optional: true
 
@@ -3512,6 +3565,22 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.4: {}
+
+  playwright-core@1.60.0: {}
+
+  playwright-core@1.61.0-alpha-1778188671000: {}
+
+  playwright@1.60.0:
+    dependencies:
+      playwright-core: 1.60.0
+    optionalDependencies:
+      fsevents: 2.3.2
+
+  playwright@1.61.0-alpha-1778188671000:
+    dependencies:
+      playwright-core: 1.61.0-alpha-1778188671000
+    optionalDependencies:
+      fsevents: 2.3.2
 
   postcss-selector-parser@6.0.10:
     dependencies:

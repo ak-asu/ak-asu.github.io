@@ -70,7 +70,7 @@ function EducationCard({ edu }: { edu: Education }) {
             onClick={() => setCoursesOpen(!coursesOpen)}
             className="flex items-center gap-2 w-full transition-colors duration-150"
             style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.15em', color: coursesOpen ? '#00bfff' : 'rgba(196,145,2,0.5)', marginBottom: '8px' }}
-            onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = '#00bfff'}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#00bfff'; }}
             onMouseLeave={e => { if (!coursesOpen) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(196,145,2,0.5)'; }}
           >
             <span>{coursesOpen ? '▼' : '▶'}</span>

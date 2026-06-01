@@ -40,7 +40,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - name: Set up Node
         uses: actions/setup-node@v6
@@ -55,7 +55,6 @@ jobs:
         run: pnpm run build
         env:
           NODE_ENV: production
-          VITE_BASE_PATH: /Portfolio/
 
       - name: Verify build output
         run: |

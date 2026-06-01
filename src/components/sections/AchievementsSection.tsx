@@ -178,7 +178,7 @@ export const AchievementsSection = () => {
                   style={{ background: 'linear-gradient(90deg, hsl(44 90% 45%) 0%, hsl(44 98% 39%) 20%, hsl(0 100% 24%) 40%, hsl(0 100% 18%) 100%)', borderRight: '3px solid hsl(44 98% 50%)' }}
                 >
                   <div className="absolute inset-0 opacity-25">
-                    {[...Array(10)].map((_, i) => <div key={i} className="absolute w-full h-px bg-iron-gold/50" style={{ top: `${i * 10 + 5}%` }} />)}
+                    {Array.from({ length: 10 }, (_, i) => i * 10 + 5).map(pct => <div key={pct} className="absolute w-full h-px bg-iron-gold/50" style={{ top: `${pct}%` }} />)}
                   </div>
                 </motion.div>
 
@@ -190,7 +190,7 @@ export const AchievementsSection = () => {
                   style={{ background: 'linear-gradient(270deg, hsl(44 90% 45%) 0%, hsl(44 98% 39%) 20%, hsl(0 100% 24%) 40%, hsl(0 100% 18%) 100%)', borderLeft: '3px solid hsl(44 98% 50%)' }}
                 >
                   <div className="absolute inset-0 opacity-25">
-                    {[...Array(10)].map((_, i) => <div key={i} className="absolute w-full h-px bg-iron-gold/50" style={{ top: `${i * 10 + 5}%` }} />)}
+                    {Array.from({ length: 10 }, (_, i) => i * 10 + 5).map(pct => <div key={pct} className="absolute w-full h-px bg-iron-gold/50" style={{ top: `${pct}%` }} />)}
                   </div>
                 </motion.div>
 

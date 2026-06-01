@@ -18,6 +18,34 @@ const NAV_BTN_STYLE: React.CSSProperties = {
   cursor: 'pointer',
 };
 
+function GameScreen({ gameId, GameComponent }: { gameId: string; GameComponent: React.ComponentType }) {
+  return (
+    <div
+      className="relative rounded-lg p-1 flex items-center justify-center"
+      style={{
+        height: '440px',
+        background: 'linear-gradient(180deg, hsl(220 30% 8%), hsl(220 35% 5%))',
+        border: '2px solid rgba(196,145,2,0.6)',
+        boxShadow: 'inset 0 0 30px rgba(0,191,255,0.08), 0 0 12px rgba(0,0,0,0.45)',
+      }}
+    >
+      <div className="absolute inset-0 rounded-lg pointer-events-none opacity-30" style={{ background: 'radial-gradient(ellipse at center, rgba(0,191,255,0.2) 0%, transparent 70%)' }} />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={gameId}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 0.3 }}
+          className="relative z-10 w-full h-full flex items-center justify-center overflow-hidden"
+        >
+          <GameComponent />
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export const GamesSection = () => {
   const [activeGameIndex, setActiveGameIndex] = useState(0);
   const { playHover, playWhoosh } = useAudioSystem();
@@ -51,31 +79,7 @@ export const GamesSection = () => {
             className="absolute -inset-0.5 rounded-xl"
             style={{ background: 'linear-gradient(180deg, hsl(0 100% 20%), hsl(0 100% 12%))' }}
           />
-
-          {/* Screen */}
-          <div
-            className="relative rounded-lg p-1 flex items-center justify-center"
-            style={{
-              height: '440px',
-              background: 'linear-gradient(180deg, hsl(220 30% 8%), hsl(220 35% 5%))',
-              border: '2px solid rgba(196,145,2,0.6)',
-              boxShadow: 'inset 0 0 30px rgba(0,191,255,0.08), 0 0 12px rgba(0,0,0,0.45)',
-            }}
-          >
-            <div className="absolute inset-0 rounded-lg pointer-events-none opacity-30" style={{ background: 'radial-gradient(ellipse at center, rgba(0,191,255,0.2) 0%, transparent 70%)' }} />
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={games[activeGameIndex].id}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.3 }}
-                className="relative z-10 w-full h-full flex items-center justify-center overflow-hidden"
-              >
-                <ActiveGame />
-              </motion.div>
-            </AnimatePresence>
-          </div>
+          <GameScreen gameId={games[activeGameIndex].id} GameComponent={ActiveGame} />
         </motion.div>
 
         {/* Navigation — clearly visible with solid gold border + background */}
@@ -113,9 +117,9 @@ export const GamesSection = () => {
               {games[activeGameIndex].description}
             </div>
             <div className="flex justify-center gap-1 mt-2">
-              {games.map((_, i) => (
+              {games.map((game, i) => (
                 <div
-                  key={i}
+                  key={game.id}
                   className="rounded-full transition-all duration-200"
                   style={{
                     width: i === activeGameIndex ? '16px' : '5px',

@@ -157,6 +157,32 @@ function SocialLinks({ centered = false }: { centered?: boolean }) {
   );
 }
 
+function TabletFeedSection() {
+  return (
+    <div
+      className="col-span-2 overflow-x-auto"
+      style={{ borderTop: "1px solid rgba(196,145,2,0.1)", paddingTop: "12px" }}
+    >
+      <div className="flex gap-3" style={{ minWidth: "max-content" }}>
+        {TABLET_FEED.map((item) => (
+          <div
+            key={item.title}
+            className="p-3 shrink-0"
+            style={{ width: "260px", border: "1px solid rgba(196,145,2,0.08)", background: "rgba(5,8,18,0.5)", fontSize: "11px" }}
+          >
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "8px", color: "rgba(0,191,255,0.75)", marginBottom: "4px" }}>
+              {item.label} - {item.date}
+            </div>
+            <div style={{ color: "rgba(224,221,216,0.8)", fontFamily: "'Rajdhani', sans-serif", fontWeight: 500 }}>
+              {item.title}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function CtaButtons({ compact = false }: { compact?: boolean }) {
   const { setActiveSection, toggleChat } = useAppStore();
 
@@ -226,9 +252,9 @@ export const HeroSection = () => {
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!containerRef.current || isMobile || prefersReduced) return;
-      const r = containerRef.current.getBoundingClientRect();
-      const nextX = (e.clientX - r.left) / r.width - 0.5;
-      const nextY = (e.clientY - r.top) / r.height - 0.5;
+      const rect = containerRef.current.getBoundingClientRect();
+      const nextX = (e.clientX - rect.left) / rect.width - 0.5;
+      const nextY = (e.clientY - rect.top) / rect.height - 0.5;
       rawX.set(nextX);
       rawY.set(nextY);
       setReactorMouse({ x: nextX, y: nextY });
@@ -486,48 +512,7 @@ export const HeroSection = () => {
           </div>
         </motion.div>
 
-        <div
-          className="col-span-2 overflow-x-auto"
-          style={{
-            borderTop: "1px solid rgba(196,145,2,0.1)",
-            paddingTop: "12px",
-          }}
-        >
-          <div className="flex gap-3" style={{ minWidth: "max-content" }}>
-            {TABLET_FEED.map((item, i) => (
-              <div
-                key={i}
-                className="p-3 shrink-0"
-                style={{
-                  width: "260px",
-                  border: "1px solid rgba(196,145,2,0.08)",
-                  background: "rgba(5,8,18,0.5)",
-                  fontSize: "11px",
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: "8px",
-                    color: "rgba(0,191,255,0.75)",
-                    marginBottom: "4px",
-                  }}
-                >
-                  {item.label} - {item.date}
-                </div>
-                <div
-                  style={{
-                    color: "rgba(224,221,216,0.8)",
-                    fontFamily: "'Rajdhani', sans-serif",
-                    fontWeight: 500,
-                  }}
-                >
-                  {item.title}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <TabletFeedSection />
       </div>
 
       <div className="relative z-10 flex h-full w-full flex-col gap-4 overflow-y-auto px-4 pt-20 pb-4 md:hidden">

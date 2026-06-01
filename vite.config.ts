@@ -8,9 +8,9 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
-  // Base URL: "/" for custom-domain / root deployments.
-  // If deploying to GitHub Pages as a project page (username.github.io/reponame/),
-  // set VITE_BASE_PATH=/Portfolio/ in the CI environment instead.
+  // Base URL: "/" for user/org GitHub Pages (username.github.io) and custom-domain deployments.
+  // If deploying to a project page (username.github.io/reponame/),
+  // set VITE_BASE_PATH=/reponame/ in the CI environment instead.
   const base = process.env.VITE_BASE_PATH ?? "/";
 
   return {
