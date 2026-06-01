@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, Play, ChevronLeft, ChevronRight } from "lucide-react";
-import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useAudioSystem } from "@/hooks/useAudioSystem";
 import projectsDataRaw from "@/data/projects.json";
 
@@ -291,8 +290,6 @@ export const ProjectsSection = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-iron-red-dark/30 via-background to-iron-red-dark/30 pointer-events-none" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 sm:px-6">
-        <SectionHeader label="portfolio" title="PROJECTS" />
-
         <div className="mb-6 flex flex-wrap gap-2">
           {filters.map((f) => (
             <button

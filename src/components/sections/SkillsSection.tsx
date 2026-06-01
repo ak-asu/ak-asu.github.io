@@ -10,7 +10,6 @@ import {
 import * as THREE from "three";
 import { useAppStore } from "@/store/useAppStore";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { SectionHeader } from "@/components/ui/SectionHeader";
 import skillsDataRaw from "@/data/skills.json";
 
 interface Skill {
@@ -348,8 +347,6 @@ export const SkillsSection = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-background via-arc-blue/3 to-background pointer-events-none" />
 
       <div className="relative z-10 px-4 pt-4 pb-2 sm:px-8">
-        <SectionHeader label="technical stack" title="SKILLS" />
-
         <div className="mt-4 flex flex-wrap gap-2">
           {CATEGORIES.map((cat) => {
             const s = CAT_CHIP_STYLE[cat];

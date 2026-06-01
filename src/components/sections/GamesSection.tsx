@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { TicTacToe } from '@/components/games/TicTacToe';
 import { ColorTap } from '@/components/games/ColorTap';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useAudioSystem } from '@/hooks/useAudioSystem';
 
 const games = [
@@ -35,10 +34,6 @@ export const GamesSection = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-background via-iron-red-dark/20 to-background pointer-events-none" />
 
       <div className="relative z-10 flex flex-col items-center w-full max-w-xl">
-        <div className="w-full mb-6">
-          <SectionHeader label="arcade" title="GAMES" />
-        </div>
-
         {/* Cabinet */}
         <motion.div
           className="relative w-full"

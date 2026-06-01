@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
-import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useAudioSystem } from '@/hooks/useAudioSystem';
 import { formatPeriod, isCurrentlyActive } from '@/lib/dateUtils';
 import workDataRaw from '@/data/work.json';
@@ -58,12 +57,10 @@ export const WorkSection = () => {
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,191,255,0.018) 2px, rgba(0,191,255,0.018) 4px)' }} />
 
       <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 flex flex-col flex-1">
-        <SectionHeader label="career" title="EXPERIENCE" />
-
         {/* Desktop: two-panel layout */}
         <div className="hidden md:flex flex-1 gap-6">
-          {/* Left: timeline list */}
-          <div className="w-56 shrink-0 flex flex-col gap-1 pt-2" style={{ borderLeft: '1px solid rgba(196,145,2,0.15)', paddingLeft: '16px' }}>
+          {/* Left: timeline list — scrollable so all entries are reachable */}
+          <div className="w-56 shrink-0 flex flex-col gap-1 pt-2 overflow-y-auto" style={{ borderLeft: '1px solid rgba(196,145,2,0.15)', paddingLeft: '16px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(196,145,2,0.2) transparent' }}>
             {workData.map(w => (
               <button
                 key={w.id}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SectionHeader } from '@/components/ui/SectionHeader';
+
 import educationDataRaw from '@/data/education.json';
 
 interface Subject { name: string; grade: string; }
@@ -110,7 +110,6 @@ export const EducationSection = () => (
   <section className="relative min-h-screen w-full overflow-hidden flex flex-col" style={{ paddingBottom: '28px', paddingTop: '72px' }}>
     <div className="absolute inset-0 bg-gradient-to-b from-iron-red-dark/20 via-background to-iron-red-dark/20 pointer-events-none" />
     <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 flex flex-col flex-1">
-      <SectionHeader label="academics" title="EDUCATION" />
       <div className="flex flex-col md:flex-row gap-6 flex-1">
         {education.map(edu => (
           <EducationCard key={edu.institution} edu={edu} />

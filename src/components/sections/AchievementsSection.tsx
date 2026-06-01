@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 import { Award, Trophy, Shield, FileText, Brain, type LucideIcon } from 'lucide-react';
 import { ArcReactor } from '@/components/ui/ArcReactor';
-import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useAudioSystem } from '@/hooks/useAudioSystem';
 import achievementsDataRaw from '@/data/achievements.json';
 
@@ -145,8 +144,6 @@ export const AchievementsSection = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-iron-red-dark/25 via-background to-iron-red-dark/25 pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 flex flex-col">
-        <SectionHeader label="milestones" title="ACHIEVEMENTS" />
-
         {/* Curtain container */}
         <div className="relative" style={{ minHeight: '400px', height: '60vh' }}>
           {/* Grid — always rendered, behind curtains */}
