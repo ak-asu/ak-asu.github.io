@@ -3,6 +3,7 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
+  type MotionValue,
 } from "framer-motion";
 import { useRef, useCallback, useState } from "react";
 import { ArcReactor3D } from "@/components/ui/ArcReactor3D";
@@ -157,6 +158,117 @@ function SocialLinks({ centered = false }: { centered?: boolean }) {
   );
 }
 
+function DesktopLeftPanel({ prefersReduced }: { prefersReduced: boolean }) {
+  return (
+    <motion.div
+      className="flex flex-col justify-center pr-6"
+      initial={{ opacity: 0, x: -40 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.7, delay: 0.4 }}
+    >
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "11px", color: "rgba(0,191,255,0.5)", letterSpacing: "0.25em", marginBottom: "8px" }}>
+        <span style={{ color: "rgba(196,145,2,0.4)" }}>[</span> engineer - builder - ai{" "}
+        <span style={{ color: "rgba(196,145,2,0.4)" }}>]</span>
+      </div>
+      <h1
+        className={`font-orbitron font-black text-foreground mb-1 ${prefersReduced ? "" : "animate-glitch"}`}
+        style={{ fontSize: "clamp(32px, 4vw, 52px)", lineHeight: 1, letterSpacing: "0.04em", textShadow: "0 0 40px rgba(196,145,2,0.2)" }}
+      >
+        AAKASH
+      </h1>
+      <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "13px", fontWeight: 400, color: "rgba(196,145,2,0.7)", letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "20px" }}>
+        Khepar - Full-Stack - AI
+      </div>
+      <div className="mb-6 flex items-center gap-3">
+        <div style={{ width: "3px", height: "24px", background: "#00bfff", boxShadow: "0 0 10px #00bfff", flexShrink: 0 }} />
+        <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: "20px", fontWeight: 600, color: "#00bfff", textShadow: "0 0 15px rgba(0,191,255,0.4)" }}>
+          Software Engineer &amp; AI Builder
+        </span>
+      </div>
+      <div className="mb-6"><MetricGrid /></div>
+      <div className="mb-6 flex flex-wrap gap-1.5">
+        {TECH_CHIPS.map((c) => (
+          <span
+            key={c.label}
+            className="px-2.5 py-1 cursor-default transition-all duration-150"
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10px", border: `1px solid ${c.ai ? "rgba(0,191,255,0.3)" : "rgba(196,145,2,0.25)"}`, color: c.ai ? "rgba(0,191,255,0.75)" : "rgba(196,145,2,0.6)", background: c.ai ? "rgba(0,191,255,0.04)" : "rgba(196,145,2,0.04)" }}
+          >
+            {c.label}
+          </span>
+        ))}
+      </div>
+      <div className="mb-8"><CtaButtons /></div>
+      <SocialLinks />
+    </motion.div>
+  );
+}
+
+function DesktopCenterPanel({ prefersReduced, reactorX, reactorY, mouseX, mouseY }: {
+  prefersReduced: boolean;
+  reactorX: MotionValue<number>;
+  reactorY: MotionValue<number>;
+  mouseX: number;
+  mouseY: number;
+}) {
+  return (
+    <motion.div
+      className="flex items-center justify-center"
+      style={{ width: "280px", ...(prefersReduced ? {} : { x: reactorX, y: reactorY }) }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, delay: 0.6 }}
+    >
+      <div style={{ width: "280px", height: "280px" }}>
+        <ArcReactor3D mouseX={mouseX} mouseY={mouseY} />
+      </div>
+    </motion.div>
+  );
+}
+
+function DesktopActivityPanel() {
+  return (
+    <motion.div
+      className="flex flex-col pl-6"
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.7, delay: 0.5 }}
+    >
+      <div className="flex flex-1 flex-col" style={{ border: "1px solid rgba(196,145,2,0.12)", background: "rgba(3,5,12,0.7)", backdropFilter: "blur(8px)", maxHeight: "70vh", overflow: "hidden" }}>
+        <ActivityFeed maxItems={7} />
+      </div>
+    </motion.div>
+  );
+}
+
+function TabletLeftPanel() {
+  return (
+    <motion.div
+      className="flex flex-col justify-center"
+      initial={{ opacity: 0, x: -30 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6, delay: 0.4 }}
+    >
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10px", color: "rgba(0,191,255,0.5)", letterSpacing: "0.2em", marginBottom: "6px" }}>
+        <span style={{ color: "rgba(196,145,2,0.4)" }}>[</span> engineer - builder - ai{" "}
+        <span style={{ color: "rgba(196,145,2,0.4)" }}>]</span>
+      </div>
+      <h1 className="font-orbitron font-black text-foreground mb-1" style={{ fontSize: "36px", lineHeight: 1 }}>AAKASH</h1>
+      <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "11px", color: "rgba(196,145,2,0.7)", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: "16px" }}>
+        Khepar - Full-Stack - AI
+      </div>
+      <div className="mb-5 flex items-center gap-2">
+        <div style={{ width: "3px", height: "20px", background: "#00bfff", boxShadow: "0 0 8px #00bfff" }} />
+        <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: "16px", fontWeight: 600, color: "#00bfff" }}>
+          Software Engineer &amp; AI Builder
+        </span>
+      </div>
+      <div className="mb-4"><MetricGrid compact /></div>
+      <div className="mb-4"><CtaButtons compact /></div>
+      <SocialLinks />
+    </motion.div>
+  );
+}
+
 function TabletFeedSection() {
   return (
     <div
@@ -286,221 +398,24 @@ export const HeroSection = () => {
 
       <div
         className="relative z-10 hidden h-full w-full lg:grid"
-        style={{
-          gridTemplateColumns: "1fr auto 1fr",
-          padding: "80px 40px 20px",
-        }}
+        style={{ gridTemplateColumns: "1fr auto 1fr", padding: "80px 40px 20px" }}
       >
-        <motion.div
-          className="flex flex-col justify-center pr-6"
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-        >
-          <div
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: "11px",
-              color: "rgba(0,191,255,0.5)",
-              letterSpacing: "0.25em",
-              marginBottom: "8px",
-            }}
-          >
-            <span style={{ color: "rgba(196,145,2,0.4)" }}>[</span> engineer
-            - builder - ai{" "}
-            <span style={{ color: "rgba(196,145,2,0.4)" }}>]</span>
-          </div>
-
-          <h1
-            className={`font-orbitron font-black text-foreground mb-1 ${prefersReduced ? "" : "animate-glitch"}`}
-            style={{
-              fontSize: "clamp(32px, 4vw, 52px)",
-              lineHeight: 1,
-              letterSpacing: "0.04em",
-              textShadow: "0 0 40px rgba(196,145,2,0.2)",
-            }}
-          >
-            AAKASH
-          </h1>
-          <div
-            style={{
-              fontFamily: "'Orbitron', sans-serif",
-              fontSize: "13px",
-              fontWeight: 400,
-              color: "rgba(196,145,2,0.7)",
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              marginBottom: "20px",
-            }}
-          >
-            Khepar - Full-Stack - AI
-          </div>
-
-          <div className="mb-6 flex items-center gap-3">
-            <div
-              style={{
-                width: "3px",
-                height: "24px",
-                background: "#00bfff",
-                boxShadow: "0 0 10px #00bfff",
-                flexShrink: 0,
-              }}
-            />
-            <span
-              style={{
-                fontFamily: "'Rajdhani', sans-serif",
-                fontSize: "20px",
-                fontWeight: 600,
-                color: "#00bfff",
-                textShadow: "0 0 15px rgba(0,191,255,0.4)",
-              }}
-            >
-              Software Engineer &amp; AI Builder
-            </span>
-          </div>
-
-          <div className="mb-6">
-            <MetricGrid />
-          </div>
-
-          <div className="mb-6 flex flex-wrap gap-1.5">
-            {TECH_CHIPS.map((c) => (
-              <span
-                key={c.label}
-                className="px-2.5 py-1 cursor-default transition-all duration-150"
-                style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: "10px",
-                  border: `1px solid ${
-                    c.ai ? "rgba(0,191,255,0.3)" : "rgba(196,145,2,0.25)"
-                  }`,
-                  color: c.ai ? "rgba(0,191,255,0.75)" : "rgba(196,145,2,0.6)",
-                  background: c.ai
-                    ? "rgba(0,191,255,0.04)"
-                    : "rgba(196,145,2,0.04)",
-                }}
-              >
-                {c.label}
-              </span>
-            ))}
-          </div>
-
-          <div className="mb-8">
-            <CtaButtons />
-          </div>
-          <SocialLinks />
-        </motion.div>
-
-        <motion.div
-          className="flex items-center justify-center"
-          style={{
-            width: "280px",
-            ...(prefersReduced ? {} : { x: reactorX, y: reactorY }),
-          }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          <div style={{ width: "280px", height: "280px" }}>
-            <ArcReactor3D mouseX={reactorMouse.x} mouseY={reactorMouse.y} />
-          </div>
-        </motion.div>
-
-        <motion.div
-          className="flex flex-col pl-6"
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.5 }}
-        >
-          <div
-            className="flex flex-1 flex-col"
-            style={{
-              border: "1px solid rgba(196,145,2,0.12)",
-              background: "rgba(3,5,12,0.7)",
-              backdropFilter: "blur(8px)",
-              maxHeight: "70vh",
-              overflow: "hidden",
-            }}
-          >
-            <ActivityFeed maxItems={7} />
-          </div>
-        </motion.div>
+        <DesktopLeftPanel prefersReduced={prefersReduced} />
+        <DesktopCenterPanel
+          prefersReduced={prefersReduced}
+          reactorX={reactorX}
+          reactorY={reactorY}
+          mouseX={reactorMouse.x}
+          mouseY={reactorMouse.y}
+        />
+        <DesktopActivityPanel />
       </div>
 
       <div
         className="relative z-10 hidden h-full w-full md:grid lg:hidden"
-        style={{
-          gridTemplateColumns: "1fr 1fr",
-          padding: "80px 24px 20px",
-          gap: "24px",
-        }}
+        style={{ gridTemplateColumns: "1fr 1fr", padding: "80px 24px 20px", gap: "24px" }}
       >
-        <motion.div
-          className="flex flex-col justify-center"
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <div
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: "10px",
-              color: "rgba(0,191,255,0.5)",
-              letterSpacing: "0.2em",
-              marginBottom: "6px",
-            }}
-          >
-            <span style={{ color: "rgba(196,145,2,0.4)" }}>[</span> engineer
-            - builder - ai{" "}
-            <span style={{ color: "rgba(196,145,2,0.4)" }}>]</span>
-          </div>
-          <h1
-            className="font-orbitron font-black text-foreground mb-1"
-            style={{ fontSize: "36px", lineHeight: 1 }}
-          >
-            AAKASH
-          </h1>
-          <div
-            style={{
-              fontFamily: "'Orbitron', sans-serif",
-              fontSize: "11px",
-              color: "rgba(196,145,2,0.7)",
-              letterSpacing: "0.25em",
-              textTransform: "uppercase",
-              marginBottom: "16px",
-            }}
-          >
-            Khepar - Full-Stack - AI
-          </div>
-          <div className="mb-5 flex items-center gap-2">
-            <div
-              style={{
-                width: "3px",
-                height: "20px",
-                background: "#00bfff",
-                boxShadow: "0 0 8px #00bfff",
-              }}
-            />
-            <span
-              style={{
-                fontFamily: "'Rajdhani', sans-serif",
-                fontSize: "16px",
-                fontWeight: 600,
-                color: "#00bfff",
-              }}
-            >
-              Software Engineer &amp; AI Builder
-            </span>
-          </div>
-          <div className="mb-4">
-            <MetricGrid compact />
-          </div>
-          <div className="mb-4">
-            <CtaButtons compact />
-          </div>
-          <SocialLinks />
-        </motion.div>
-
+        <TabletLeftPanel />
         <motion.div
           className="flex items-center justify-center"
           initial={{ opacity: 0, scale: 0.8 }}
@@ -511,7 +426,6 @@ export const HeroSection = () => {
             <ArcReactor3D mouseX={0} mouseY={0} />
           </div>
         </motion.div>
-
         <TabletFeedSection />
       </div>
 

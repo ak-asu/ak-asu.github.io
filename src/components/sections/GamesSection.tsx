@@ -46,6 +46,63 @@ function GameScreen({ gameId, GameComponent }: { gameId: string; GameComponent: 
   );
 }
 
+function GameNavigation({
+  activeGameIndex,
+  onPrev,
+  onNext,
+  onHover,
+}: {
+  activeGameIndex: number;
+  onPrev: () => void;
+  onNext: () => void;
+  onHover: () => void;
+}) {
+  const hoverOn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.borderColor = 'rgba(0,191,255,0.7)';
+    e.currentTarget.style.color = '#00bfff';
+    e.currentTarget.style.background = 'rgba(0,191,255,0.1)';
+    onHover();
+  };
+  const hoverOff = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.borderColor = 'rgba(196,145,2,0.6)';
+    e.currentTarget.style.color = '#c49102';
+    e.currentTarget.style.background = 'rgba(196,145,2,0.08)';
+  };
+
+  return (
+    <motion.div className="flex items-center gap-3 mt-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+      <motion.button onClick={onPrev} onMouseEnter={hoverOn} onMouseLeave={hoverOff} style={NAV_BTN_STYLE} whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
+        <ChevronLeft className="w-5 h-5" />
+      </motion.button>
+      <div className="px-4 text-center min-w-[140px]">
+        <div className="font-orbitron text-sm text-arc-blue uppercase tracking-wider" style={{ textShadow: '0 0 6px hsl(195 100% 50%)' }}>
+          {games[activeGameIndex].name}
+        </div>
+        <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '11px', color: 'rgba(224,221,216,0.5)', marginTop: '2px' }}>
+          {games[activeGameIndex].description}
+        </div>
+        <div className="flex justify-center gap-1 mt-2">
+          {games.map((game, i) => (
+            <div
+              key={game.id}
+              className="rounded-full transition-all duration-200"
+              style={{
+                width: i === activeGameIndex ? '16px' : '5px',
+                height: '5px',
+                background: i === activeGameIndex ? '#00bfff' : 'rgba(196,145,2,0.4)',
+                boxShadow: i === activeGameIndex ? '0 0 6px #00bfff' : 'none',
+              }}
+            />
+          ))}
+        </div>
+      </div>
+      <motion.button onClick={onNext} onMouseEnter={hoverOn} onMouseLeave={hoverOff} style={NAV_BTN_STYLE} whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
+        <ChevronRight className="w-5 h-5" />
+      </motion.button>
+    </motion.div>
+  );
+}
+
 export const GamesSection = () => {
   const [activeGameIndex, setActiveGameIndex] = useState(0);
   const { playHover, playWhoosh } = useAudioSystem();
@@ -60,98 +117,23 @@ export const GamesSection = () => {
       style={{ paddingTop: '72px', paddingBottom: '28px' }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-background via-iron-red-dark/20 to-background pointer-events-none" />
-
       <div className="relative z-10 flex flex-col items-center w-full max-w-xl">
-        {/* Cabinet */}
         <motion.div
           className="relative w-full"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.4 }}
         >
-          {/* Gold outer frame */}
-          <div
-            className="absolute -inset-1 rounded-2xl"
-            style={{ background: 'linear-gradient(135deg, hsl(44 98% 39%), hsl(44 98% 25%), hsl(44 98% 39%))', boxShadow: '0 0 18px hsl(44 98% 39% / 0.35)' }}
-          />
-          {/* Red inner frame */}
-          <div
-            className="absolute -inset-0.5 rounded-xl"
-            style={{ background: 'linear-gradient(180deg, hsl(0 100% 20%), hsl(0 100% 12%))' }}
-          />
+          <div className="absolute -inset-1 rounded-2xl" style={{ background: 'linear-gradient(135deg, hsl(44 98% 39%), hsl(44 98% 25%), hsl(44 98% 39%))', boxShadow: '0 0 18px hsl(44 98% 39% / 0.35)' }} />
+          <div className="absolute -inset-0.5 rounded-xl" style={{ background: 'linear-gradient(180deg, hsl(0 100% 20%), hsl(0 100% 12%))' }} />
           <GameScreen gameId={games[activeGameIndex].id} GameComponent={ActiveGame} />
         </motion.div>
-
-        {/* Navigation — clearly visible with solid gold border + background */}
-        <motion.div
-          className="flex items-center gap-3 mt-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <motion.button
-            onClick={prevGame}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,191,255,0.7)';
-              (e.currentTarget as HTMLButtonElement).style.color = '#00bfff';
-              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,191,255,0.1)';
-              playHover();
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(196,145,2,0.6)';
-              (e.currentTarget as HTMLButtonElement).style.color = '#c49102';
-              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(196,145,2,0.08)';
-            }}
-            style={NAV_BTN_STYLE}
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.92 }}
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </motion.button>
-
-          <div className="px-4 text-center min-w-[140px]">
-            <div className="font-orbitron text-sm text-arc-blue uppercase tracking-wider" style={{ textShadow: '0 0 6px hsl(195 100% 50%)' }}>
-              {games[activeGameIndex].name}
-            </div>
-            <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '11px', color: 'rgba(224,221,216,0.5)', marginTop: '2px' }}>
-              {games[activeGameIndex].description}
-            </div>
-            <div className="flex justify-center gap-1 mt-2">
-              {games.map((game, i) => (
-                <div
-                  key={game.id}
-                  className="rounded-full transition-all duration-200"
-                  style={{
-                    width: i === activeGameIndex ? '16px' : '5px',
-                    height: '5px',
-                    background: i === activeGameIndex ? '#00bfff' : 'rgba(196,145,2,0.4)',
-                    boxShadow: i === activeGameIndex ? '0 0 6px #00bfff' : 'none',
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          <motion.button
-            onClick={nextGame}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,191,255,0.7)';
-              (e.currentTarget as HTMLButtonElement).style.color = '#00bfff';
-              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,191,255,0.1)';
-              playHover();
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(196,145,2,0.6)';
-              (e.currentTarget as HTMLButtonElement).style.color = '#c49102';
-              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(196,145,2,0.08)';
-            }}
-            style={NAV_BTN_STYLE}
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.92 }}
-          >
-            <ChevronRight className="w-5 h-5" />
-          </motion.button>
-        </motion.div>
+        <GameNavigation
+          activeGameIndex={activeGameIndex}
+          onPrev={prevGame}
+          onNext={nextGame}
+          onHover={playHover}
+        />
       </div>
     </section>
   );

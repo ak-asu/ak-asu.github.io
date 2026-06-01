@@ -97,30 +97,104 @@ function AchievementCard({ ach }: { ach: Achievement }) {
   );
 }
 
+function CurtainContainer({
+  isRevealed,
+  scrollRef,
+  onReveal,
+  onRevealHover,
+}: {
+  isRevealed: boolean;
+  scrollRef: React.RefObject<HTMLDivElement | null>;
+  onReveal: () => void;
+  onRevealHover: () => void;
+}) {
+  return (
+    <div className="relative" style={{ minHeight: '400px', height: '60vh' }}>
+      <div
+        ref={scrollRef}
+        className="absolute inset-0 overflow-y-auto p-4"
+        style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,191,255,0.2) transparent' }}
+      >
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {achievements.map((ach, i) => (
+            <motion.div
+              key={ach.title}
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={isRevealed ? { opacity: 1, scale: 1 } : {}}
+              transition={{ delay: 0.4 + i * 0.07, duration: 0.3 }}
+            >
+              <AchievementCard ach={ach} />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+      <AnimatePresence>
+        {!isRevealed && (
+          <>
+            <motion.div
+              className="absolute top-0 left-0 w-1/2 h-full z-20"
+              initial={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ duration: 0.75, ease: 'easeInOut' }}
+              style={{ background: 'linear-gradient(90deg, hsl(44 90% 45%) 0%, hsl(44 98% 39%) 20%, hsl(0 100% 24%) 40%, hsl(0 100% 18%) 100%)', borderRight: '3px solid hsl(44 98% 50%)' }}
+            >
+              <div className="absolute inset-0 opacity-25">
+                {Array.from({ length: 10 }, (_, i) => i * 10 + 5).map(pct => <div key={pct} className="absolute w-full h-px bg-iron-gold/50" style={{ top: `${pct}%` }} />)}
+              </div>
+            </motion.div>
+            <motion.div
+              className="absolute top-0 right-0 w-1/2 h-full z-20"
+              initial={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ duration: 0.75, ease: 'easeInOut' }}
+              style={{ background: 'linear-gradient(270deg, hsl(44 90% 45%) 0%, hsl(44 98% 39%) 20%, hsl(0 100% 24%) 40%, hsl(0 100% 18%) 100%)', borderLeft: '3px solid hsl(44 98% 50%)' }}
+            >
+              <div className="absolute inset-0 opacity-25">
+                {Array.from({ length: 10 }, (_, i) => i * 10 + 5).map(pct => <div key={pct} className="absolute w-full h-px bg-iron-gold/50" style={{ top: `${pct}%` }} />)}
+              </div>
+            </motion.div>
+            <motion.button
+              onClick={onReveal}
+              onMouseEnter={onRevealHover}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-3"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}>
+                <ArcReactor size={60} />
+              </motion.div>
+              <span className="font-orbitron text-xs text-arc-blue uppercase tracking-wider px-4 py-2 bg-background/80" style={{ border: '1px solid rgba(0,191,255,0.4)' }}>
+                Reveal Achievements
+              </span>
+            </motion.button>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export const AchievementsSection = () => {
   const [isRevealed, setIsRevealed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { playPowerUp, playHover } = useAudioSystem();
 
-  // Auto-scroll bidirectional
-  useEffect(() => {
+  useEffect(function scrollEffect() {
     if (!isRevealed || !scrollRef.current) return;
     const el = scrollRef.current;
     let isAuto = true;
-    let isProg = false;
     let dir: 'down' | 'up' = 'down';
 
     const interval = setInterval(() => {
-      if (!isAuto) return;
-      isProg = true;
-      if (dir === 'down') {
-        el.scrollTop += 1;
-        if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) dir = 'up';
-      } else {
-        el.scrollTop -= 1;
-        if (el.scrollTop <= 4) dir = 'down';
+      if (isAuto) {
+        if (dir === 'down') {
+          el.scrollTop += 1;
+          if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) dir = 'up';
+        } else {
+          el.scrollTop -= 1;
+          if (el.scrollTop <= 4) dir = 'down';
+        }
       }
-      setTimeout(() => { isProg = false; }, 10);
     }, 30);
 
     const pause = () => { isAuto = false; };
@@ -131,7 +205,7 @@ export const AchievementsSection = () => {
     el.addEventListener('touchstart', pause, { passive: true });
     document.addEventListener('click', resume);
 
-    return () => {
+    return function cleanup() {
       clearInterval(interval);
       el.removeEventListener('wheel', pause);
       el.removeEventListener('touchstart', pause);
@@ -142,77 +216,13 @@ export const AchievementsSection = () => {
   return (
     <section className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center" style={{ paddingBottom: '28px', paddingTop: '72px' }}>
       <div className="absolute inset-0 bg-gradient-to-b from-iron-red-dark/25 via-background to-iron-red-dark/25 pointer-events-none" />
-
       <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 flex flex-col">
-        {/* Curtain container */}
-        <div className="relative" style={{ minHeight: '400px', height: '60vh' }}>
-          {/* Grid — always rendered, behind curtains */}
-          <div
-            ref={scrollRef}
-            className="absolute inset-0 overflow-y-auto p-4"
-            style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,191,255,0.2) transparent' }}
-          >
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {achievements.map((ach, i) => (
-                <motion.div
-                  key={ach.title}
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={isRevealed ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ delay: 0.4 + i * 0.07, duration: 0.3 }}
-                >
-                  <AchievementCard ach={ach} />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          {/* Curtains */}
-          <AnimatePresence>
-            {!isRevealed && (
-              <>
-                <motion.div
-                  className="absolute top-0 left-0 w-1/2 h-full z-20"
-                  initial={{ x: 0 }}
-                  exit={{ x: '-100%' }}
-                  transition={{ duration: 0.75, ease: 'easeInOut' }}
-                  style={{ background: 'linear-gradient(90deg, hsl(44 90% 45%) 0%, hsl(44 98% 39%) 20%, hsl(0 100% 24%) 40%, hsl(0 100% 18%) 100%)', borderRight: '3px solid hsl(44 98% 50%)' }}
-                >
-                  <div className="absolute inset-0 opacity-25">
-                    {Array.from({ length: 10 }, (_, i) => i * 10 + 5).map(pct => <div key={pct} className="absolute w-full h-px bg-iron-gold/50" style={{ top: `${pct}%` }} />)}
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  className="absolute top-0 right-0 w-1/2 h-full z-20"
-                  initial={{ x: 0 }}
-                  exit={{ x: '100%' }}
-                  transition={{ duration: 0.75, ease: 'easeInOut' }}
-                  style={{ background: 'linear-gradient(270deg, hsl(44 90% 45%) 0%, hsl(44 98% 39%) 20%, hsl(0 100% 24%) 40%, hsl(0 100% 18%) 100%)', borderLeft: '3px solid hsl(44 98% 50%)' }}
-                >
-                  <div className="absolute inset-0 opacity-25">
-                    {Array.from({ length: 10 }, (_, i) => i * 10 + 5).map(pct => <div key={pct} className="absolute w-full h-px bg-iron-gold/50" style={{ top: `${pct}%` }} />)}
-                  </div>
-                </motion.div>
-
-                {/* Reveal button */}
-                <motion.button
-                  onClick={() => { playPowerUp(); setIsRevealed(true); }}
-                  onMouseEnter={playHover}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-3"
-                  whileHover={{ scale: 1.08 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}>
-                    <ArcReactor size={60} />
-                  </motion.div>
-                  <span className="font-orbitron text-xs text-arc-blue uppercase tracking-wider px-4 py-2 bg-background/80" style={{ border: '1px solid rgba(0,191,255,0.4)' }}>
-                    Reveal Achievements
-                  </span>
-                </motion.button>
-              </>
-            )}
-          </AnimatePresence>
-        </div>
+        <CurtainContainer
+          isRevealed={isRevealed}
+          scrollRef={scrollRef}
+          onReveal={() => { playPowerUp(); setIsRevealed(true); }}
+          onRevealHover={playHover}
+        />
       </div>
     </section>
   );

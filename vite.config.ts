@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 // ESM equivalent of __dirname
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(() => {
   // Base URL: "/" for user/org GitHub Pages (username.github.io) and custom-domain deployments.
   // If deploying to a project page (username.github.io/reponame/),
   // set VITE_BASE_PATH=/reponame/ in the CI environment instead.
