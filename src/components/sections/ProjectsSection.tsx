@@ -1,223 +1,368 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import {
-  ExternalLink,
-  Github,
-  ChevronLeft,
-  ChevronRight,
-  Link,
-} from "lucide-react";
+import { ExternalLink, Play, ChevronLeft, ChevronRight } from "lucide-react";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useAudioSystem } from "@/hooks/useAudioSystem";
 import projectsDataRaw from "@/data/projects.json";
 
-// Helper function to convert YouTube URLs to embed format
-const convertToEmbedUrl = (url: string): string => {
-  if (!url) return "";
+type ProjectType = "personal" | "collaborative" | "hackathon" | "academic";
+type FilterType = "All" | "Personal" | "Collaborative" | "Hackathon";
 
-  // Handle youtu.be short format
-  const youtuBeMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
-  if (youtuBeMatch) {
-    return `https://www.youtube.com/embed/${youtuBeMatch[1]}`;
+interface Project {
+  id: string;
+  name: string;
+  shortDescription: string;
+  description: string;
+  technologies: string[];
+  duration: string;
+  url: string;
+  media: string;
+  type: ProjectType;
+  placement?: string;
+}
+
+const projects = projectsDataRaw as Project[];
+const PINNED_IDS = ["project30", "project31", "project32", "project33"];
+
+function typeToFilter(t: ProjectType): FilterType {
+  if (t === "personal") return "Personal";
+  if (t === "collaborative") return "Collaborative";
+  if (t === "hackathon") return "Hackathon";
+  return "Personal";
+}
+
+function placementLabel(p?: string) {
+  if (!p) return null;
+  if (p === "1st") return "1st Place";
+  if (p === "2nd") return "2nd Place";
+  if (p === "3rd") return "3rd Place";
+  return p;
+}
+
+function getBadge(project: Project) {
+  if (project.type === "hackathon" && project.placement) {
+    return { label: placementLabel(project.placement)!, color: "#00c864" };
   }
-
-  // Handle youtube.com/watch?v= format
-  const youtubeMatch = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/);
-  if (youtubeMatch) {
-    return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+  if (project.type === "hackathon") {
+    return { label: "Hackathon", color: "#00c864" };
   }
-
-  // Return empty string for non-YouTube URLs (like LinkedIn)
-  if (!url.includes("youtube.com") && !url.includes("youtu.be")) {
-    return "";
+  if (project.type === "collaborative") {
+    return { label: "Collab", color: "#00bfff" };
   }
+  return { label: "Personal", color: "#c49102" };
+}
 
-  return url;
-};
+function convertToEmbedUrl(url: string): string | null {
+  if (!url) return null;
+  const ytShort = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  if (ytShort) return `https://www.youtube.com/embed/${ytShort[1]}`;
+  const ytLong = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/);
+  if (ytLong) return `https://www.youtube.com/embed/${ytLong[1]}`;
+  return null;
+}
 
-// Transform projects data to match component structure
-const projectsData = projectsDataRaw.map((project, index) => ({
-  id: index + 1,
-  title: project.name,
-  subtitle: `${project.type.charAt(0).toUpperCase() + project.type.slice(1)} Project`,
-  description: project.description,
-  tech: project.technologies,
-  videoUrl: convertToEmbedUrl(project.media || ""),
-  liveUrl: project.url || "#",
-}));
+function FeaturedShowcase({
+  project,
+  onPrev,
+  onNext,
+}: {
+  project: Project;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  const embedUrl = convertToEmbedUrl(project.media);
+  const badge = getBadge(project);
+  const { playHover } = useAudioSystem();
+
+  return (
+    <div
+      className="mb-5 grid grid-cols-1 gap-4 lg:grid-cols-[1.3fr_1fr]"
+      style={{
+        border: "1px solid rgba(196,145,2,0.18)",
+        background: "rgba(3,5,12,0.72)",
+        boxShadow: "0 0 28px rgba(0,191,255,0.06)",
+        padding: "14px",
+      }}
+    >
+      <div
+        className="relative overflow-hidden"
+        style={{
+          aspectRatio: "16/9",
+          border: "1px solid rgba(0,191,255,0.22)",
+          background:
+            "linear-gradient(180deg, rgba(0,191,255,0.08), rgba(5,8,18,0.92))",
+        }}
+      >
+        {embedUrl ? (
+          <iframe
+            key={embedUrl}
+            src={embedUrl}
+            className="h-full w-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center">
+            <Play size={28} style={{ color: "rgba(0,191,255,0.55)" }} />
+            <span
+              style={{
+                fontFamily: "'Orbitron', sans-serif",
+                fontSize: "11px",
+                color: "rgba(196,145,2,0.6)",
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+              }}
+            >
+              No video preview
+            </span>
+          </div>
+        )}
+      </div>
+
+      <div className="flex min-h-0 flex-col">
+        <div className="mb-3 flex items-center gap-2">
+          <span
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "8px",
+              textTransform: "uppercase",
+              color: badge.color,
+              border: `1px solid ${badge.color}40`,
+              background: `${badge.color}10`,
+              padding: "2px 7px",
+            }}
+          >
+            {badge.label}
+          </span>
+          <span
+            style={{
+              marginLeft: "auto",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "9px",
+              color: "rgba(224,221,216,0.28)",
+            }}
+          >
+            {project.duration}
+          </span>
+        </div>
+
+        <h3
+          style={{
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: "18px",
+            lineHeight: 1.2,
+            color: "#e0ddd8",
+            marginBottom: "8px",
+          }}
+        >
+          {project.name}
+        </h3>
+        <p
+          style={{
+            fontFamily: "'Rajdhani', sans-serif",
+            fontSize: "14px",
+            color: "rgba(224,221,216,0.68)",
+            lineHeight: 1.5,
+            marginBottom: "12px",
+          }}
+        >
+          {project.shortDescription}
+        </p>
+        <p
+          className="min-h-0 overflow-y-auto pr-1"
+          style={{
+            fontFamily: "'Rajdhani', sans-serif",
+            fontSize: "13px",
+            color: "rgba(224,221,216,0.48)",
+            lineHeight: 1.5,
+            maxHeight: "96px",
+            marginBottom: "12px",
+          }}
+        >
+          {project.description}
+        </p>
+
+        <div className="mb-4 flex flex-wrap gap-1.5">
+          {project.technologies.slice(0, 7).map((t) => (
+            <span
+              key={t}
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: "9px",
+                padding: "2px 7px",
+                border: "1px solid rgba(196,145,2,0.18)",
+                color: "rgba(196,145,2,0.55)",
+                background: "rgba(196,145,2,0.04)",
+              }}
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+
+        <div className="mt-auto flex items-center gap-2">
+          <button
+            onClick={onPrev}
+            onMouseEnter={playHover}
+            className="btn-chamfer flex h-8 w-8 items-center justify-center"
+            style={{
+              border: "1px solid rgba(196,145,2,0.25)",
+              color: "rgba(196,145,2,0.72)",
+              background: "rgba(5,8,18,0.6)",
+            }}
+            aria-label="Previous project"
+          >
+            <ChevronLeft size={15} />
+          </button>
+          <button
+            onClick={onNext}
+            onMouseEnter={playHover}
+            className="btn-chamfer flex h-8 w-8 items-center justify-center"
+            style={{
+              border: "1px solid rgba(196,145,2,0.25)",
+              color: "rgba(196,145,2,0.72)",
+              background: "rgba(5,8,18,0.6)",
+            }}
+            aria-label="Next project"
+          >
+            <ChevronRight size={15} />
+          </button>
+          {project.url && (
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-chamfer ml-auto flex items-center gap-1 px-4 py-2 font-orbitron text-[9px] uppercase tracking-wider"
+              style={{
+                border: "1px solid rgba(196,145,2,0.28)",
+                color: "rgba(196,145,2,0.75)",
+                background: "rgba(196,145,2,0.04)",
+              }}
+            >
+              <ExternalLink size={11} /> Open
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export const ProjectsSection = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const { playClick, playHover, playWhoosh } = useAudioSystem();
+  const [filter, setFilter] = useState<FilterType>("All");
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const { playClick, playHover } = useAudioSystem();
 
-  const currentProject = projectsData[currentIndex];
+  const filters: FilterType[] = [
+    "All",
+    "Personal",
+    "Collaborative",
+    "Hackathon",
+  ];
 
-  const nextProject = () => {
-    playWhoosh();
-    setCurrentIndex((prev) => (prev + 1) % projectsData.length);
+  const filtered = (() => {
+    const matches = (p: Project) =>
+      filter === "All" || typeToFilter(p.type) === filter;
+    const pinned = projects.filter((p) => PINNED_IDS.includes(p.id) && matches(p));
+    const rest = projects.filter((p) => !PINNED_IDS.includes(p.id) && matches(p));
+    return [...pinned, ...rest];
+  })();
+  const featured = filtered[Math.min(featuredIndex, Math.max(filtered.length - 1, 0))];
+
+  useEffect(() => {
+    setFeaturedIndex(0);
+  }, [filter]);
+
+  const showPrevious = () => {
+    playClick();
+    setFeaturedIndex((idx) => (idx - 1 + filtered.length) % filtered.length);
   };
 
-  const prevProject = () => {
-    playWhoosh();
-    setCurrentIndex(
-      (prev) => (prev - 1 + projectsData.length) % projectsData.length,
-    );
+  const showNext = () => {
+    playClick();
+    setFeaturedIndex((idx) => (idx + 1) % filtered.length);
   };
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden flex items-center justify-center py-16 sm:py-20">
-      {/* Background */}
-      <div className="absolute inset-0 bg-linear-to-b from-iron-red-dark/50 via-background to-iron-red-dark/50" />
+    <section
+      className="relative flex min-h-screen w-full flex-col overflow-hidden"
+      style={{ paddingBottom: "28px", paddingTop: "72px" }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-iron-red-dark/30 via-background to-iron-red-dark/30 pointer-events-none" />
 
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-20 w-64 h-64 rounded-full bg-iron-gold/20 blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-64 h-64 rounded-full bg-arc-blue/20 blur-3xl" />
-      </div>
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 sm:px-6">
+        <SectionHeader label="portfolio" title="PROJECTS" />
 
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-2 sm:px-4">
-        {/* Main TV Frame */}
-        <motion.div
-          className="relative"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          {/* Outer Frame - Gold metallic */}
-          <div
-            className="relative p-2 sm:p-3 rounded-xl sm:rounded-2xl"
-            style={{
-              background:
-                "linear-gradient(180deg, hsl(44 90% 55%) 0%, hsl(44 98% 39%) 30%, hsl(44 100% 25%) 100%)",
-              boxShadow:
-                "0 0 30px hsl(44 98% 39% / 0.3), inset 0 2px 0 hsl(44 90% 70%)",
-            }}
-          >
-            {/* Inner Frame - Red metallic */}
-            <div
-              className="relative p-3 sm:p-4 rounded-lg sm:rounded-xl"
+        <div className="mb-6 flex flex-wrap gap-2">
+          {filters.map((f) => (
+            <button
+              key={f}
+              onClick={() => {
+                playClick();
+                setFilter(f);
+              }}
+              onMouseEnter={playHover}
+              className="btn-chamfer px-4 py-1.5 font-orbitron text-[9px] uppercase tracking-wider transition-all duration-200"
               style={{
+                border: `1px solid ${
+                  filter === f ? "rgba(0,191,255,0.5)" : "rgba(196,145,2,0.2)"
+                }`,
+                color: filter === f ? "#00bfff" : "rgba(196,145,2,0.6)",
                 background:
-                  "linear-gradient(180deg, hsl(0 85% 35%) 0%, hsl(0 100% 24%) 50%, hsl(0 100% 15%) 100%)",
+                  filter === f ? "rgba(0,191,255,0.08)" : "rgba(5,8,18,0.5)",
+                boxShadow:
+                  filter === f ? "0 0 12px rgba(0,191,255,0.12)" : "none",
               }}
             >
-              {/* Screen area with arc blue glow */}
-              <div
-                className="relative rounded-md sm:rounded-lg overflow-hidden"
-                style={{
-                  boxShadow:
-                    "0 0 20px hsl(195 100% 50% / 0.3), inset 0 0 30px hsl(195 100% 50% / 0.1)",
-                  border: "3px solid hsl(195 100% 50% / 0.5)",
-                }}
-              >
-                {/* Screen Content */}
-                <div className="bg-background/90 p-3 sm:p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                    {/* Left - Video */}
-                    <div className="relative h-48 sm:h-56 md:h-80 lg:h-96 rounded-lg overflow-hidden bg-background border border-arc-blue/30">
-                      {currentProject.videoUrl ? (
-                        <iframe
-                          src={currentProject.videoUrl}
-                          className="w-full h-full"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-iron-gold/50">
-                          <span className="font-orbitron text-xs sm:text-sm">
-                            No preview available
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Right - Project Info */}
-                    <div className="flex flex-col">
-                      {/* Title with links */}
-                      <div className="flex items-start justify-between gap-2 sm:gap-3 mb-2 shrink-0">
-                        <motion.h3
-                          key={currentProject.id}
-                          className="font-orbitron text-lg sm:text-2xl md:text-3xl gold-text flex-1"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                        >
-                          {currentProject.title}
-                        </motion.h3>
-
-                        {/* Demo and Repo icon links */}
-                        <div className="flex gap-1.5 sm:gap-2 shrink-0">
-                          {currentProject.liveUrl &&
-                            currentProject.liveUrl !== "#" && (
-                              <motion.a
-                                href={currentProject.liveUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-1.5 sm:p-2 rounded-lg border border-arc-blue/50 bg-arc-blue/10 text-arc-blue hover:bg-arc-blue/20 transition-all"
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={playClick}
-                                onMouseEnter={playHover}
-                                title="Live Demo"
-                              >
-                                <ExternalLink
-                                  size={16}
-                                  className="sm:w-4.5 sm:h-4.5"
-                                />
-                              </motion.a>
-                            )}
-                        </div>
-                      </div>
-
-                      <p className="text-iron-gold font-rajdhani text-sm sm:text-base md:text-lg mb-3 sm:mb-4 shrink-0">
-                        {currentProject.subtitle}
-                      </p>
-
-                      {/* Scrollable Description */}
-                      <div className="overflow-y-auto rounded-lg bg-background/50 border border-iron-gold/20 p-3 sm:p-4 mb-3 sm:mb-4 scrollbar-thin scrollbar-track-iron-red-dark scrollbar-thumb-arc-blue/30 h-24 sm:h-28 md:h-32 lg:h-40">
-                        <p className="text-foreground/80 font-rajdhani text-sm sm:text-base leading-relaxed">
-                          {currentProject.description}
-                        </p>
-                      </div>
-
-                      {/* Tech Stack */}
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2 shrink-0">
-                        {currentProject.tech.map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-iron-red-dark/50 border border-iron-gold/30 text-iron-gold font-orbitron text-[10px] sm:text-xs"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation Arrows - Left */}
-          <motion.button
-            onClick={prevProject}
-            onMouseEnter={playHover}
-            className="absolute left-2 md:left-0 top-1/2 -translate-y-1/2 md:-translate-x-16 w-10 h-16 sm:w-12 sm:h-20 flex items-center justify-center border-2 border-arc-blue/50 rounded-lg bg-background/30 md:bg-background/50 backdrop-blur-sm text-arc-blue hover:bg-arc-blue/10 transition-all z-20"
-            whileHover={{ scale: 1.1, borderColor: "hsl(195 100% 50%)" }}
-            whileTap={{ scale: 0.95 }}
+              {f}
+            </button>
+          ))}
+          <span
+            style={{
+              marginLeft: "auto",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "9px",
+              color: "rgba(224,221,216,0.25)",
+              alignSelf: "center",
+            }}
           >
-            <ChevronLeft size={24} className="sm:w-7 sm:h-7" />
-          </motion.button>
+            {filtered.length} projects
+          </span>
+        </div>
 
-          {/* Navigation Arrows - Right */}
-          <motion.button
-            onClick={nextProject}
-            onMouseEnter={playHover}
-            className="absolute right-2 md:right-0 top-1/2 -translate-y-1/2 md:translate-x-16 w-10 h-16 sm:w-12 sm:h-20 flex items-center justify-center border-2 border-arc-blue/50 rounded-lg bg-background/30 md:bg-background/50 backdrop-blur-sm text-arc-blue hover:bg-arc-blue/10 transition-all z-20"
-            whileHover={{ scale: 1.1, borderColor: "hsl(195 100% 50%)" }}
-            whileTap={{ scale: 0.95 }}
+        {featured && (
+          <FeaturedShowcase
+            project={featured}
+            onPrev={showPrevious}
+            onNext={showNext}
+          />
+        )}
+
+        <div className="mt-auto mb-4 flex justify-center">
+          <a
+            href="https://github.com/ak-asu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-chamfer flex items-center gap-2 px-6 py-2.5 font-orbitron text-[9px] uppercase tracking-wider transition-all duration-200"
+            style={{
+              border: "1px solid rgba(196,145,2,0.3)",
+              color: "rgba(196,145,2,0.7)",
+              background: "rgba(5,8,18,0.6)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(0,191,255,0.4)";
+              e.currentTarget.style.color = "#00bfff";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(196,145,2,0.3)";
+              e.currentTarget.style.color = "rgba(196,145,2,0.7)";
+            }}
           >
-            <ChevronRight size={24} className="sm:w-7 sm:h-7" />
-          </motion.button>
-        </motion.div>
+            View More on GitHub ↗
+          </a>
+        </div>
       </div>
+
     </section>
   );
 };
