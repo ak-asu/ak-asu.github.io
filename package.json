@@ -17,13 +17,17 @@
     "build:github": "vite build --mode production",
     "preview": "vite preview",
     "check": "tsc",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "e2e": "node tests/e2e.mjs",
+    "e2e:desktop": "node tests/e2e.mjs --viewport desktop",
+    "e2e:mobile": "node tests/e2e.mjs --viewport mobile"
   },
   "dependencies": {
     "@heroui/system": "^2.4.25",
     "@heroui/theme": "^2.4.25",
     "@hookform/resolvers": "^5.2.2",
     "@mlc-ai/web-llm": "^0.2.80",
+    "@playwright/mcp": "^0.0.75",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.2",
     "@tanstack/react-query": "^5.90.12",
@@ -45,6 +49,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
     "@types/node": "^25.0.3",

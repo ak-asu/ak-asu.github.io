@@ -55,6 +55,7 @@ jobs:
         run: pnpm run build
         env:
           NODE_ENV: production
+          VITE_BASE_PATH: /Portfolio/
 
       - name: Verify build output
         run: |

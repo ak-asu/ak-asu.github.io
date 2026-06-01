@@ -276,7 +276,7 @@ export const AKChat = () => {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className={cn(
-              "fixed bottom-6 right-6 z-50 w-95 rounded-xl overflow-hidden",
+              "fixed bottom-6 right-6 z-50 w-[calc(100vw-3rem)] sm:w-95 rounded-xl overflow-hidden",
               "bg-linear-to-b from-slate-900/95 to-slate-950/95 backdrop-blur-xl",
               "border-2 border-red-600/50 shadow-2xl shadow-red-500/20",
               "flex flex-col",

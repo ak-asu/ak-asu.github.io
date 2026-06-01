@@ -85,7 +85,7 @@ export const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
-              Devsarc
+              AK
             </motion.h1>
 
             {/* Boot sequence terminal */}
