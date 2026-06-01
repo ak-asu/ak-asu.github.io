@@ -1,167 +1,118 @@
-import { motion } from "framer-motion";
-import { memo } from "react";
-import { ArcReactorIcon } from "@/components/ui/ArcReactor";
-import { formatPeriod } from "@/lib/dateUtils";
-import educationDataRaw from "@/data/education.json";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import educationDataRaw from '@/data/education.json';
 
-// Format subjects into description
-const formatDescription = (
-  subjects: Array<{ name: string; grade: string }>,
-) => {
-  if (!subjects || subjects.length === 0)
-    return "Comprehensive program in Computer Science.";
+interface Subject { name: string; grade: string; }
+interface Education {
+  degree: string; field: string; institution: string;
+  image: string; subjects: Subject[]; gpa: number;
+  startDate: number; endDate: number;
+}
 
-  const courseList = subjects.map((s) => `${s.name} (${s.grade})`).join(", ");
-  return `Key Courses: ${courseList}`;
-};
+const education = educationDataRaw as Education[];
 
-// Transform education data to match component structure
-const educationData = educationDataRaw.map((edu, index) => ({
-  id: index + 1,
-  degree: `${edu.degree} in ${edu.field}`,
-  institution: edu.institution,
-  period: formatPeriod(edu.startDate, edu.endDate),
-  score: `GPA: ${edu.gpa}/4.0`,
-  description: formatDescription(edu.subjects),
-  image: edu.image,
-}));
-
-const EducationCard = memo(function EducationCard({
-  education,
-  index,
-}: {
-  education: (typeof educationData)[0];
-  index: number;
-}) {
+function GradeBadge({ grade }: { grade: string }) {
+  const color = grade === 'A+' ? '#c49102' : grade === 'A' ? '#00bfff' : 'rgba(224,221,216,0.4)';
+  const bg    = grade === 'A+' ? 'rgba(196,145,2,0.12)' : grade === 'A' ? 'rgba(0,191,255,0.1)' : 'rgba(224,221,216,0.05)';
   return (
-    <motion.div
-      className="relative group"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
+    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '9px', padding: '2px 7px', border: `1px solid ${color}50`, color, background: bg }}>
+      {grade}
+    </span>
+  );
+}
+
+function EducationCard({ edu }: { edu: Education }) {
+  const [coursesOpen, setCoursesOpen] = useState(false);
+
+  return (
+    <div
+      className="flex-1 min-w-0 flex flex-col border-trace"
+      style={{ background: 'rgba(5,8,18,0.7)', border: '1px solid rgba(196,145,2,0.15)', padding: '24px', position: 'relative', minHeight: '360px' }}
     >
-      {/* Card Frame */}
-      <div
-        className="relative rounded-xl p-0.75"
-        style={{
-          background:
-            "linear-gradient(180deg, hsl(44 90% 55%) 0%, hsl(44 98% 39%) 50%, hsl(44 100% 25%) 100%)",
-        }}
-      >
-        <div
-          className="relative rounded-xl p-4 sm:p-5 min-h-50"
-          style={{
-            background:
-              "linear-gradient(180deg, hsl(0 85% 30%) 0%, hsl(0 100% 20%) 100%)",
-          }}
-        >
-          {/* Corner decorations */}
-          <div className="absolute top-2 left-2 w-4 h-4 sm:w-6 sm:h-6 border-t-2 border-l-2 border-arc-blue/50 rounded-tl-lg" />
-          <div className="absolute top-2 right-2 w-4 h-4 sm:w-6 sm:h-6 border-t-2 border-r-2 border-arc-blue/50 rounded-tr-lg" />
-          <div className="absolute bottom-2 left-2 w-4 h-4 sm:w-6 sm:h-6 border-b-2 border-l-2 border-arc-blue/50 rounded-bl-lg" />
-          <div className="absolute bottom-2 right-2 w-4 h-4 sm:w-6 sm:h-6 border-b-2 border-r-2 border-arc-blue/50 rounded-br-lg" />
+      {/* Institution image */}
+      {edu.image && (
+        <div className="mb-4 overflow-hidden" style={{ height: '70px', border: '1px solid rgba(196,145,2,0.1)' }}>
+          <img src={`${import.meta.env.BASE_URL}${edu.image.replace(/^\//, '')}`} alt={edu.institution} className="w-full h-full object-cover" style={{ filter: 'brightness(0.85) saturate(0.9)' }} />
+        </div>
+      )}
 
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-row gap-4">
-              {/* Institution Logo */}
-              <div className="shrink-0 w-20 h-20 rounded-lg bg-iron-red-dark border border-iron-gold/30 overflow-hidden">
-                <img
-                  src={`${import.meta.env.BASE_URL}${education.image.startsWith("/") ? education.image.slice(1) : education.image}`}
-                  alt={education.institution}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex flex-col">
-                <h3 className="font-orbitron text-xs sm:text-sm md:text-base uppercase text-iron-gold-light leading-tight mb-1">
-                  {education.degree}
-                </h3>
-                <p className="text-iron-gold font-rajdhani text-xs sm:text-sm mb-1">
-                  {education.period}
-                </p>
-                <p className="text-arc-blue font-orbitron text-[10px] sm:text-xs mb-2">
-                  {education.score}
-                </p>
-              </div>
-            </div>
+      {/* Degree + field */}
+      <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '10px', color: 'rgba(224,221,216,0.4)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '3px' }}>
+        {edu.degree}
+      </div>
+      <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '17px', fontWeight: 700, color: '#e0ddd8', lineHeight: 1.2, marginBottom: '4px' }}>
+        {edu.field}
+      </h3>
+      <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '14px', color: 'rgba(196,145,2,0.7)', marginBottom: '16px' }}>
+        {edu.institution}
+      </div>
 
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-              <p className="text-foreground/70 font-rajdhani text-xs sm:text-sm">
-                {education.description.startsWith("Key Courses:") ? (
-                  <>
-                    <span className="font-bold">Key Courses:</span>
-                    {education.description.slice(12)}
-                  </>
-                ) : (
-                  education.description
-                )}
-              </p>
-            </div>
-          </div>
-
-          {/* Arc Reactor decoration */}
-          <div className="absolute bottom-3 right-3">
-            <ArcReactorIcon size={20} className="text-arc-blue opacity-60" />
-          </div>
+      {/* GPA */}
+      <div className="mb-4">
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '9px', color: 'rgba(224,221,216,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px' }}>GPA</div>
+        <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '38px', fontWeight: 900, color: '#c49102', textShadow: '0 0 20px rgba(196,145,2,0.4)', lineHeight: 1 }}>
+          {edu.gpa.toFixed(2)}
         </div>
       </div>
 
-      {/* Hover glow */}
-      <motion.div
-        className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-        style={{ boxShadow: "0 0 30px hsl(195 100% 50% / 0.2)" }}
-      />
-    </motion.div>
-  );
-});
+      {/* Timeline bar */}
+      <div className="flex items-center gap-3 mb-4">
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(0,191,255,0.6)' }}>{edu.startDate}</span>
+        <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(0,191,255,0.4), rgba(196,145,2,0.4))' }} />
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(0,191,255,0.6)' }}>{edu.endDate}</span>
+      </div>
 
-export const EducationSection = () => {
-  return (
-    <section
-      id="education"
-      className="relative min-h-screen w-full overflow-hidden py-16 sm:py-20 md:py-24"
-    >
-      {/* Background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-linear-to-b from-background via-iron-red-dark/20 to-background" />
+      {/* Courses collapsible */}
+      {edu.subjects.length > 0 && (
+        <div>
+          <button
+            onClick={() => setCoursesOpen(!coursesOpen)}
+            className="flex items-center gap-2 w-full transition-colors duration-150"
+            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.15em', color: coursesOpen ? '#00bfff' : 'rgba(196,145,2,0.5)', marginBottom: '8px' }}
+            onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = '#00bfff'}
+            onMouseLeave={e => { if (!coursesOpen) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(196,145,2,0.5)'; }}
+          >
+            <span>{coursesOpen ? '▼' : '▶'}</span>
+            Courses ({edu.subjects.length})
+          </button>
 
-        {/* Circuit pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" preserveAspectRatio="none">
-            <defs>
-              <pattern
-                id="circuitEdu"
-                patternUnits="userSpaceOnUse"
-                width="60"
-                height="60"
+          <AnimatePresence>
+            {coursesOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                style={{ overflow: 'hidden' }}
               >
-                <path
-                  d="M30 0 L30 30 M0 30 L60 30"
-                  stroke="hsl(44 98% 39%)"
-                  strokeWidth="0.5"
-                  fill="none"
-                />
-                <circle cx="30" cy="30" r="2" fill="hsl(195 100% 50%)" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#circuitEdu)" />
-          </svg>
+                <div className="flex flex-col gap-1.5">
+                  {edu.subjects.map(s => (
+                    <div key={s.name} className="flex items-center justify-between gap-3" style={{ padding: '5px 8px', background: 'rgba(5,8,18,0.5)', border: '1px solid rgba(196,145,2,0.07)' }}>
+                      <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '13px', color: 'rgba(224,221,216,0.65)', flex: 1 }}>{s.name}</span>
+                      <GradeBadge grade={s.grade} />
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
-
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 gap-4 sm:gap-6">
-          {educationData.map((education, index) => (
-            <EducationCard
-              key={education.id}
-              education={education}
-              index={index}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
+      )}
+    </div>
   );
-};
+}
+
+export const EducationSection = () => (
+  <section className="relative min-h-screen w-full overflow-hidden flex flex-col" style={{ paddingBottom: '28px', paddingTop: '72px' }}>
+    <div className="absolute inset-0 bg-gradient-to-b from-iron-red-dark/20 via-background to-iron-red-dark/20 pointer-events-none" />
+    <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 flex flex-col flex-1">
+      <SectionHeader label="academics" title="EDUCATION" />
+      <div className="flex flex-col md:flex-row gap-6 flex-1">
+        {education.map(edu => (
+          <EducationCard key={edu.institution} edu={edu} />
+        ))}
+      </div>
+    </div>
+  </section>
+);
