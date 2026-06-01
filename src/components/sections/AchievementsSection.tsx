@@ -205,6 +205,7 @@ export const AchievementsSection = () => {
     el.addEventListener('touchstart', pause, { passive: true });
     document.addEventListener('click', resume);
 
+    // skipcq: JS-0045 — useEffect cleanup return is valid React; DeepSource does not model EffectCallback's Destructor overload
     return function cleanup() {
       clearInterval(interval);
       el.removeEventListener('wheel', pause);
