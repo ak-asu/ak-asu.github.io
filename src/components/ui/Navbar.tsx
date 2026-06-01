@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useAppStore } from "@/store/useAppStore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { useAudioSystem } from "@/hooks/useAudioSystem";
 import {
   Monitor,
@@ -48,155 +48,128 @@ export const Navbar = () => {
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Sync with hash on mount
   useEffect(() => {
     const hash = window.location.hash.replace("#", "") as Section;
-    if (hash && navItems.some((item) => item.id === hash)) {
-      setActiveSection(hash);
-    }
+    if (hash && navItems.some((i) => i.id === hash)) setActiveSection(hash);
 
-    const handleHashChange = () => {
-      const newHash = window.location.hash.replace("#", "") as Section;
-      if (newHash && navItems.some((item) => item.id === newHash)) {
-        setActiveSection(newHash);
-      }
+    const handleHash = () => {
+      const h = window.location.hash.replace("#", "") as Section;
+      if (h && navItems.some((i) => i.id === h)) setActiveSection(h);
     };
 
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
   }, [setActiveSection]);
+
+  const ctrlBtnClass = (active: boolean) =>
+    `w-[26px] h-[26px] flex items-center justify-center border transition-all duration-200 btn-chamfer cursor-pointer ${
+      active
+        ? "border-arc-blue/60 text-arc-blue bg-arc-blue/10"
+        : "border-iron-gold/25 text-iron-gold/60 hover:border-arc-blue/50 hover:text-arc-blue"
+    }`;
+
+  const navInnerStyle: CSSProperties = {
+    background:
+      "linear-gradient(180deg, rgba(100,0,0,0.45) 0%, rgba(40,0,0,0.7) 100%)",
+    border: "1px solid rgba(196,145,2,0.35)",
+    borderRadius: "8px",
+    boxShadow:
+      "0 0 20px rgba(196,145,2,0.12), inset 0 1px 0 rgba(255,220,80,0.15)",
+  };
 
   return (
     <motion.nav
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-2 sm:px-4 py-2 sm:py-4"
+      className="fixed top-0 right-0 left-0 z-50 flex items-center justify-center px-2 py-2 sm:px-4 sm:py-3"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       {isMobile ? (
-        /* Mobile Layout */
         <div
-          className="iron-panel w-full max-w-full px-2 py-2 flex items-center justify-between gap-2"
-          style={{
-            boxShadow:
-              "0 0 30px hsl(44 98% 39% / 0.3), inset 0 1px 0 hsl(44 90% 55% / 0.3)",
-          }}
+          className="flex w-full max-w-full items-center justify-between gap-2 px-2 py-2"
+          style={navInnerStyle}
         >
-          {/* Logo */}
-          <a href="#home" className="flex items-center gap-1.5 px-2 py-1">
+          <button
+            onClick={() => {
+              playClick();
+              setActiveSection("home");
+            }}
+            className="flex items-center gap-1.5 px-2 py-1"
+          >
             <div
               className="w-2 h-2 rounded-full bg-arc-blue animate-pulse"
               style={{ boxShadow: "0 0 8px hsl(195 100% 50%)" }}
             />
-            <span className="font-orbitron text-xs font-bold text-iron-gold uppercase tracking-wider">
-              Home
+            <span className="font-orbitron text-xs font-black text-iron-gold uppercase tracking-wider">
+              AK
             </span>
-          </a>
+          </button>
 
-          {/* Utility Controls - Always visible on mobile */}
           <div className="flex items-center gap-1">
-            <motion.button
-              onClick={() => {
-                playToggle();
-                toggleViewMode();
-              }}
-              onMouseEnter={playHover}
-              className={`relative p-1.5 rounded-full transition-all duration-300 ${
-                viewMode === "terminal"
-                  ? "bg-arc-blue/20 text-arc-blue border border-arc-blue/50"
-                  : "text-iron-gold hover:text-arc-blue hover:bg-iron-gold/10"
-              }`}
-              style={
-                viewMode === "terminal"
-                  ? { boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }
-                  : {}
-              }
-              whileTap={{ scale: 0.95 }}
-              title={
-                viewMode === "terminal" ? "Terminal Mode" : "Visual 3D Mode"
-              }
-            >
-              {viewMode === "terminal" ? (
-                <Monitor size={14} />
-              ) : (
-                <Layers size={14} />
-              )}
-            </motion.button>
-
-            <motion.button
-              onClick={() => {
-                playClick();
-                toggleSound();
-              }}
-              onMouseEnter={playHover}
-              className={`relative p-1.5 rounded-full transition-all duration-300 ${
-                soundEnabled
-                  ? "bg-arc-blue/20 text-arc-blue border border-arc-blue/50"
-                  : "text-iron-gold hover:text-arc-blue hover:bg-iron-gold/10"
-              }`}
-              style={
-                soundEnabled
-                  ? { boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }
-                  : {}
-              }
-              whileTap={{ scale: 0.95 }}
-              title={soundEnabled ? "Sound ON" : "Sound OFF"}
-            >
-              {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
-            </motion.button>
-
-            <motion.button
-              onClick={() => {
-                playClick();
-                toggleAnimation();
-              }}
-              onMouseEnter={playHover}
-              className={`relative p-1.5 rounded-full transition-all duration-300 ${
-                animationEnabled
-                  ? "bg-arc-blue/20 text-arc-blue border border-arc-blue/50"
-                  : "text-iron-gold hover:text-arc-blue hover:bg-iron-gold/10"
-              }`}
-              style={
-                animationEnabled
-                  ? { boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }
-                  : {}
-              }
-              whileTap={{ scale: 0.95 }}
-              title={animationEnabled ? "Animations ON" : "Animations OFF"}
-            >
-              {animationEnabled ? <Sparkles size={14} /> : <Zap size={14} />}
-            </motion.button>
-
-            <div className="w-px h-5 bg-iron-gold/30 mx-1" />
-
-            {/* Mobile Menu Toggle */}
+            {[
+              {
+                active: viewMode === "terminal",
+                icon: viewMode === "terminal" ? Monitor : Layers,
+                fn: () => {
+                  playToggle();
+                  toggleViewMode();
+                },
+                title: "Toggle Terminal",
+              },
+              {
+                active: soundEnabled,
+                icon: soundEnabled ? Volume2 : VolumeX,
+                fn: () => {
+                  playClick();
+                  toggleSound();
+                },
+                title: "Toggle Sound",
+              },
+              {
+                active: animationEnabled,
+                icon: animationEnabled ? Sparkles : Zap,
+                fn: () => {
+                  playClick();
+                  toggleAnimation();
+                },
+                title: "Toggle Animations",
+              },
+            ].map(({ active, icon: Icon, fn, title }) => (
+              <motion.button
+                key={title}
+                onClick={fn}
+                onMouseEnter={playHover}
+                className={ctrlBtnClass(active)}
+                whileTap={{ scale: 0.95 }}
+                title={title}
+              >
+                <Icon size={13} />
+              </motion.button>
+            ))}
+            <div className="w-px h-5 bg-iron-gold/20 mx-1" />
             <motion.button
               onClick={() => {
                 playClick();
                 setMobileMenuOpen(!mobileMenuOpen);
               }}
               onMouseEnter={playHover}
-              className="relative p-1.5 rounded-full text-iron-gold hover:text-arc-blue hover:bg-iron-gold/10 transition-all duration-300"
+              className="p-1.5 text-iron-gold hover:text-arc-blue transition-colors"
               whileTap={{ scale: 0.95 }}
             >
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </motion.button>
           </div>
 
-          {/* Mobile Dropdown Menu */}
           {mobileMenuOpen && (
             <motion.div
-              className="absolute top-full left-0 right-0 mt-2 mx-2 iron-panel p-2 flex flex-col gap-1"
-              initial={{ opacity: 0, y: -10 }}
+              className="absolute top-full right-0 left-0 mx-2 mt-2 flex flex-col gap-1 p-2"
+              style={{ ...navInnerStyle, borderRadius: "6px" }}
+              initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              style={{
-                boxShadow:
-                  "0 0 30px hsl(44 98% 39% / 0.3), inset 0 1px 0 hsl(44 90% 55% / 0.3)",
-              }}
+              exit={{ opacity: 0, y: -8 }}
             >
               {navItems
-                .filter((item) => item.id !== "home")
+                .filter((i) => i.id !== "home")
                 .map((item) => (
                   <motion.button
                     key={item.id}
@@ -206,50 +179,49 @@ export const Navbar = () => {
                       setMobileMenuOpen(false);
                     }}
                     onMouseEnter={playHover}
-                    className={`relative px-3 py-2 font-orbitron text-xs uppercase tracking-wider rounded transition-all duration-300 ${
+                    className={`relative px-3 py-2 font-orbitron text-xs uppercase tracking-wider rounded transition-all duration-200 text-left ${
                       activeSection === item.id
-                        ? "bg-arc-blue/20 text-arc-blue border border-arc-blue/50"
-                        : "text-iron-gold hover:text-arc-blue hover:bg-iron-gold/10"
+                        ? "bg-arc-blue/15 text-arc-blue border border-arc-blue/40"
+                        : "text-iron-gold hover:text-arc-blue hover:bg-iron-gold/8"
                     }`}
-                    style={
-                      activeSection === item.id
-                        ? { boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)" }
-                        : {}
-                    }
-                    whileTap={{ scale: 0.95 }}
+                    whileTap={{ scale: 0.97 }}
                   >
                     {item.label}
+                    {activeSection === item.id && (
+                      <motion.div
+                        layoutId="mobileNavIndicator"
+                        className="absolute right-2 bottom-0 left-2 h-[2px] bg-arc-blue"
+                        style={{ boxShadow: "0 0 6px hsl(195 100% 50%)" }}
+                      />
+                    )}
                   </motion.button>
                 ))}
             </motion.div>
           )}
         </div>
       ) : (
-        /* Desktop Layout */
         <div
-          className="iron-panel px-4 py-2 flex flex-wrap items-center justify-center gap-2"
-          style={{
-            boxShadow:
-              "0 0 30px hsl(44 98% 39% / 0.3), inset 0 1px 0 hsl(44 90% 55% / 0.3)",
-          }}
+          className="flex flex-wrap items-center gap-1 px-3 py-2"
+          style={navInnerStyle}
         >
-          {/* Logo */}
-          <a
-            href="#home"
-            className="flex items-center gap-2 px-3 py-1 border-r border-iron-gold/30 mr-2"
+          <button
+            onClick={() => {
+              playClick();
+              setActiveSection("home");
+            }}
+            className="flex items-center gap-2 px-3 py-1 border-r border-iron-gold/20 mr-1"
           >
             <div
               className="w-2 h-2 rounded-full bg-arc-blue animate-pulse"
               style={{ boxShadow: "0 0 8px hsl(195 100% 50%)" }}
             />
-            <span className="font-orbitron text-sm font-bold text-iron-gold uppercase tracking-wider">
-              Home
+            <span className="font-orbitron text-sm font-black text-iron-gold uppercase tracking-widest">
+              AK
             </span>
-          </a>
+          </button>
 
-          {/* Nav Items */}
           {navItems
-            .filter((item) => item.id !== "home")
+            .filter((i) => i.id !== "home")
             .map((item) => (
               <motion.button
                 key={item.id}
@@ -258,115 +230,68 @@ export const Navbar = () => {
                   setActiveSection(item.id);
                 }}
                 onMouseEnter={playHover}
-                className={`relative px-4 py-2 font-orbitron text-xs uppercase tracking-wider rounded-full transition-all duration-300 ${
+                className={`relative px-3 py-1.5 font-orbitron text-[10px] uppercase tracking-wider transition-all duration-200 ${
                   activeSection === item.id
-                    ? "bg-arc-blue/20 text-arc-blue border border-arc-blue/50"
-                    : "text-iron-gold hover:text-arc-blue hover:bg-iron-gold/10"
+                    ? "text-arc-blue"
+                    : "text-iron-gold/70 hover:text-arc-blue"
                 }`}
-                style={
-                  activeSection === item.id
-                    ? {
-                        boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)",
-                      }
-                    : {}
-                }
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
               >
                 {item.label}
                 {activeSection === item.id && (
                   <motion.div
-                    className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-arc-blue"
                     layoutId="navIndicator"
-                    style={{ boxShadow: "0 0 8px hsl(195 100% 50%)" }}
+                    className="absolute right-0 bottom-0 left-0 h-[2px] bg-arc-blue"
+                    style={{ boxShadow: "0 0 6px hsl(195 100% 50%)" }}
                   />
                 )}
               </motion.button>
             ))}
 
-          <div className="w-px h-6 bg-iron-gold/30 mx-2" />
+          <div className="w-px h-5 bg-iron-gold/20 mx-1" />
 
-          {/* Mode Toggle */}
-          <motion.button
-            onClick={() => {
-              playToggle();
-              toggleViewMode();
-            }}
-            onMouseEnter={playHover}
-            className={`relative p-2 rounded-full transition-all duration-300 ${
-              viewMode === "terminal"
-                ? "bg-arc-blue/20 text-arc-blue border border-arc-blue/50"
-                : "text-iron-gold hover:text-arc-blue hover:bg-iron-gold/10"
-            }`}
-            style={
-              viewMode === "terminal"
-                ? {
-                    boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)",
-                  }
-                : {}
-            }
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            title={viewMode === "terminal" ? "Terminal Mode" : "Visual 3D Mode"}
-          >
-            {viewMode === "terminal" ? (
-              <Monitor size={16} />
-            ) : (
-              <Layers size={16} />
-            )}
-          </motion.button>
-
-          {/* Sound Toggle */}
-          <motion.button
-            onClick={() => {
-              playClick();
-              toggleSound();
-            }}
-            onMouseEnter={playHover}
-            className={`relative p-2 rounded-full transition-all duration-300 ${
-              soundEnabled
-                ? "bg-arc-blue/20 text-arc-blue border border-arc-blue/50"
-                : "text-iron-gold hover:text-arc-blue hover:bg-iron-gold/10"
-            }`}
-            style={
-              soundEnabled
-                ? {
-                    boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)",
-                  }
-                : {}
-            }
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            title={soundEnabled ? "Sound ON" : "Sound OFF"}
-          >
-            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-          </motion.button>
-
-          {/* Animation Toggle */}
-          <motion.button
-            onClick={() => {
-              playClick();
-              toggleAnimation();
-            }}
-            onMouseEnter={playHover}
-            className={`relative p-2 rounded-full transition-all duration-300 ${
-              animationEnabled
-                ? "bg-arc-blue/20 text-arc-blue border border-arc-blue/50"
-                : "text-iron-gold hover:text-arc-blue hover:bg-iron-gold/10"
-            }`}
-            style={
-              animationEnabled
-                ? {
-                    boxShadow: "0 0 15px hsl(195 100% 50% / 0.3)",
-                  }
-                : {}
-            }
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            title={animationEnabled ? "Animations ON" : "Animations OFF"}
-          >
-            {animationEnabled ? <Sparkles size={16} /> : <Zap size={16} />}
-          </motion.button>
+          {[
+            {
+              active: viewMode === "terminal",
+              icon: viewMode === "terminal" ? Monitor : Layers,
+              fn: () => {
+                playToggle();
+                toggleViewMode();
+              },
+              title: "Terminal Mode",
+            },
+            {
+              active: soundEnabled,
+              icon: soundEnabled ? Volume2 : VolumeX,
+              fn: () => {
+                playClick();
+                toggleSound();
+              },
+              title: "Sound",
+            },
+            {
+              active: animationEnabled,
+              icon: animationEnabled ? Sparkles : Zap,
+              fn: () => {
+                playClick();
+                toggleAnimation();
+              },
+              title: "Animations",
+            },
+          ].map(({ active, icon: Icon, fn, title }) => (
+            <motion.button
+              key={title}
+              onClick={fn}
+              onMouseEnter={playHover}
+              className={ctrlBtnClass(active)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              title={title}
+            >
+              <Icon size={14} />
+            </motion.button>
+          ))}
         </div>
       )}
     </motion.nav>
