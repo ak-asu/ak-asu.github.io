@@ -1,7 +1,7 @@
 {
   "name": "Aakash Khepar",
-  "title": "MSCS (SDE)",
-  "description": "Passionate full-stack developer with expertise in creating efficient and user-centric applications. Currently pursuing Master's in Computer Science at Arizona State University, with experience in software development, data engineering and mentoring.",
-  "passion": "Building innovative solutions that enhance user experiences. I thrive on challenges and enjoy learning new technologies to stay at the forefront of the industry.",
-  "interests": "AI, Machine Learning, Web Development, Software Development, GenAI, LLMs, Computer Vision."
+  "title": "Full-Stack SWE & AI/ML Engineer",
+  "description": "Full-stack software engineer and 5× hackathon winner with 3+ years at Fractal Analytics. Products serve 370+ active users across web, mobile, and AI applications.",
+  "passion": "Building production-grade AI systems — from multi-agent LangGraph pipelines to on-device ML — that solve real problems at scale.",
+  "interests": "LLMs, Agentic AI, RAG, LangChain, MCP, Cloud Infrastructure, Full-Stack Engineering."
 }

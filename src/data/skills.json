@@ -1,182 +1,39 @@
 [
-  {
-    "name": "Python",
-    "level": "Advanced",
-    "icon": "/images/skills/python.svg",
-    "category": "Languages"
-  },
-  {
-    "name": "Dart",
-    "level": "Intermediate",
-    "icon": "/images/skills/dart.svg",
-    "category": "Languages"
-  },
-  {
-    "name": "JavaScript",
-    "level": "Advanced",
-    "icon": "/images/skills/javascript.svg",
-    "category": "Languages"
-  },
-  {
-    "name": "HTML",
-    "level": "Intermediate",
-    "icon": "/images/skills/html.svg",
-    "category": "Front-End"
-  },
-  {
-    "name": "CSS",
-    "level": "Intermediate",
-    "icon": "/images/skills/css.svg",
-    "category": "Front-End"
-  },
-  {
-    "name": "React.JS",
-    "level": "Intermediate",
-    "icon": "/images/skills/react.svg",
-    "category": "Front-End"
-  },
-  {
-    "name": "NextJS",
-    "level": "Intermediate",
-    "icon": "/images/skills/nextjs.svg",
-    "category": "Frameworks"
-  },
-  {
-    "name": "Flutter",
-    "level": "Intermediate",
-    "icon": "/images/skills/flutter.svg",
-    "category": "Frameworks"
-  },
-  {
-    "name": "Django",
-    "level": "Intermediate",
-    "icon": "/images/skills/django.svg",
-    "category": "Frameworks"
-  },
-  {
-    "name": "Flask",
-    "level": "Beginner",
-    "icon": "/images/skills/flask.svg",
-    "category": "Frameworks"
-  },
-  {
-    "name": "FastAPI",
-    "level": "Intermediate",
-    "icon": "/images/skills/fastapi.svg",
-    "category": "Frameworks"
-  },
-  {
-    "name": "Langchain",
-    "level": "Beginner",
-    "icon": "/images/skills/langchain.svg",
-    "category": "Frameworks"
-  },
-  {
-    "name": "Node.JS",
-    "level": "Intermediate",
-    "icon": "/images/skills/nodejs.svg",
-    "category": "Frameworks"
-  },
-  {
-    "name": "Express.JS",
-    "level": "Intermediate",
-    "icon": "/images/skills/expressjs.svg",
-    "category": "Frameworks"
-  },
-  {
-    "name": "Streamlit",
-    "level": "Beginner",
-    "icon": "/images/skills/streamlit.svg",
-    "category": "Frameworks"
-  },
-  {
-    "name": "MongoDB",
-    "level": "Intermediate",
-    "icon": "/images/skills/mongodb.svg",
-    "category": "Databases"
-  },
-  {
-    "name": "PostgreSQL",
-    "level": "Beginner",
-    "icon": "/images/skills/postgresql.svg",
-    "category": "Databases"
-  },
-  {
-    "name": "Supabase",
-    "level": "Beginner",
-    "icon": "/images/skills/supabase.svg",
-    "category": "Databases"
-  },
-  {
-    "name": "Redis",
-    "level": "Intermediate",
-    "icon": "/images/skills/redis.svg",
-    "category": "Databases"
-  },
-  {
-    "name": "GitHub",
-    "level": "Advanced",
-    "icon": "/images/skills/github.svg",
-    "category": "Tools"
-  },
-  {
-    "name": "Docker",
-    "level": "Intermediate",
-    "icon": "/images/skills/docker.svg",
-    "category": "Tools"
-  },
-  {
-    "name": "Kubernetes",
-    "level": "Intermediate",
-    "icon": "/images/skills/kubernetes.svg",
-    "category": "Tools"
-  },
-  {
-    "name": "Jenkins",
-    "level": "Intermediate",
-    "icon": "/images/skills/jenkins.svg",
-    "category": "Tools"
-  },
-  {
-    "name": "PyTest",
-    "level": "Beginner",
-    "icon": "/images/skills/pytest.svg",
-    "category": "Tools"
-  },
-  {
-    "name": "Celery",
-    "level": "Intermediate",
-    "icon": "/images/skills/celery.svg",
-    "category": "Tools"
-  },
-  {
-    "name": "RabbitMQ",
-    "level": "Intermediate",
-    "icon": "/images/skills/rabbitmq.svg",
-    "category": "Tools"
-  },
-  {
-    "name": "Windows",
-    "level": "Advanced",
-    "icon": "/images/skills/windows.svg",
-    "category": "OS"
-  },
-  {
-    "name": "Ubuntu",
-    "level": "Intermediate",
-    "icon": "/images/skills/ubuntu.svg",
-    "category": "OS"
-  },
-  {
-    "name": "Azure",
-    "level": "Beginner",
-    "icon": "/images/skills/azure.svg",
-    "category": "Cloud"
-  },
-  {
-    "name": "Firebase",
-    "level": "Intermediate",
-    "icon": "/images/skills/firebase.svg",
-    "category": "Cloud"
-  }
+  { "name": "LangChain",      "level": "Advanced",      "category": "AI/ML",      "size": 1.4, "icon": "" },
+  { "name": "LLMs",           "level": "Advanced",      "category": "AI/ML",      "size": 1.3, "icon": "" },
+  { "name": "RAG",            "level": "Advanced",      "category": "AI/ML",      "size": 1.2, "icon": "" },
+  { "name": "LangGraph",      "level": "Advanced",      "category": "AI/ML",      "size": 1.1, "icon": "" },
+  { "name": "MCP",            "level": "Intermediate",  "category": "AI/ML",      "size": 1.0, "icon": "" },
+  { "name": "Gemini",         "level": "Advanced",      "category": "AI/ML",      "size": 1.0, "icon": "" },
+  { "name": "PyTorch",        "level": "Intermediate",  "category": "AI/ML",      "size": 1.0, "icon": "" },
+  { "name": "ChromaDB",       "level": "Intermediate",  "category": "AI/ML",      "size": 0.9, "icon": "" },
+  { "name": "Python",         "level": "Advanced",      "category": "Backend",    "size": 1.5, "icon": "/images/skills/python.svg" },
+  { "name": "Django",         "level": "Advanced",      "category": "Backend",    "size": 1.2, "icon": "/images/skills/django.svg" },
+  { "name": "FastAPI",        "level": "Advanced",      "category": "Backend",    "size": 1.2, "icon": "/images/skills/fastapi.svg" },
+  { "name": "Node.js",        "level": "Advanced",      "category": "Backend",    "size": 1.0, "icon": "/images/skills/nodejs.svg" },
+  { "name": "PostgreSQL",     "level": "Advanced",      "category": "Backend",    "size": 1.0, "icon": "/images/skills/postgresql.svg" },
+  { "name": "MongoDB",        "level": "Advanced",      "category": "Backend",    "size": 0.9, "icon": "/images/skills/mongodb.svg" },
+  { "name": "Redis",          "level": "Advanced",      "category": "Backend",    "size": 0.9, "icon": "/images/skills/redis.svg" },
+  { "name": "RabbitMQ",       "level": "Intermediate",  "category": "Backend",    "size": 0.8, "icon": "/images/skills/rabbitmq.svg" },
+  { "name": "React",          "level": "Advanced",      "category": "Frontend",   "size": 1.3, "icon": "/images/skills/react.svg" },
+  { "name": "TypeScript",     "level": "Advanced",      "category": "Frontend",   "size": 1.2, "icon": "" },
+  { "name": "Next.js",        "level": "Advanced",      "category": "Frontend",   "size": 1.1, "icon": "" },
+  { "name": "Tailwind CSS",   "level": "Advanced",      "category": "Frontend",   "size": 1.0, "icon": "" },
+  { "name": "JavaScript",     "level": "Advanced",      "category": "Frontend",   "size": 1.0, "icon": "/images/skills/javascript.svg" },
+  { "name": "Streamlit",      "level": "Advanced",      "category": "Frontend",   "size": 0.8, "icon": "/images/skills/streamlit.svg" },
+  { "name": "Kubernetes",     "level": "Advanced",      "category": "Cloud/Infra","size": 1.3, "icon": "/images/skills/kubernetes.svg" },
+  { "name": "Docker",         "level": "Advanced",      "category": "Cloud/Infra","size": 1.2, "icon": "/images/skills/docker.svg" },
+  { "name": "AWS",            "level": "Advanced",      "category": "Cloud/Infra","size": 1.2, "icon": "" },
+  { "name": "GKE",            "level": "Advanced",      "category": "Cloud/Infra","size": 1.0, "icon": "" },
+  { "name": "Azure",          "level": "Intermediate",  "category": "Cloud/Infra","size": 0.9, "icon": "/images/skills/azure.svg" },
+  { "name": "Jenkins",        "level": "Intermediate",  "category": "Cloud/Infra","size": 0.9, "icon": "/images/skills/jenkins.svg" },
+  { "name": "GitHub Actions", "level": "Advanced",      "category": "Cloud/Infra","size": 0.9, "icon": "/images/skills/github.svg" },
+  { "name": "Java",           "level": "Intermediate",  "category": "Languages",  "size": 1.0, "icon": "" },
+  { "name": "C++",            "level": "Intermediate",  "category": "Languages",  "size": 0.9, "icon": "" },
+  { "name": "SQL",            "level": "Advanced",      "category": "Languages",  "size": 1.0, "icon": "" },
+  { "name": "Apache Spark",   "level": "Intermediate",  "category": "Languages",  "size": 0.9, "icon": "" },
+  { "name": "Dart",           "level": "Intermediate",  "category": "Languages",  "size": 0.8, "icon": "/images/skills/dart.svg" },
+  { "name": "Flutter",        "level": "Advanced",      "category": "Mobile",     "size": 1.1, "icon": "/images/skills/flutter.svg" },
+  { "name": "Kotlin",         "level": "Intermediate",  "category": "Mobile",     "size": 0.9, "icon": "" },
+  { "name": "Firebase",       "level": "Intermediate",  "category": "Mobile",     "size": 0.9, "icon": "/images/skills/firebase.svg" }
 ]

@@ -1,445 +1,656 @@
-[
-  {
-    "id": "project22",
-    "name": "LocalScholar",
-    "shortDescription": "Privacy-First AI Assistant Chrome Extension",
-    "description": "Integrated 5 Chrome Built-in AI APIs for local-only summarization, flashcard generation, and report synthesis with zero data transmission. Architected Manifest V3 extension with 4,700+ lines vanilla JavaScript featuring multi-chunk processing, intelligent caching, and concurrent task management. Delivered study workflows generating adaptive flashcards, multi-source reports with citations, and 10+ language support powered by offline Gemini Nano. Achieved WCAG 2.1 AA accessibility compliance and CSP-compliant security architecture.",
-    "technologies": [
-      "TypeScript",
-      "React",
-      "Tailwind CSS",
-      "Chrome Built-in AI",
-      "Gemini Nano",
-      "Chrome Extension API",
-      "JavaScript"
-    ],
-    "duration": "2 days",
-    "url": "https://devpost.com/software/localscholar",
-    "media": "https://youtu.be/EpBHHyjSFgM",
-    "type": "personal"
-  },
-  {
-    "id": "project23",
-    "name": "VisionForge",
-    "shortDescription": "Full-stack deep learning IDE with drag-and-drop neural network design",
-    "description": "Achieved 1st place in Claude Developer Tools track at HackASU 2025. Engineered full-stack deep learning IDE enabling drag-and-drop neural network design with automatic shape inference and real-time validation for rapid prototyping. Built production code generator supporting PyTorch and TensorFlow frameworks, transforming visual architectures into deployable models with single-click export functionality. Integrated AI assistant using Google Gemini API for natural language model modifications. Developed comprehensive layer library (CNNs, LSTMs, ResNets) with React 19 frontend and Django backend.",
-    "technologies": [
-      "Django",
-      "React",
-      "Tailwind CSS",
-      "Anthropic Claude",
-      "TypeScript",
-      "Python",
-      "PyTorch",
-      "TensorFlow",
-      "Gemini API"
-    ],
-    "duration": "1 day",
-    "url": "https://github.com/ak-asu/VisionForge",
-    "media": "https://youtu.be/cqYE320Kt7E",
-    "type": "collaborative"
-  },
-  {
-    "id": "project24",
-    "name": "NMTSA - Education LMS",
-    "shortDescription": "Accessibility-first LMS for autism-friendly learning",
-    "description": "Achieved 2nd place and Best Polish Product award at Opportunity Hack 2025, ASU Fall Hackathon 2025. Built an accessibility-first LMS enabling structured, autism-friendly learning with seamless course enrollment, CE certificates, and community features. Engineered dual-authentication and robust RBAC workflows for teacher verification, admin review, and high course quality. Integrated AI-powered semantic search, multilingual support (EN/ES), and PayPal payments to expand impact for families and clinicians.",
-    "technologies": [
-      "Django",
-      "JavaScript",
-      "SQLite",
-      "Python",
-      "AI",
-      "PayPal API",
-      "HTML",
-      "CSS"
-    ],
-    "duration": "1 day",
-    "url": "https://github.com/2025-Arizona-Opportunity-Hack/Coderz-NMTSA-NMTSA-Education-and-Therapy-Management-System",
-    "media": "https://youtu.be/HVi6uw4Y33Y",
-    "type": "collaborative"
-  },
-  {
-    "id": "project25",
-    "name": "AIM - Academic Integrity Mentor",
-    "shortDescription": "Browser extension for academic integrity education",
-    "description": "A browser extension that educates and keeps you informed about academic policies to avoid unintentional mistakes. Features include learning modules, quizzes, and crash courses on academic integrity, pre-submission checklists and reflection journals, user journey monitoring, one-stop access to all policies and resources, AI-powered chatbot with RAG-enabled knowledge base, helpful tools including planner and feedback provider, CANVAS API integration and direct webpage scraping, WebLLM and Gemini support, with all data stored locally and securely.",
-    "technologies": [
-      "JavaScript",
-      "React",
-      "Chrome Extension API",
-      "WebLLM",
-      "Gemini API",
-      "RAG",
-      "CANVAS API",
-      "TypeScript"
-    ],
-    "duration": "1 day",
-    "url": "https://devpost.com/software/aim-pdyn8b",
-    "media": "https://youtu.be/e8fK9o0sNi4",
-    "type": "personal"
-  },
-  {
-    "id": "project21",
-    "name": "ResumeBotX",
-    "shortDescription": "An AI-powered resume assistant",
-    "description": "Agentic AI-powered resume building, job tracking, and smart career planning. Scrape jobs, identify skill gaps, enrich resumes, and get personalized learning plans—all seamlessly integrated for success.",
-    "technologies": [
-      "Python",
-      "FastAPI",
-      "React",
-      "Gemini API",
-      "Autogen",
-      "Next.js",
-      "Typescript"
-    ],
-    "duration": "2 days",
-    "url": "https://devpost.com/software/resumebotx",
-    "media": "https://www.youtube.com/watch?v=Nwpbhr7jecU",
-    "type": "personal"
-  },
-  {
-    "id": "project18",
-    "name": "Archyx AI",
-    "shortDescription": "A chat interface for summarizing and managing Google drive files",
-    "description": "A web application that utilizes the Gemini API, Vector embeddings, Langchain to summarize and manage Google Drive files efficiently using an agentic AI approach.",
-    "technologies": [
-      "React",
-      "Typescript",
-      "Tailwind CSS",
-      "Python",
-      "Gemini API",
-      "Langchain",
-      "FastAPI",
-      "Supabase",
-      "Chromadb",
-      "Pydantic",
-      "Next.js"
-    ],
-    "duration": "2 months",
-    "url": "https://devpost.com/software/archyx-ai",
-    "media": "https://www.youtube.com/watch?v=8onJQ87hVlE",
-    "type": "collaborative"
-  },
-  {
-    "id": "project10",
-    "name": "Local Image Finder (LIF)",
-    "shortDescription": "Cross-platform desktop image search application",
-    "description": "A privacy-first, cross-platform desktop image search application that performs on-device semantic search using natural language or image queries to organize and retrieve local images efficiently.",
-    "technologies": [
-      "Python",
-      "Flask",
-      "Electron.js",
-      "Chromadb",
-      "React",
-      "Heroui"
-    ],
-    "duration": "1 month",
-    "url": "https://github.com/ak-asu/Local-Image-Finder",
-    "media": "https://www.linkedin.com/posts/quy-hoang-nguyen_semanticsearch-ai-productivity-activity-7323267080001069056-cbhr",
-    "type": "collaborative"
-  },
-  {
-    "id": "project17",
-    "name": "ResumeClarity",
-    "shortDescription": "A tool for improving resume ats scores",
-    "description": "Developed a Chrome extension with Courtney Ngai to help students optimize resumes for ATS systems. The extension automatically analyzes the job content and provides suggestions for improvement.",
-    "technologies": [
-      "React",
-      "Typescript",
-      "Tailwind CSS",
-      "Python",
-      "Gemini API",
-      "Chrome extension API"
-    ],
-    "duration": "2 months",
-    "url": "https://www.resumeclarity.com",
-    "media": "https://www.linkedin.com/posts/iamcourtneyngai_ive-been-quietly-building-resumeclarity-activity-7350532110803251200-ypcL",
-    "type": "collaborative"
-  },
-  {
-    "id": "project9",
-    "name": "BookTrack",
-    "shortDescription": "AI-powered book recommendation web app",
-    "description": "An AI-powered book recommendation web app that personalizes suggestions based on user-defined prompts. The app delivers a rich discovery experience with enhanced metadata and visual presentation.",
-    "technologies": [
-      "Next.js",
-      "React",
-      "Typescript",
-      "Tailwind CSS",
-      "Perplexity API",
-      "Vercel"
-    ],
-    "duration": "1 month",
-    "url": "https://github.com/ak-asu/book-recommender",
-    "media": "https://www.linkedin.com/posts/jesus-aguilar-2657a8205_two-highlights-of-this-semester-a-few-weeks-activity-7326813641192751104-aIhQ",
-    "type": "collaborative"
-  },
-  {
-    "id": "project8",
-    "name": "dAIgrammatic",
-    "shortDescription": "Agentic AI powered application for creating diagrams",
-    "description": "Developed an agentic AI application that allows users to create diagrams by simply describing them in natural language. The app uses advanced natural language processing to interpret user input and generate corresponding visual diagrams.",
-    "technologies": [
-      "Python",
-      "Flask",
-      "React",
-      "Typescript",
-      "HTML",
-      "Tailwind CSS",
-      "Gemini API"
-    ],
-    "duration": "1 month",
-    "url": "https://devpost.com/software/daigrammatic",
-    "media": "",
-    "type": "collaborative"
-  },
-  {
-    "id": "project1",
-    "name": "Note summarizer",
-    "shortDescription": "Web application for summarizing notes using AI",
-    "description": "Created a web application that leverages AI to summarize lengthy notes into concise, easy-to-read formats. The app supports multiple languages and includes features for saving, sharing, and exporting summaries.",
-    "technologies": ["Streamlit", "Python", "Gemini API"],
-    "duration": "1 day",
-    "url": "https://github.com/ak-asu/notesummarizer",
-    "media": "https://www.youtube.com/watch?v=LCSOp7c1UOI",
-    "type": "personal"
-  },
-  {
-    "id": "project5",
-    "name": "CT Scanner 3D Reconstruction",
-    "shortDescription": "3D reconstruction program using CT Scanner data",
-    "description": "Developed a program to reconstruct 3D objects from CT Scanner readings leveraging the MART (Multiplicative Algebraic Reconstruction Technique) algorithm. The software processes multiple 2D scans to create accurate 3D models of small objects.",
-    "technologies": ["Python", "NumPy"],
-    "duration": "2 months",
-    "url": "",
-    "media": "",
-    "type": "academic"
-  },
-  {
-    "id": "project6",
-    "name": "Handwritten Character Recognition",
-    "shortDescription": "Real-time Devanagari character recognition system",
-    "description": "Built and trained a 98% accurate Convolutional Neural Network (CNN) model to recognize Devanagari characters drawn in front of a webcam in real-time. The system processes video input, extracts the drawn characters, and classifies them with high accuracy.",
-    "technologies": ["Python", "TensorFlow", "OpenCV"],
-    "duration": "10 days",
-    "url": "",
-    "media": "",
-    "type": "personal"
-  },
-  {
-    "id": "project3",
-    "name": "Context Monitor",
-    "shortDescription": "Heartbeat and respiration rate monitoring android app",
-    "description": "Created an Android app that monitors and displays the user's heartbeat and respiration rate in real-time. The app uses the device's camera and sensors to provide accurate readings and includes features for tracking health metrics over time.",
-    "technologies": ["Kotlin", "Jetpack Compose"],
-    "duration": "15 days",
-    "url": "https://github.com/ak-asu/Context-Monitor",
-    "media": "https://www.youtube.com/watch?v=jxaa_TT-dZI",
-    "type": "personal"
-  },
-  {
-    "id": "project14",
-    "name": "SEO analyzer",
-    "shortDescription": "Web application for analyzing SEO performance",
-    "description": "Developed a web application that analyzes the SEO performance of websites, providing insights and recommendations for improvement. The app includes features for keyword analysis, backlink tracking, and on-page optimization.",
-    "technologies": ["React", "Typescript", "Tailwind CSS"],
-    "duration": "1 day",
-    "url": "https://seoanalyzer.pages.dev/",
-    "media": "",
-    "type": "personal"
-  },
-  {
-    "id": "project12",
-    "name": "Cards Of Conscience",
-    "shortDescription": "A flutter AI powered game for teaching refugee education",
-    "description": "Developed a Flutter simulation card game for policymaking, where players select policy options across different domains while managing budget constraints. The game includes AI agents that participate in the decision-making process.",
-    "technologies": ["Flutter", "Dart", "Gemini API"],
-    "duration": "1 week",
-    "url": "https://github.com/ak-asu/cards_of_conscience",
-    "media": "https://youtu.be/i0noLh0AEsI",
-    "type": "personal"
-  },
-  {
-    "id": "project16",
-    "name": "Utilix",
-    "shortDescription": "A collection of utility tools",
-    "description": "Developed a web application that provides a suite of general purpose utility tools for basic everyday tasks.",
-    "technologies": ["React", "Typescript", "Tailwind CSS"],
-    "duration": "1 week",
-    "url": "https://utilixpro.netlify.app/",
-    "media": "",
-    "type": "personal"
-  },
-  {
-    "id": "project13",
-    "name": "Cryptogak",
-    "shortDescription": "Cross-platform command-line utility for string encryption",
-    "description": "Cryptogak is a lightweight and efficient cross-platform command-line utility for encrypting and decrypting strings using common hash algorithms. It works on Linux and Windows.",
-    "technologies": ["C"],
-    "duration": "2 weeks",
-    "url": "https://github.com/ak-asu/public-releases/tree/main/releases",
-    "media": "",
-    "type": "personal"
-  },
-  {
-    "id": "project4",
-    "name": "Basic language parser",
-    "shortDescription": "Simple language parser for basic syntax",
-    "description": "Developed a basic language parser that can interpret and execute simple commands in a custom scripting language. The parser supports variable assignments, arithmetic operations, and conditional statements.",
-    "technologies": ["C++"],
-    "duration": "1 month",
-    "url": "https://github.com/ak-asu/basicparser",
-    "media": "",
-    "type": "personal"
-  },
-  {
-    "id": "project11",
-    "name": "Web development course",
-    "shortDescription": "Created a web development course for beginners using Github actions",
-    "description": "Developed a comprehensive web development course for beginners, focusing on key concepts and practical skills using GitHub actions.",
-    "technologies": ["Markdown", "Github Actions", "Github Workflows"],
-    "duration": "1 week",
-    "url": "https://github.com/ak-asu/web-dev-skill",
-    "media": "",
-    "type": "personal"
-  },
-  {
-    "id": "project7",
-    "name": "Gesture Controlled Hologram Pong",
-    "shortDescription": "Pong game with 3D hologram display and gesture controls",
-    "description": "Created an innovative pong game using Unity, with OpenCV Python code to detect player hand gestures for control. Formed a 3D hologram display using an upside-down truncated acrylic square prism placed on an LED screen, creating an immersive gaming experience.",
-    "technologies": ["Unity", "Python", "OpenCV", "C#"],
-    "duration": "2 weeks",
-    "url": "",
-    "media": "",
-    "type": "personal"
-  },
-  {
-    "id": "project15",
-    "name": "Flutter games",
-    "shortDescription": "Collection of games built with Flutter",
-    "description": "Developed a collection of games using the Flutter framework, showcasing its capabilities for building interactive and visually appealing applications.",
-    "technologies": ["Flutter", "Dart", "Firebase"],
-    "duration": "2 months",
-    "url": "https://play.google.com/store/apps/dev?id=7580092972636663435",
-    "media": "https://www.youtube.com/watch?v=dTi1PRMUCjQ",
-    "type": "personal"
-  },
-  {
-    "id": "project20",
-    "name": "Arduino projects",
-    "shortDescription": "A collection of projects built with Arduino",
-    "description": "Developed a series of interactive projects using Arduino, showcasing its capabilities for building hardware-based applications.",
-    "technologies": ["Arduino", "C++", "Electronics"],
-    "duration": "2 weeks",
-    "url": "https://github.com/ak-asu/Arduino",
-    "media": "",
-    "type": "personal"
-  },
-  {
-    "id": "project2",
-    "name": "Multiplayer Bluetooth Tic-Tac-Toe game",
-    "shortDescription": "Multiplayer Tic-Tac-Toe game over Bluetooth",
-    "description": "Led a team to create a Bluetooth-enabled Tic Tac Toe application using Android Jetpack Compose, exceeding requirements and achieving an exceptional score of 125/120. The app features a simple and intuitive UI, score tracking, and the ability to play multiple rounds.",
-    "technologies": ["Kotlin", "Jetpack Compose"],
-    "duration": "2 months",
-    "url": "https://github.com/ak-asu/Tic-Tac-Toe",
-    "media": "https://www.youtube.com/watch?v=HLWJYrPlGiY",
-    "type": "collaborative"
-  },
-  {
-    "id": "project19",
-    "name": "Aptitude",
-    "shortDescription": "An interactive mathematical quiz game",
-    "description": "Aptitude is an interactive mathematical quiz game built as a Confluence space page. The app creates an engaging, time-pressured environment for users to test and improve their arithmetic skills.",
-    "technologies": ["Javascript", "@forge/react", "React"],
-    "duration": "1 day",
-    "url": "https://devpost.com/software/aptitude-slb37n",
-    "media": "",
-    "type": "personal"
-  },
-  {
-    "id": "project26",
-    "name": "Docuer",
-    "shortDescription": "InShorts-style adaptive learning from documentation",
-    "description": "Transforms documentation websites into bite-sized, personalized learning paths. Docuer generates 160-word adaptive articles, auto-created quizzes, interactive knowledge graphs, and an AI chat assistant. It imports docs (including Google Drive), adapts paths to learner profiles, and offers a TikTok-style mobile interface with progress tracking and intelligent caching.",
-    "technologies": [
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Tailwind CSS",
-      "Framer Motion",
-      "Gemini",
-      "Cohere",
-      "Neo4j",
-      "Firecrawl",
-      "Supermemory"
-    ],
-    "duration": "1 day",
-    "url": "https://devpost.com/software/docuer",
-    "media": "https://www.youtube.com/watch?v=6zUn6MzgsFU",
-    "type": "personal"
-  },
-  {
-    "id": "project27",
-    "name": "ProjectStory",
-    "shortDescription": "Multi-agent AI document-to-story generator with water-glass UI",
-    "description": "Single-page React + TypeScript app that converts uploaded documents into multi-stage, industry-specific narratives using a 3-agent pipeline with Google Gemini and embeddings. Features a water-glass bubble UI, sequential agent pipeline, and client-side vector embeddings for context-aware content generation.",
-    "technologies": [
-      "React",
-      "TypeScript",
-      "Vite",
-      "Tailwind CSS",
-      "@google/generative-ai",
-      "text-embedding-004",
-      "lucide-react"
-    ],
-    "duration": "1 day",
-    "url": "https://github.com/ak-asu/SmallProjects/tree/main/projectstory",
-    "media": "https://youtu.be/kRQ1yoxPeSU",
-    "type": "personal"
-  },
-  {
-    "id": "project28",
-    "name": "ProjectIAM",
-    "shortDescription": "Decentralized identity & credentials verification (Unicredify)",
-    "description": "Unicredify is a privacy-first decentralized Identity and Access Management system for university credential issuance and verification. It uses Privado ID wallets, zero-knowledge proofs for selective disclosure, on-chain anchoring on Polygon, a Supabase backend, and smart contracts for credential issuance and revocation.",
-    "technologies": [
-      "TypeScript",
-      "Next.js",
-      "React",
-      "Solidity",
-      "Hardhat",
-      "Ethers.js",
-      "Supabase",
-      "Privado ID",
-      "Polygon"
-    ],
-    "duration": "2 months",
-    "url": "https://github.com/ak-asu/ProjectIAM",
-    "media": "https://youtu.be/g0GiXiuzgvQ",
-    "type": "collaborative"
-  },
-  {
-    "id": "project29",
-    "name": "Elektraz",
-    "shortDescription": "Arizona solar EV charging station optimization toolkit",
-    "description": "Comprehensive toolkit for optimizing placement and sizing of solar-powered DC fast charging stations across Arizona. Includes data ingestion from public APIs, ML demand prediction, PV sizing using NREL APIs, economic modeling, and MILP optimization with a Streamlit dashboard and SHAP explainability.",
-    "technologies": [
-      "Python",
-      "Streamlit",
-      "Pyomo",
-      "XGBoost",
-      "LightGBM",
-      "CatBoost",
-      "NREL API",
-      "HiGHS",
-      "SHAP"
-    ],
-    "duration": "2 days",
-    "url": "https://github.com/ak-asu/elektraz",
-    "media": "",
-    "type": "collaborative"
-  }
+﻿[
+    {
+        "id":  "project22",
+        "name":  "LocalScholar",
+        "shortDescription":  "Privacy-First AI Assistant Chrome Extension",
+        "description":  "Integrated 5 Chrome Built-in AI APIs for local-only summarization, flashcard generation, and report synthesis with zero data transmission. Architected Manifest V3 extension with 4,700+ lines vanilla JavaScript featuring multi-chunk processing, intelligent caching, and concurrent task management. Delivered study workflows generating adaptive flashcards, multi-source reports with citations, and 10+ language support powered by offline Gemini Nano. Achieved WCAG 2.1 AA accessibility compliance and CSP-compliant security architecture.",
+        "technologies":  [
+                             "TypeScript",
+                             "React",
+                             "Tailwind CSS",
+                             "Chrome Built-in AI",
+                             "Gemini Nano",
+                             "Chrome Extension API",
+                             "JavaScript"
+                         ],
+        "duration":  "2 days",
+        "url":  "https://devpost.com/software/localscholar",
+        "media":  "https://youtu.be/EpBHHyjSFgM",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project23",
+        "name":  "VisionForge",
+        "shortDescription":  "Full-Stack Deep Learning IDE with Drag-and-Drop Neural Network Design",
+        "description":  "Achieved 1st place in Claude Developer Tools track at HackASU 2025. Engineered full-stack deep learning IDE enabling drag-and-drop neural network design with automatic shape inference and real-time validation for rapid prototyping. Built production code generator supporting PyTorch and TensorFlow frameworks, transforming visual architectures into deployable models with single-click export functionality. Integrated AI assistant using Google Gemini API for natural language model modifications. Developed comprehensive layer library (CNNs, LSTMs, ResNets) with React 19 frontend and Django backend.",
+        "technologies":  [
+                             "Django",
+                             "React",
+                             "Tailwind CSS",
+                             "Anthropic Claude",
+                             "TypeScript",
+                             "Python",
+                             "PyTorch",
+                             "TensorFlow",
+                             "Gemini API"
+                         ],
+        "duration":  "1 day",
+        "url":  "https://github.com/ak-asu/VisionForge",
+        "media":  "https://youtu.be/cqYE320Kt7E",
+        "type":  "hackathon",
+        "placement":  "1st"
+    },
+    {
+        "id":  "project24",
+        "name":  "NMTSA - Education LMS",
+        "shortDescription":  "Accessibility-First LMS for Autism-Friendly Learning",
+        "description":  "Achieved 2nd place and Best Polish Product award at Opportunity Hack 2025, ASU Fall Hackathon 2025. Built an accessibility-first LMS enabling structured, autism-friendly learning with seamless course enrollment, CE certificates, and community features. Engineered dual-authentication and robust RBAC workflows for teacher verification, admin review, and high course quality. Integrated AI-powered semantic search, multilingual support (EN/ES), and PayPal payments to expand impact for families and clinicians.",
+        "technologies":  [
+                             "Django",
+                             "JavaScript",
+                             "SQLite",
+                             "Python",
+                             "AI",
+                             "PayPal API",
+                             "HTML",
+                             "CSS"
+                         ],
+        "duration":  "1 day",
+        "url":  "https://github.com/2025-Arizona-Opportunity-Hack/Coderz-NMTSA-NMTSA-Education-and-Therapy-Management-System",
+        "media":  "https://youtu.be/HVi6uw4Y33Y",
+        "type":  "hackathon",
+        "placement":  "2nd"
+    },
+    {
+        "id":  "project25",
+        "name":  "AIM - Academic Integrity Mentor",
+        "shortDescription":  "Browser Extension for Academic Integrity Education",
+        "description":  "A browser extension that educates and keeps you informed about academic policies to avoid unintentional mistakes. Features include learning modules, quizzes, and crash courses on academic integrity, pre-submission checklists and reflection journals, user journey monitoring, one-stop access to all policies and resources, AI-powered chatbot with RAG-enabled knowledge base, helpful tools including planner and feedback provider, CANVAS API integration and direct webpage scraping, WebLLM and Gemini support, with all data stored locally and securely.",
+        "technologies":  [
+                             "JavaScript",
+                             "React",
+                             "Chrome Extension API",
+                             "WebLLM",
+                             "Gemini API",
+                             "RAG",
+                             "CANVAS API",
+                             "TypeScript"
+                         ],
+        "duration":  "1 day",
+        "url":  "https://devpost.com/software/aim-pdyn8b",
+        "media":  "https://youtu.be/e8fK9o0sNi4",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project21",
+        "name":  "ResumeBotX",
+        "shortDescription":  "AI-Powered Resume Assistant",
+        "description":  "Agentic AI-powered resume building, job tracking, and smart career planning. Scrape jobs, identify skill gaps, enrich resumes, and get personalized learning plansâ€”all seamlessly integrated for success.",
+        "technologies":  [
+                             "Python",
+                             "FastAPI",
+                             "React",
+                             "Gemini API",
+                             "Autogen",
+                             "Next.js",
+                             "Typescript"
+                         ],
+        "duration":  "2 days",
+        "url":  "https://devpost.com/software/resumebotx",
+        "media":  "https://www.youtube.com/watch?v=Nwpbhr7jecU",
+        "type":  "personal"
+    },
+    {
+        "id":  "project18",
+        "name":  "Archyx AI",
+        "shortDescription":  "Chat Interface for Summarizing and Managing Google Drive Files",
+        "description":  "A web application that utilizes the Gemini API, Vector embeddings, Langchain to summarize and manage Google Drive files efficiently using an agentic AI approach.",
+        "technologies":  [
+                             "React",
+                             "Typescript",
+                             "Tailwind CSS",
+                             "Python",
+                             "Gemini API",
+                             "Langchain",
+                             "FastAPI",
+                             "Supabase",
+                             "Chromadb",
+                             "Pydantic",
+                             "Next.js"
+                         ],
+        "duration":  "2 months",
+        "url":  "https://devpost.com/software/archyx-ai",
+        "media":  "https://www.youtube.com/watch?v=8onJQ87hVlE",
+        "type":  "collaborative"
+    },
+    {
+        "id":  "project10",
+        "name":  "Local Image Finder (LIF)",
+        "shortDescription":  "Cross-Platform Desktop Image Search Application",
+        "description":  "A privacy-first, cross-platform desktop image search application that performs on-device semantic search using natural language or image queries to organize and retrieve local images efficiently.",
+        "technologies":  [
+                             "Python",
+                             "Flask",
+                             "Electron.js",
+                             "Chromadb",
+                             "React",
+                             "Heroui"
+                         ],
+        "duration":  "1 month",
+        "url":  "https://github.com/ak-asu/Local-Image-Finder",
+        "media":  "https://www.linkedin.com/posts/quy-hoang-nguyen_semanticsearch-ai-productivity-activity-7323267080001069056-cbhr",
+        "type":  "collaborative"
+    },
+    {
+        "id":  "project17",
+        "name":  "ResumeClarity",
+        "shortDescription":  "Chrome Extension for Improving Resume ATS Scores",
+        "description":  "Developed a Chrome extension with Courtney Ngai to help students optimize resumes for ATS systems. The extension automatically analyzes the job content and provides suggestions for improvement.",
+        "technologies":  [
+                             "React",
+                             "Typescript",
+                             "Tailwind CSS",
+                             "Python",
+                             "Gemini API",
+                             "Chrome extension API"
+                         ],
+        "duration":  "2 months",
+        "url":  "https://www.resumeclarity.com",
+        "media":  "https://www.linkedin.com/posts/iamcourtneyngai_ive-been-quietly-building-resumeclarity-activity-7350532110803251200-ypcL",
+        "type":  "collaborative"
+    },
+    {
+        "id":  "project9",
+        "name":  "BookTrack",
+        "shortDescription":  "AI-Powered Book Recommendation Web App",
+        "description":  "An AI-powered book recommendation web app that personalizes suggestions based on user-defined prompts. The app delivers a rich discovery experience with enhanced metadata and visual presentation.",
+        "technologies":  [
+                             "Next.js",
+                             "React",
+                             "Typescript",
+                             "Tailwind CSS",
+                             "Perplexity API",
+                             "Vercel"
+                         ],
+        "duration":  "1 month",
+        "url":  "https://github.com/ak-asu/book-recommender",
+        "media":  "https://www.linkedin.com/posts/jesus-aguilar-2657a8205_two-highlights-of-this-semester-a-few-weeks-activity-7326813641192751104-aIhQ",
+        "type":  "collaborative"
+    },
+    {
+        "id":  "project8",
+        "name":  "dAIgrammatic",
+        "shortDescription":  "Agentic AI Application for Creating Diagrams",
+        "description":  "Developed an agentic AI application that allows users to create diagrams by simply describing them in natural language. The app uses advanced natural language processing to interpret user input and generate corresponding visual diagrams.",
+        "technologies":  [
+                             "Python",
+                             "Flask",
+                             "React",
+                             "Typescript",
+                             "HTML",
+                             "Tailwind CSS",
+                             "Gemini API"
+                         ],
+        "duration":  "1 month",
+        "url":  "https://devpost.com/software/daigrammatic",
+        "media":  "",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project1",
+        "name":  "Note summarizer",
+        "shortDescription":  "Web Application for Summarizing Notes Using AI",
+        "description":  "Created a web application that leverages AI to summarize lengthy notes into concise, easy-to-read formats. The app supports multiple languages and includes features for saving, sharing, and exporting summaries.",
+        "technologies":  [
+                             "Streamlit",
+                             "Python",
+                             "Gemini API"
+                         ],
+        "duration":  "1 day",
+        "url":  "https://github.com/ak-asu/notesummarizer",
+        "media":  "https://www.youtube.com/watch?v=LCSOp7c1UOI",
+        "type":  "personal"
+    },
+    {
+        "id":  "project5",
+        "name":  "CT Scanner 3D Reconstruction",
+        "shortDescription":  "3D Reconstruction Program Using CT Scanner Data",
+        "description":  "Developed a program to reconstruct 3D objects from CT Scanner readings leveraging the MART (Multiplicative Algebraic Reconstruction Technique) algorithm. The software processes multiple 2D scans to create accurate 3D models of small objects.",
+        "technologies":  [
+                             "Python",
+                             "NumPy"
+                         ],
+        "duration":  "2 months",
+        "url":  "",
+        "media":  "",
+        "type":  "academic"
+    },
+    {
+        "id":  "project6",
+        "name":  "Handwritten Character Recognition",
+        "shortDescription":  "Real-Time Devanagari Character Recognition System",
+        "description":  "Built and trained a 98% accurate Convolutional Neural Network (CNN) model to recognize Devanagari characters drawn in front of a webcam in real-time. The system processes video input, extracts the drawn characters, and classifies them with high accuracy.",
+        "technologies":  [
+                             "Python",
+                             "TensorFlow",
+                             "OpenCV"
+                         ],
+        "duration":  "10 days",
+        "url":  "",
+        "media":  "",
+        "type":  "personal"
+    },
+    {
+        "id":  "project3",
+        "name":  "Context Monitor",
+        "shortDescription":  "Heartbeat and Respiration Rate Monitoring Android App",
+        "description":  "Created an Android app that monitors and displays the user\u0027s heartbeat and respiration rate in real-time. The app uses the device\u0027s camera and sensors to provide accurate readings and includes features for tracking health metrics over time.",
+        "technologies":  [
+                             "Kotlin",
+                             "Jetpack Compose"
+                         ],
+        "duration":  "15 days",
+        "url":  "https://github.com/ak-asu/Context-Monitor",
+        "media":  "https://www.youtube.com/watch?v=jxaa_TT-dZI",
+        "type":  "personal"
+    },
+    {
+        "id":  "project12",
+        "name":  "Cards Of Conscience",
+        "shortDescription":  "Flutter AI-Powered Game for Teaching Refugee Policy",
+        "description":  "Developed a Flutter simulation card game for policymaking, where players select policy options across different domains while managing budget constraints. The game includes AI agents that participate in the decision-making process.",
+        "technologies":  [
+                             "Flutter",
+                             "Dart",
+                             "Gemini API"
+                         ],
+        "duration":  "1 week",
+        "url":  "https://github.com/ak-asu/cards_of_conscience",
+        "media":  "https://youtu.be/i0noLh0AEsI",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project13",
+        "name":  "Cryptogak",
+        "shortDescription":  "Cross-platform command-line utility for string encryption",
+        "description":  "Cryptogak is a lightweight and efficient cross-platform command-line utility for encrypting and decrypting strings using common hash algorithms. It works on Linux and Windows.",
+        "technologies":  [
+                             "C"
+                         ],
+        "duration":  "2 weeks",
+        "url":  "https://github.com/ak-asu/public-releases/tree/main/releases",
+        "media":  "",
+        "type":  "personal"
+    },
+    {
+        "id":  "project11",
+        "name":  "Web development course",
+        "shortDescription":  "Created a web development course for beginners using Github actions",
+        "description":  "Developed a comprehensive web development course for beginners, focusing on key concepts and practical skills using GitHub actions.",
+        "technologies":  [
+                             "Markdown",
+                             "Github Actions",
+                             "Github Workflows"
+                         ],
+        "duration":  "1 week",
+        "url":  "https://github.com/ak-asu/web-dev-skill",
+        "media":  "",
+        "type":  "personal"
+    },
+    {
+        "id":  "project7",
+        "name":  "Gesture Controlled Hologram Pong",
+        "shortDescription":  "Pong Game with 3D Hologram Display and Gesture Controls",
+        "description":  "Created an innovative pong game using Unity, with OpenCV Python code to detect player hand gestures for control. Formed a 3D hologram display using an upside-down truncated acrylic square prism placed on an LED screen, creating an immersive gaming experience.",
+        "technologies":  [
+                             "Unity",
+                             "Python",
+                             "OpenCV",
+                             "C#"
+                         ],
+        "duration":  "2 weeks",
+        "url":  "",
+        "media":  "",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project15",
+        "name":  "Flutter games",
+        "shortDescription":  "Collection of games built with Flutter",
+        "description":  "Developed a collection of games using the Flutter framework, showcasing its capabilities for building interactive and visually appealing applications.",
+        "technologies":  [
+                             "Flutter",
+                             "Dart",
+                             "Firebase"
+                         ],
+        "duration":  "2 months",
+        "url":  "https://play.google.com/store/apps/dev?id=7580092972636663435",
+        "media":  "https://www.youtube.com/watch?v=dTi1PRMUCjQ",
+        "type":  "personal"
+    },
+    {
+        "id":  "project2",
+        "name":  "Multiplayer Bluetooth Tic-Tac-Toe game",
+        "shortDescription":  "Multiplayer Tic-Tac-Toe game over Bluetooth",
+        "description":  "Led a team to create a Bluetooth-enabled Tic Tac Toe application using Android Jetpack Compose, exceeding requirements and achieving an exceptional score of 125/120. The app features a simple and intuitive UI, score tracking, and the ability to play multiple rounds.",
+        "technologies":  [
+                             "Kotlin",
+                             "Jetpack Compose"
+                         ],
+        "duration":  "2 months",
+        "url":  "https://github.com/ak-asu/Tic-Tac-Toe",
+        "media":  "https://www.youtube.com/watch?v=HLWJYrPlGiY",
+        "type":  "collaborative"
+    },
+    {
+        "id":  "project26",
+        "name":  "Docuer",
+        "shortDescription":  "InShorts-Style Adaptive Learning from Documentation",
+        "description":  "Transforms documentation websites into bite-sized, personalized learning paths. Docuer generates 160-word adaptive articles, auto-created quizzes, interactive knowledge graphs, and an AI chat assistant. It imports docs (including Google Drive), adapts paths to learner profiles, and offers a TikTok-style mobile interface with progress tracking and intelligent caching.",
+        "technologies":  [
+                             "Next.js",
+                             "React",
+                             "TypeScript",
+                             "Tailwind CSS",
+                             "Framer Motion",
+                             "Gemini",
+                             "Cohere",
+                             "Neo4j",
+                             "Firecrawl",
+                             "Supermemory"
+                         ],
+        "duration":  "1 day",
+        "url":  "https://devpost.com/software/docuer",
+        "media":  "https://www.youtube.com/watch?v=6zUn6MzgsFU",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project27",
+        "name":  "ProjectStory",
+        "shortDescription":  "Multi-Agent AI Document-to-Story Generator",
+        "description":  "Single-page React + TypeScript app that converts uploaded documents into multi-stage, industry-specific narratives using a 3-agent pipeline with Google Gemini and embeddings. Features a water-glass bubble UI, sequential agent pipeline, and client-side vector embeddings for context-aware content generation.",
+        "technologies":  [
+                             "React",
+                             "TypeScript",
+                             "Vite",
+                             "Tailwind CSS",
+                             "@google/generative-ai",
+                             "text-embedding-004",
+                             "lucide-react"
+                         ],
+        "duration":  "1 day",
+        "url":  "https://github.com/ak-asu/SmallProjects/tree/main/projectstory",
+        "media":  "https://youtu.be/kRQ1yoxPeSU",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project28",
+        "name":  "ProjectIAM",
+        "shortDescription":  "Decentralized Identity and Credentials Verification",
+        "description":  "Unicredify is a privacy-first decentralized Identity and Access Management system for university credential issuance and verification. It uses Privado ID wallets, zero-knowledge proofs for selective disclosure, on-chain anchoring on Polygon, a Supabase backend, and smart contracts for credential issuance and revocation.",
+        "technologies":  [
+                             "TypeScript",
+                             "Next.js",
+                             "React",
+                             "Solidity",
+                             "Hardhat",
+                             "Ethers.js",
+                             "Supabase",
+                             "Privado ID",
+                             "Polygon"
+                         ],
+        "duration":  "2 months",
+        "url":  "https://github.com/ak-asu/ProjectIAM",
+        "media":  "https://youtu.be/g0GiXiuzgvQ",
+        "type":  "collaborative"
+    },
+    {
+        "id":  "project29",
+        "name":  "Elektraz",
+        "shortDescription":  "Arizona Solar EV Charging Station Optimization Toolkit",
+        "description":  "Comprehensive toolkit for optimizing placement and sizing of solar-powered DC fast charging stations across Arizona. Includes data ingestion from public APIs, ML demand prediction, PV sizing using NREL APIs, economic modeling, and MILP optimization with a Streamlit dashboard and SHAP explainability.",
+        "technologies":  [
+                             "Python",
+                             "Streamlit",
+                             "Pyomo",
+                             "XGBoost",
+                             "LightGBM",
+                             "CatBoost",
+                             "NREL API",
+                             "HiGHS",
+                             "SHAP"
+                         ],
+        "duration":  "2 days",
+        "url":  "https://github.com/ak-asu/elektraz",
+        "media":  "",
+        "type":  "hackathon",
+        "placement":  "3rd"
+    },
+    {
+        "id":  "project30",
+        "name":  "CareCallerAI",
+        "shortDescription":  "Multilingual Real-Time AI Phone Triage Platform",
+        "description":  "Multilingual AI phone caller with Modal, Groq, ElevenLabs, and fine-tuned Whisper for STT evaluated on WER, CER, and medical recall. Engineered triage workflows, 5ms lexicon checks, 30ms memory-loaded prompts, LLM fallback rules, and Supabase cron monitoring. Loaded call context in ~30ms, triggered LLM fallback on entity confidence \u003c 0.85, and supported AssemblyAI realtime with medical vocabulary boost for telephony-grade clinical transcription.",
+        "technologies":  [
+                             "Next.js",
+                             "TypeScript",
+                             "React",
+                             "Modal",
+                             "Groq",
+                             "ElevenLabs",
+                             "Whisper",
+                             "Supabase",
+                             "AssemblyAI",
+                             "Python",
+                             "FastAPI"
+                         ],
+        "duration":  "2 days",
+        "url":  "https://github.com/ak-asu/Carecallerai",
+        "media":  "",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project31",
+        "name":  "MoneyNest",
+        "shortDescription":  "Personalized GenUI Financial Wellness Platform",
+        "description":  "Led a team of 4 to build a multi-model multimodal LangGraph coaching app with smart routing, reducing AI latency by 45%. Routed Claude Sonnet to chat and document extraction, Gemini 2.5 Flash to image generation. Delivered profile-aware generative UI streaming via SSE, 20%+ spend-spike insights, ElevenLabs multilingual agents, and 6 interactive financial mini-games including Credit Quest, Insurance Card Game, and Wealth Farm.",
+        "technologies":  [
+                             "Next.js",
+                             "TypeScript",
+                             "React",
+                             "LangGraph",
+                             "Claude",
+                             "Gemini",
+                             "Vercel AI SDK",
+                             "ElevenLabs",
+                             "Supabase",
+                             "Python"
+                         ],
+        "duration":  "2 days",
+        "url":  "https://github.com/ak-asu/Moneynest",
+        "media":  "",
+        "type":  "collaborative"
+    },
+    {
+        "id":  "project32",
+        "name":  "CloudForge",
+        "shortDescription":  "5-Agent LangGraph AWS Infrastructure Builder",
+        "description":  "5-agent LangGraph pipeline generating Terraform HCL with TFLint and Checkov CIS validation, provisioning live AWS CloudFormation stacks via IAM STS with zero persistent credentials. Features FastAPI SSE across stages, Fernet-encrypted credentials, GitHub OAuth commits, Kuzu graph traversal for reusable cloud patterns, and LangGraph interrupt API for human-in-the-loop architecture review before code generation.",
+        "technologies":  [
+                             "LangGraph",
+                             "Claude",
+                             "Python",
+                             "FastAPI",
+                             "Terraform",
+                             "AWS",
+                             "Next.js",
+                             "TypeScript",
+                             "React",
+                             "MongoDB",
+                             "Zustand"
+                         ],
+        "duration":  "2 months",
+        "url":  "https://github.com/ak-asu/Cloudforge",
+        "media":  "",
+        "type":  "personal"
+    },
+    {
+        "id":  "project33",
+        "name":  "Geeky",
+        "shortDescription":  "Offline-First Adaptive Micro-Learning Flutter App",
+        "description":  "Flutter app with on-device SQLite, ObjectBox 768-dim vector store on Gemini embeddings, and RevenueCat IAP for 10+ users. Applied 9-signal adaptive path sequencing with ZPD fit, BKT Bayesian updates, and FSRS spaced repetition targeting 90% retention. Features ANN hybrid RAG with CrossEncoder reranking and MMR pruning, on-device knowledge graph computation in Dart, and docling-based content ingestion from multiple formats.",
+        "technologies":  [
+                             "Flutter",
+                             "Dart",
+                             "FastAPI",
+                             "Python",
+                             "ObjectBox",
+                             "Gemini",
+                             "RevenueCat",
+                             "Firebase",
+                             "SQLite",
+                             "sentence-transformers"
+                         ],
+        "duration":  "1 month",
+        "url":  "https://github.com/ak-asu/Geeky",
+        "media":  "",
+        "type":  "personal"
+    },
+    {
+        "id":  "project34",
+        "name":  "GameGenAI",
+        "shortDescription":  "Natural Language to Playable 2D Browser Game Generator",
+        "description":  "Full-stack platform converting natural language descriptions into playable HTML5/Canvas/JavaScript games via a 5-agent AWS Bedrock pipeline: Prompt Parser, Game Designer, Code Generator, Test/Debug Agent, and Runtime Monitor. Features up to 5 iterative self-correction test-analyze-patch cycles, hot-patching without full reloads, and a ReasoningTransparency panel exposing agent reasoning chains to users.",
+        "technologies":  [
+                             "React",
+                             "TypeScript",
+                             "AWS Bedrock",
+                             "Lambda",
+                             "API Gateway",
+                             "DynamoDB",
+                             "S3",
+                             "CDK",
+                             "Puppeteer",
+                             "CloudWatch"
+                         ],
+        "duration":  "2 days",
+        "url":  "https://github.com/ak-asu/GameGenAI",
+        "media":  "",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project35",
+        "name":  "ShadowPath",
+        "shortDescription":  "Thermal-Comfort Shade-Aware Campus Routing App",
+        "description":  "Thermal-comfort-aware campus routing for ASU Tempe optimizing pedestrian routes for shade exposure and heat safety. Implements 4 parallel Dijkstra strategies (shortest, shade-maximizing, cooling-stop, UTCI-weighted) on one graph. Features time-travel shade geometry using real building footprints, cloud-aware diffusion from NWS forecast text parsing, and a HeatShield Day Planner with per-leg heat budgets and WHO-endorsed UTCI safety labels.",
+        "technologies":  [
+                             "Next.js",
+                             "TypeScript",
+                             "MapLibre GL",
+                             "Turf.js",
+                             "SunCalc",
+                             "Gemini",
+                             "Tailwind CSS",
+                             "Vitest"
+                         ],
+        "duration":  "2 days",
+        "url":  "https://github.com/ak-asu/Shadowpath",
+        "media":  "",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project36",
+        "name":  "Shadow Committee",
+        "shortDescription":  "Adversarial AI Boardroom Simulation for Pitch Stress-Testing",
+        "description":  "Adversarial AI platform generating 3 domain-specific antagonist personas from uploaded materials to stress-test business pitches. Features adversarial document ingestion that constructs attack vectors specific to the user\u0027s domain (e.g. a FinTech pitch generates Compliance Officer, High-Frequency Trader, and Consumer Advocate personas). Includes real-time confidence scoring, limbic stress simulation via expression shifts, and PDF dossier generation.",
+        "technologies":  [
+                             "Next.js",
+                             "TypeScript",
+                             "React",
+                             "Groq",
+                             "ElevenLabs",
+                             "Radix UI",
+                             "shadcn/ui",
+                             "Vercel"
+                         ],
+        "duration":  "2 days",
+        "url":  "https://github.com/ak-asu/Shadow-Committee",
+        "media":  "",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project37",
+        "name":  "COLLIDE",
+        "shortDescription":  "Energy Data Collision Simulator for Policy Planning",
+        "description":  "EnergyHackathon project using LangGraph, Claude, FastAPI, React, DuckDB, Parquet, and Recharts to simulate energy-data collision scenarios for planning and decision support. Built a policy-facing analytics workflow that turns heterogeneous datasets into explainable scenario comparisons and interactive visualizations.",
+        "technologies":  [
+                             "LangGraph",
+                             "Claude",
+                             "FastAPI",
+                             "React",
+                             "DuckDB",
+                             "Parquet",
+                             "Recharts",
+                             "Python",
+                             "TypeScript"
+                         ],
+        "duration":  "2 days",
+        "url":  "https://github.com/ak-asu/COLLIDE",
+        "media":  "",
+        "type":  "hackathon"
+    },
+    {
+        "id":  "project38",
+        "name":  "Zeneuro",
+        "shortDescription":  "AI-Powered Neurodiversity Support Companion",
+        "description":  "Cross-platform companion app combining React, TypeScript, Express, GPT-4o, Capacitor, SQLite, and Drizzle ORM for personalized neurodiversity support workflows. Features local-first state, mobile packaging, conversational coaching, and structured reflection loops.",
+        "technologies":  [
+                             "React",
+                             "TypeScript",
+                             "Express",
+                             "GPT-4o",
+                             "Capacitor",
+                             "SQLite",
+                             "Drizzle ORM"
+                         ],
+        "duration":  "1 month",
+        "url":  "https://github.com/ak-asu/Zeneuro",
+        "media":  "",
+        "type":  "personal"
+    },
+    {
+        "id":  "project39",
+        "name":  "VisionVault",
+        "shortDescription":  "Computer Vision Face Archive and Search Toolkit",
+        "description":  "Python computer-vision toolkit using OpenCV, RetinaFace, PyTorch, and NumPy for face detection, embedding extraction, and searchable visual archives. Designed for local image processing workflows with reproducible pipelines and privacy-preserving storage.",
+        "technologies":  [
+                             "Python",
+                             "OpenCV",
+                             "RetinaFace",
+                             "PyTorch",
+                             "NumPy"
+                         ],
+        "duration":  "1 month",
+        "url":  "https://github.com/ak-asu/VisionVault",
+        "media":  "",
+        "type":  "personal"
+    },
+    {
+        "id":  "project40",
+        "name":  "CampusGPT",
+        "shortDescription":  "Campus Knowledge Assistant on Vertex AI and Cloud Run",
+        "description":  "Python and Streamlit campus assistant deployed with Vertex AI, Docker, Cloud Run, and GCP. Built retrieval and generation workflows for university information access with a lightweight interface suitable for fast iteration and demonstration.",
+        "technologies":  [
+                             "Python",
+                             "Streamlit",
+                             "Vertex AI",
+                             "Docker",
+                             "Cloud Run",
+                             "GCP"
+                         ],
+        "duration":  "2 weeks",
+        "url":  "https://github.com/ak-asu/CampusGPT",
+        "media":  "",
+        "type":  "personal"
+    }
 ]
